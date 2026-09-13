@@ -18,7 +18,7 @@
     --r:8px;
     /* สเกล KPI (คงที่) vs UI รอง (ปรับได้) — โหมดอ่านง่าย */
     --fs-kpi:40px; --fs-kpi-name:17px; --fs-kpi-unit:16px;
-    --fs-base:24px; --fs-h2:28px;
+    --fs-base:24px; --fs-h2:22px;
     --fs-chrome-h1:26px; --fs-chrome-sub:18px; --fs-chrome-meta:17px; --fs-chrome-org:15px;
     --fs-filter:17px; --fs-filter-chip:16px;
     --fs-ui:20px; --fs-ui-md:18px; --fs-ui-sm:16px;
@@ -91,8 +91,8 @@
         padding:15px 17px 13px; min-width:0; box-shadow:var(--sh-1)}
   /* ขีดสีสั้น ๆ หน้าหัวข้อ — แยกลำดับชั้นหัวข้อกับคำอธิบายให้ชัดโดยไม่เพิ่มเส้นกรอบ */
   .card > h2{margin:0; font-size:var(--fs-h2); font-weight:700; letter-spacing:.1px;
-             display:flex; align-items:center; gap:10px}
-  .card > h2::before{content:""; width:4px; height:20px; border-radius:2px;
+             line-height:1.28; display:flex; align-items:center; gap:10px}
+  .card > h2::before{content:""; width:4px; height:16px; border-radius:2px;
                      background:var(--navy); flex:none}
   .card > .cap{margin:5px 0 12px 13px; color:var(--muted); font-size:var(--fs-ui);
                line-height:1.5}
@@ -148,6 +148,7 @@
   .trendLegend .lg{display:inline-flex; align-items:center; gap:6px}
   .trendLegend .lg i{display:inline-block; width:10px; height:10px; border-radius:50%;
                      flex:none; box-shadow:0 0 0 1.5px #fff}
+  .trendLegend .trendUnit{margin-left:auto; font-weight:600; color:var(--muted)}
   .card.trend.card--row-stretch,
   .card.treemapCard.card--row-stretch,
   .card.cagrCard.card--row-stretch,
@@ -155,12 +156,17 @@
   .card.healthCard.card--row-stretch{
     display:flex; flex-direction:column; align-self:stretch; min-height:0}
   #trendChart{
-    flex:0 0 auto; width:100%; height:auto; min-height:0;
-    aspect-ratio:980/280; max-height:300px}
-  #trendChart svg{display:block; width:100% !important; height:100% !important; max-height:100% !important}
-  #treemap,#cagrChart,#countryChart{
+    flex:0 0 auto !important; width:100%; height:auto; min-height:0; line-height:0}
+  #trendChart svg{
+    display:block; width:100% !important; height:auto !important; max-height:none !important;
+    aspect-ratio:980/268}
+  #treemap{
+    flex:1 1 auto; min-height:var(--dash-chart-h); height:var(--dash-chart-h)}
+  #treemap svg{
+    display:block; width:100% !important; height:100% !important; max-height:100% !important}
+  #cagrChart,#countryChart{
     flex:0 0 auto; min-height:var(--dash-chart-h-lg); height:var(--dash-chart-h-lg)}
-  #treemap svg,#cagrChart svg,#countryChart svg{
+  #cagrChart svg,#countryChart svg{
     display:block; width:100% !important; height:var(--dash-chart-h-lg) !important;
     max-height:var(--dash-chart-h-lg) !important}
   .treemapCard{grid-column:span 4}
@@ -603,7 +609,7 @@ function renderTrendLegend(){
   if (!el) return;
   el.innerHTML = Object.entries(SERIES).map(([k, v]) =>
     `<span class="lg"><i style="background:${v.color}"></i>${v.label}</span>`
-  ).join("");
+  ).join("") + `<span class="lg trendUnit">หน่วย: ล้านบาท</span>`;
 }
 function trendPlotX(i, n, W, P){
   const plotW = W - P.l - P.r;
@@ -614,19 +620,32 @@ function trendScaleY(allValues, nTicks){
   const nums = allValues.filter(v => v != null);
   if (!nums.length) return niceScale(0, 1, nTicks);
   const dataLo = Math.min(...nums), dataHi = Math.max(...nums);
+  const posMax = Math.max(0, ...nums);
   const span = dataHi - dataLo || Math.max(Math.abs(dataHi), Math.abs(dataLo), 1);
-  const padTop = Math.max(span * 0.045, Math.abs(dataHi) * 0.022);
-  const padBot = Math.max(span * 0.035, Math.abs(dataLo) * 0.06);
-  let lo = dataLo - padBot, hi = dataHi + padTop;
-  const sc = niceScale(lo, hi, nTicks);
-  if (sc.ticks.length > 3) {
-    const step = sc.ticks[1] - sc.ticks[0];
-    if (sc.hi - dataHi > step * 1.15) {
-      const ticks = sc.ticks.slice(0, -1);
-      return { lo: sc.lo, hi: ticks[ticks.length - 1], ticks };
-    }
+  const headroom = Math.max(posMax * 0.065, span * 0.04, 8000);
+  const padBot = Math.max(span * 0.03, Math.abs(dataLo) * 0.05);
+  const topTarget = (posMax || dataHi) + headroom;
+  const loTarget = dataLo - padBot;
+  let step = niceStep((topTarget - loTarget) / 8);
+  for (let k = 0; k < 8; k++) {
+    const band = Math.ceil(topTarget / step) * step - topTarget;
+    if (band <= step * 0.35) break;
+    step = Math.max(niceStep(step * 0.5), step / 2);
+    if (step < 2000) break;
   }
-  return sc;
+  const lo = Math.floor(loTarget / step) * step;
+  let hi = Math.ceil(topTarget / step) * step;
+  if (hi < topTarget) hi += step;
+  const ticks = [];
+  for (let v = lo; v <= hi + step * 1e-6; v += step) ticks.push(v);
+  return { lo, hi, ticks };
+}
+function niceStep(raw){
+  if (!isFinite(raw) || raw <= 0) return 1;
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const norm = raw / mag;
+  const mul = norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10;
+  return mul * mag;
 }
 
 const TREND_DISPLAY_YEARS = 5;
@@ -663,7 +682,7 @@ function trendSeries(){
    ข้อมูลมอคมี SARIMAX พยากรณ์รายปีงบประมาณจริง เก็บ path เดิมไว้ไม่แตะเลย
    ส่วนข้อมูลจริงที่ต่อ DB ตรง ยังไม่มีพยากรณ์ (ต้องมี >=12 เดือนต่อรอบ) แสดง
    รายเดือนจะเห็นแนวโน้มได้ชัดกว่าการยุบเหลือแค่ 2-3 จุดต่อปีงบประมาณ */
-const TREND_SVG = { W: 980, H: 280, P: { t: 26, r: 14, b: 34, l: 82 } };
+const TREND_SVG = { W: 980, H: 268, P: { t: 14, r: 12, b: 32, l: 78 } };
 
 function trendChartDataFontPx() {
   const v = getComputedStyle(document.documentElement).getPropertyValue("--fs-chart-data").trim();
@@ -684,9 +703,8 @@ function trendPointValueLabel(cx, cy, value, color, opts) {
   return `<text class="barlbl" x="${cx}" y="${cy + dy}" text-anchor="middle"
     style="fill:${color};font-size:${fs}px;font-weight:600">${fmt(value)}</text>`;
 }
-function trendYAxisUnitLabel(P) {
-  return `<text class="axis" x="${P.l - 6}" y="${P.t - 8}" text-anchor="end"
-    style="font-size:13px;font-weight:600">ล้านบาท</text>`;
+function trendYAxisUnitLabel() {
+  return "";
 }
 function trendLineLabelShow(i, total, seriesCount) {
   if (seriesCount <= 1) return true;

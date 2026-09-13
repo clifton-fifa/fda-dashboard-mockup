@@ -36,6 +36,42 @@
     };
   }
 
+  function chartAxisFontSize() {
+    var axisFs = parseInt(cssVar("--fs-axis"), 10);
+    if (axisFs && !isNaN(axisFs)) return axisFs;
+    return 14;
+  }
+
+  /** แกนกราฟ — ป้ายหมวดแนวนอน (bar indexAxis y) ใช้ฟอนต์เล็กลง */
+  function applyAxisFonts(cfg) {
+    if (!cfg || !cfg.options) return cfg;
+    var scales = cfg.options.scales;
+    if (!scales) return cfg;
+    var axisFs = chartAxisFontSize();
+    var family = Chart.defaults.font.family;
+    var horizBar = cfg.type === "bar" && cfg.options.indexAxis === "y";
+    Object.keys(scales).forEach(function (key) {
+      var sc = scales[key];
+      if (!sc || sc === false) return;
+      var tickFs = horizBar && key === "y" ? Math.min(13, axisFs) : axisFs;
+      sc.ticks = sc.ticks || {};
+      var userFont = (sc.ticks.font && typeof sc.ticks.font === "object") ? sc.ticks.font : {};
+      sc.ticks.font = Object.assign({ size: tickFs, family: family }, userFont);
+      if (sc.ticks.font.size > axisFs + 1) sc.ticks.font.size = tickFs;
+      if (sc.pointLabels) {
+        var plFont = (sc.pointLabels.font && typeof sc.pointLabels.font === "object")
+          ? sc.pointLabels.font
+          : {};
+        sc.pointLabels.font = Object.assign(
+          { size: Math.min(14, axisFs), family: family },
+          plFont
+        );
+        if (sc.pointLabels.font.size > 16) sc.pointLabels.font.size = Math.min(14, axisFs);
+      }
+    });
+    return cfg;
+  }
+
   function numericValue(raw) {
     if (raw == null) return null;
     if (typeof raw === "object") {
@@ -271,6 +307,7 @@
     applyCircleLegend(cfg);
     if (cfg.type === "doughnut" || cfg.type === "pie") {
       applyDonutLayout(cfg);
+      applyAxisFonts(cfg);
       return ensureChartInteraction(cfg);
     }
     if (cfg.type === "scatter" || cfg.type === "bubble") {
@@ -282,15 +319,29 @@
         padding: Object.assign({ top: 14, bottom: 8, left: 8, right: 12 }, scPad),
       });
       applyScatterDataLabels(cfg);
+      applyAxisFonts(cfg);
       return ensureChartInteraction(cfg);
     }
     if (cfg.type === "radar") {
+      applyAxisFonts(cfg);
       return ensureChartInteraction(cfg);
     }
-    if (cfg.type !== "bar" && cfg.type !== "line") return ensureChartInteraction(cfg);
+    if (cfg.type !== "bar" && cfg.type !== "line") {
+      applyAxisFonts(cfg);
+      return ensureChartInteraction(cfg);
+    }
     cfg.options = cfg.options || {};
     cfg.options.plugins = cfg.options.plugins || {};
-    if (cfg.options.plugins.datalabels === false) return ensureChartInteraction(cfg);
+    if (cfg.options.indexAxis === "y") {
+      cfg.options.layout = Object.assign(
+        { padding: { top: 4, bottom: 4, left: 2, right: 10 } },
+        cfg.options.layout || {}
+      );
+    }
+    if (cfg.options.plugins.datalabels === false) {
+      applyAxisFonts(cfg);
+      return ensureChartInteraction(cfg);
+    }
     if (cfg.type === "line") {
       cfg.options.layout = Object.assign(
         { padding: { top: 14, bottom: 6, left: 4, right: 8 } },
@@ -300,6 +351,7 @@
     var user = cfg.options.plugins.datalabels;
     var base = defaultDataLabelsFor(cfg);
     cfg.options.plugins.datalabels = Object.assign({}, base, user || {});
+    applyAxisFonts(cfg);
     return ensureChartInteraction(cfg);
   };
 

@@ -327,7 +327,7 @@ function applyFilters() {
   bindRowFilter('rssBody');
 
   const labels = rows.map(r=>r.name);
-  const cRss = setChart('cRss', {type:'bar', data:{labels, datasets:[{label:'คะแนนดาวรุ่ง', data:rows.map(r=>r.rss), backgroundColor:rows.map(r=>gColor(r.code))}]}, options:{indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{min:0, max:100, ticks:{font:{size:22}, stepSize:10}}, y:{ticks:{font:{size:22}}}}}});
+  const cRss = setChart('cRss', {type:'bar', data:{labels, datasets:[{label:'คะแนนดาวรุ่ง', data:rows.map(r=>r.rss), backgroundColor:rows.map(r=>gColor(r.code))}]}, options:{indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{min:0, max:100, ticks:{stepSize:10}}, y:{ticks:{autoSkip:false, padding:2}}}}});
   chartClickGroup(cRss, labels, rows.map(r=>r.code));
 
   // เลือก "ทั้งหมด" = ซ้อนทุกกลุ่มให้เทียบกัน (เส้นล้วน ไม่ถมสี เพราะ 7 ชั้นทับกันจะอ่านไม่ออก)
@@ -358,7 +358,7 @@ function applyFilters() {
     generateLabels:ch=>ch.data.datasets.map((ds,i)=>({text:ds.label, fillStyle:ds.borderColor,
       strokeStyle:ds.borderColor, lineWidth:0, pointStyle:'circle',
       hidden:!ch.isDatasetVisible(i), datasetIndex:i}))}},
-  tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.formattedValue}`}}}, scales:{r:{min:0, max:100, pointLabels:{font:{size:22}}, ticks:{font:{size:20}, stepSize:20}}}}});
+  tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.formattedValue}`}}}, scales:{r:{min:0, max:100, pointLabels:{padding:6}, ticks:{stepSize:20}}}}});
   if (g === 'ALL' && radarRows.length > 1) chartClickGroup(cRadar, null, radarRows.map(r => r.code));
   renderProductDrill();
 }

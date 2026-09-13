@@ -33,6 +33,10 @@ body[data-dash="3"] {
   --dash-chart-h-lg: 400px;
 }
 
+body[data-dash="3"] .card--row-stretch:has(#cRss) .chart-box.lg {
+  min-height: 320px;
+}
+
 /* d1 — KPI / SVG กราฟ (Executive Overview) */
 body[data-dash="1"] .kpi .name {
   display: -webkit-box;

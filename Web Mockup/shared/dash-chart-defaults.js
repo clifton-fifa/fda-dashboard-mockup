@@ -379,48 +379,45 @@
     if (!pick && typeof clickGroup === "function") pick = clickGroup;
     if (!pick) return;
 
-    function pickAt(idx) {
-      if (idx == null || idx < 0) return;
-      var code = codes && codes.length ? codes[idx] : null;
-      if (code) pick(code);
-    }
-
     var type = chart.config.type;
 
+    /* อย่าแทนที่ object ใน chart.options (Chart.js 4 proxy) — จะ stack overflow ตอน update */
+    chart.$dashGroupCodes = codes;
     chart.options.onClick = function (evt, elements) {
       if (!elements || !elements.length) return;
       var el = elements[0];
-      if (type === "radar" || type === "scatter" || type === "bubble") {
-        pickAt(el.datasetIndex != null ? el.datasetIndex : el.index);
-      } else {
-        pickAt(el.index);
-      }
+      var c = chart.$dashGroupCodes;
+      var idx =
+        type === "radar" || type === "scatter" || type === "bubble"
+          ? el.datasetIndex != null
+            ? el.datasetIndex
+            : el.index
+          : el.index;
+      if (idx == null || idx < 0) return;
+      var code = c && c.length ? c[idx] : null;
+      if (code) pick(code);
     };
 
     if (type === "doughnut" || type === "pie") {
-      chart.options.plugins = chart.options.plugins || {};
-      var leg = chart.options.plugins.legend || {};
-      chart.options.plugins.legend = Object.assign({}, leg, {
-        onClick: function (e, legendItem) {
-          if (e && e.native && e.native.stopPropagation) e.native.stopPropagation();
-          pickAt(legendItem.index);
-        },
-      });
+      if (!chart.options.plugins) chart.options.plugins = {};
+      if (!chart.options.plugins.legend) chart.options.plugins.legend = {};
+      chart.options.plugins.legend.onClick = function (e, legendItem) {
+        if (e && e.native && e.native.stopPropagation) e.native.stopPropagation();
+        var c = chart.$dashGroupCodes;
+        var idx = legendItem.index;
+        if (idx == null || idx < 0) return;
+        var code = c && c.length ? c[idx] : null;
+        if (code) pick(code);
+      };
     }
 
-    chart.options.interaction = Object.assign(
-      { mode: "nearest", intersect: false },
-      chart.options.interaction || {}
-    );
+    if (!chart.options.interaction) chart.options.interaction = {};
+    if (chart.options.interaction.mode == null) chart.options.interaction.mode = "nearest";
+    if (chart.options.interaction.intersect == null) chart.options.interaction.intersect = false;
     chart.options.onHover = function (evt, elements) {
       var t = evt.native && evt.native.target;
       if (t) t.style.cursor = elements.length ? "pointer" : "default";
     };
-    try {
-      chart.update("none");
-    } catch (e) {
-      /* อย่าให้ update ล้มแล้วหยุด applyFilters กลางทาง (d2 กราฟล่าง/ตาราง HS) */
-    }
   };
 
   window.dashFyFactor = function (fy, baseYear) {

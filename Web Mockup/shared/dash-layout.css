@@ -35,7 +35,16 @@ body[data-dash="3"] {
   --dash-chart-h-lg: 400px;
 }
 
-/* d9 — อันดับจังหวัด Top 10: แท่งหนาเต็มพื้นที่การ์ด (คู่กับแผนที่) */
+/* d9 — แผนที่ + Top 10 สูงเท่ากัน กะทัดรัด (ไม่ยืด 520px) */
+body[data-dash="9"] {
+  --dash-map-h: 400px;
+}
+
+body[data-dash="9"] .card.mapCard.card--chart-grow,
+body[data-dash="9"] .card--rank.card--chart-grow {
+  align-self: start;
+}
+
 body[data-dash="9"] .card--rank.card--chart-grow {
   display: flex;
   flex-direction: column;
@@ -43,10 +52,20 @@ body[data-dash="9"] .card--rank.card--chart-grow {
 }
 
 body[data-dash="9"] .card--rank .chart-box.lg {
-  flex: 1 1 auto;
-  min-height: 320px;
-  height: auto !important;
-  max-height: none !important;
+  flex: 0 0 auto;
+  height: var(--dash-map-h) !important;
+  min-height: var(--dash-map-h);
+  max-height: var(--dash-map-h);
+}
+
+body[data-dash="9"] .card.mapCard #mapEl {
+  height: var(--dash-map-h) !important;
+  min-height: var(--dash-map-h);
+  max-height: var(--dash-map-h);
+}
+
+body[data-dash="9"] .card.mapCard .legend-swatch {
+  margin-top: 6px;
 }
 
 body[data-dash="3"] .card--row-stretch:has(#cRss) .chart-box.lg {
@@ -614,6 +633,10 @@ header .right .dash-mock-badge {
     --dash-chart-h-lg: 300px;
     --dash-map-h: 420px;
   }
+
+  body[data-dash="9"] {
+    --dash-map-h: 360px;
+  }
 }
 
 /* d1 — KPI 4 คอลัมน์แบบ mockup (ไม่หดเป็น 2 คอลัมน์แค่เพราะมี sidebar) */
@@ -658,6 +681,10 @@ body[data-dash="1"] main > .kpis {
     --dash-sidebar-w: 260px;
     --dash-chart-h-lg: 280px;
     --dash-map-h: 380px;
+  }
+
+  body[data-dash="9"] {
+    --dash-map-h: 320px;
   }
 
   body[data-dash] header {

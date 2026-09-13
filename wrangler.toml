@@ -1,4 +1,6 @@
-# Cloudflare Pages — static mockup (โฟลเดอร์ Web Mockup)
+# Cloudflare Pages — โฟลเดอร์ static สำหรับ mockup
+# Deploy command ใน Cloudflare ต้องเป็น:
+#   npx wrangler pages deploy "Web Mockup" --project-name=fda-dashboard-mockup
 name = "fda-dashboard-mockup"
 compatibility_date = "2024-09-23"
 pages_build_output_dir = "Web Mockup"

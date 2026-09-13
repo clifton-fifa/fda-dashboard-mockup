@@ -100,3 +100,16 @@ git push -u origin main
 4. URL ประมาณ `https://<user>.github.io/<repo>/dashboard.html`
 
 > ข้อมูลใน mockup เป็นข้อมูลจำลองสำหรับสาธิต UI เท่านั้น
+
+## Cloudflare Pages (fda-dashboard-mockup.pages.dev)
+
+ใน Cloudflare → โปรเจกต → **Settings** → **Build**:
+
+| ช่อง | ค่า |
+|------|-----|
+| Build command | *(ว่าง)* |
+| **Deploy command** | `npx wrangler pages deploy "Web Mockup" --project-name=fda-dashboard-mockup` |
+
+**อย่าใช้** `npx wrangler deploy` (เป็น Worker จะ error Missing entry-point)
+
+จากนั้น **Retry deployment** หรือ push commit ใหม่

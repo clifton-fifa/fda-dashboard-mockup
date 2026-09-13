@@ -1,0 +1,1289 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>หน้าจอที่ 1 (Mockup) — ภาพรวมเศรษฐกิจผลิตภัณฑ์สุขภาพ | อย.</title>
+<style>
+  :root{
+    --navy:#0E2A4F; --navy2:#1B4A82; --gold:#B7922E; --ink:#1A2430; --muted:#5B6B7E;
+    --line:#D8E0EA; --line2:#EAEFF4; --canvas:#F2F4F7; --card:#FFFFFF;
+    --good:#1F7A45; --warn:#A66A00; --bad:#B4382A;
+    --sh-1:0 1px 3px rgba(18,48,91,.08);
+    --r:8px;
+    /* สเกล KPI (คงที่) vs UI รอง (ปรับได้) — โหมดอ่านง่าย */
+    --fs-kpi:54px; --fs-kpi-name:25px; --fs-kpi-unit:22px;
+    --fs-base:28px; --fs-h2:33px;
+    /* แถบบน + ตัวกรอง — เล็กกว่าเนื้อหา เพื่อโฟกัส KPI/กราฟ */
+    --fs-chrome-h1:30px; --fs-chrome-sub:20px; --fs-chrome-meta:19px; --fs-chrome-org:17px;
+    --fs-filter:19px; --fs-filter-chip:18px;
+    --fs-ui:24px; --fs-ui-md:22px; --fs-ui-sm:20px;
+    --fs-axis:22px; --fs-chart-lbl:18px; --fs-chart-data:14px; --fs-tip:26px; --fs-period:20px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--canvas);
+    color:var(--ink);
+    font-family:"TH Sarabun New","TH SarabunPSK","Sarabun","Noto Sans Thai",
+                "Leelawadee UI",system-ui,-apple-system,sans-serif;
+    font-size:var(--fs-base); line-height:1.5; font-weight:600;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+  }
+  /* ── แถบหัวเรื่อง ─────────────────────────────────────────── */
+  header{background:var(--navy);
+         color:#fff; padding:11px 22px 10px;
+         display:flex; justify-content:space-between; align-items:center; gap:12px;
+         flex-wrap:wrap; position:relative; border-bottom:3px solid var(--gold)}
+  header .brand{display:flex; align-items:center; gap:11px}
+  header .brandLogo{width:46px; height:46px; object-fit:contain; background:#fff;
+                    border-radius:6px; padding:4px; box-shadow:0 0 0 1px rgba(255,255,255,.25)}
+  header h1{margin:0; font-size:var(--fs-chrome-h1); font-weight:700; letter-spacing:.15px;
+            line-height:1.22}
+  header .sub{color:#B7C7DC; font-size:var(--fs-chrome-sub); letter-spacing:.15px;
+             margin-top:2px; line-height:1.3}
+  header .right{text-align:right; font-size:var(--fs-chrome-meta); line-height:1.35}
+  header .right .asof{font-weight:600}
+  header .right .org{color:#B7C7DC; font-size:var(--fs-chrome-org); margin-top:2px;
+                     line-height:1.3}
+
+  /* ── แถบตัวกรอง ───────────────────────────────────────────── */
+  .filters{background:#fff; border-bottom:1px solid var(--line); padding:6px 16px 6px 22px;
+           display:grid; grid-template-columns:1fr auto; gap:8px 10px; align-items:center;
+           position:sticky; top:0; z-index:20}
+  .static-filters{grid-column:1; justify-self:start; min-width:0}
+  /* คอลัมน์ auto ชิดขวา — ใช้พื้นที่กลางให้ชิปครบโดยไม่โดนตัด */
+  .filterGroups{grid-column:2; justify-self:end; display:flex; align-items:center;
+                gap:6px; flex-wrap:nowrap; width:max-content; max-width:100%}
+  .filters .lbl{color:var(--muted); font-size:var(--fs-filter); font-weight:600;
+                 white-space:nowrap; flex:none}
+  #chips{display:flex; flex:0 0 auto; gap:5px; flex-wrap:nowrap; justify-content:flex-end;
+         min-width:0; padding:2px 0}
+  .chip{border:1px solid var(--line); background:#fff; color:var(--ink);
+        border-radius:6px; padding:5px 15px; font:inherit; font-size:24px;
+        cursor:pointer; display:inline-flex; align-items:center; gap:8px; flex:none;
+        transition:background .13s, color .13s, border-color .13s}
+  .filters .chip{padding:3px 8px; font-size:var(--fs-filter-chip); gap:4px;
+                 border-radius:5px; font-weight:600}
+  .filters .chip .dot{width:8px; height:8px}
+  .chip:hover{border-color:#9FB6D0}
+  .chip[aria-pressed="true"]{background:var(--navy); color:#fff; border-color:var(--navy)}
+  .chip .dot{width:9px; height:9px; border-radius:50%; flex:none}
+  .static-filters{display:flex; gap:12px; color:var(--muted); font-size:var(--fs-filter);
+                  flex-wrap:wrap; align-items:center; flex:0 1 auto}
+  .static-filters span{white-space:nowrap; padding-left:12px; border-left:1px solid var(--line)}
+  .static-filters span:first-child{padding-left:0; border-left:none}
+  .static-filters select{font:inherit; font-size:var(--fs-filter-chip); color:var(--ink);
+                         background:#fff; border:1px solid var(--line); border-radius:5px;
+                         padding:2px 7px; margin:0 2px}
+  .reset-btn{font:inherit; font-size:var(--fs-filter-chip); font-weight:600; color:var(--navy);
+             background:#fff; border:1px solid var(--line); border-radius:5px;
+             padding:2px 10px; margin-left:4px; cursor:pointer}
+  .reset-btn:hover{background:var(--line2)}
+
+  /* ── ตาราง 12 คอลัมน์ ตามมาตรฐานในตารางที่ 13 ─────────────── */
+  main{padding:16px 20px 10px; display:grid; grid-template-columns:repeat(12,1fr);
+       gap:14px; max-width:2000px; margin:0 auto}
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+        padding:15px 17px 13px; min-width:0; box-shadow:var(--sh-1)}
+  /* ขีดสีสั้น ๆ หน้าหัวข้อ — แยกลำดับชั้นหัวข้อกับคำอธิบายให้ชัดโดยไม่เพิ่มเส้นกรอบ */
+  .card > h2{margin:0; font-size:var(--fs-h2); font-weight:700; letter-spacing:.1px;
+             display:flex; align-items:center; gap:10px}
+  .card > h2::before{content:""; width:4px; height:20px; border-radius:2px;
+                     background:var(--navy); flex:none}
+  .card > .cap{margin:5px 0 12px 13px; color:var(--muted); font-size:var(--fs-ui);
+               line-height:1.5}
+
+  /* ── ตัวเลือกช่วงเวลารายการ์ด ─────────────────────────────── */
+  /* ปุ่มไอคอน + เมนู dropdown เลือกช่วงเวลาต่อการ์ด อิสระจากตัวกรอง Year/Month
+     ด้านบนของหน้าจอ (คนละกลไกกัน) — เผื่อ user อยากดูกราฟนึงช่วงสั้น อีกกราฟช่วงยาว
+     พร้อมกันได้ ซ่อนอัตโนมัติในโหมดข้อมูลมอค (ดูฟังก์ชัน period* ใน script) เพราะ
+     กราฟมอคยังไม่รองรับตัวกรองนี้ */
+  .periodPick{position:relative; margin-left:auto; flex:none}
+  .periodBtn{width:34px; height:34px; border-radius:7px; border:1px solid var(--line);
+             background:#fff; color:var(--muted); cursor:pointer; display:inline-flex;
+             align-items:center; justify-content:center; line-height:1;
+             transition:background .13s, color .13s, border-color .13s}
+  .periodBtn:hover{background:var(--line2); color:var(--ink)}
+  .periodMenu{display:none; position:absolute; right:0; top:36px; z-index:30;
+              background:#fff; border:1px solid var(--line); border-radius:8px;
+              box-shadow:0 10px 26px rgba(8,24,46,.16); padding:12px; min-width:210px}
+  .periodMenu.open{display:block}
+  .periodRow{display:flex; align-items:center; gap:8px; margin-bottom:8px}
+  .periodRow label{width:44px; flex:none; color:var(--muted); font-size:var(--fs-period);
+      font-weight:600}
+  .periodRow input[type="month"]{flex:1; min-width:0; font:inherit; font-size:var(--fs-period);
+      color:var(--ink); border:1px solid var(--line); border-radius:6px; padding:7px 9px}
+  .periodActions{display:flex; justify-content:space-between; gap:8px; margin-top:10px}
+  .periodActions button{flex:1; font:inherit; font-size:var(--fs-period); font-weight:600;
+      border-radius:6px; padding:9px 6px; cursor:pointer}
+  .periodClear{border:1px solid var(--line); background:#fff; color:var(--muted)}
+  .periodClear:hover{background:var(--line2); color:var(--ink)}
+  .periodApply{border:1px solid var(--navy); background:var(--navy); color:#fff}
+  .periodApply:hover{background:var(--navy2)}
+
+  /* ── การ์ดตัวชี้วัดหลัก ───────────────────────────────────── */
+  /* auto-fit แทนการตรึง 6 คอลัมน์ — ปรับตามจำนวนการ์ดจริงเอง (มอค 6 ใบ / จริง 4 ใบ
+     ตอนนี้) ไม่ต้องแก้ CSS ทุกครั้งที่จำนวนการ์ดเปลี่ยน */
+  .kpis{grid-column:span 12; display:grid;
+        grid-template-columns:repeat(auto-fit, minmax(228px, 1fr)); gap:16px}
+  .kpi{background:var(--card); border:1px solid var(--line); border-radius:var(--r);
+       overflow:hidden; position:relative; cursor:default; box-shadow:var(--sh-1)}
+  .kpi .bar{height:4px}
+  .kpi .body{padding:11px 15px 18px}
+  .kpi .name{color:var(--muted); font-size:var(--fs-kpi-name); font-weight:600;
+            letter-spacing:.1px; line-height:1.3}
+  .kpi .val{font-size:var(--fs-kpi); font-weight:700; line-height:1.08; letter-spacing:-.5px;
+            font-variant-numeric:tabular-nums; margin-top:2px}
+  .kpi .unit{color:var(--muted); font-size:var(--fs-kpi-unit); margin-top:2px}
+  .kpi .spark{position:absolute; top:64px; right:14px; width:96px; height:36px}
+
+  .trend{grid-column:span 8}
+  /* คำอธิบายสีอยู่นอก SVG — ไม่แย่งพื้นที่ plot กับตัวอักษรที่ scale ตามความกว้างการ์ด */
+  .trendLegend{display:flex; flex-wrap:wrap; gap:6px 18px; margin:0 0 8px 13px;
+               font-size:var(--fs-ui-md); font-weight:600; color:var(--muted)}
+  .trendLegend .lg{display:inline-flex; align-items:center; gap:6px}
+  .trendLegend .lg i{display:inline-block; width:10px; height:10px; border-radius:50%;
+                     flex:none; box-shadow:0 0 0 1.5px #fff}
+  .card.trend.card--row-stretch,
+  .card.treemapCard.card--row-stretch,
+  .card.cagrCard.card--row-stretch,
+  .card.countryCard.card--row-stretch,
+  .card.healthCard.card--row-stretch{
+    display:flex; flex-direction:column; align-self:stretch; min-height:0}
+  #trendChart,#treemap,#cagrChart,#countryChart{
+    flex:0 0 auto; min-height:var(--dash-chart-h-lg); height:var(--dash-chart-h-lg)}
+  #trendChart svg,#treemap svg,#cagrChart svg,#countryChart svg{
+    display:block; width:100% !important; height:var(--dash-chart-h-lg) !important;
+    max-height:var(--dash-chart-h-lg) !important}
+  .treemapCard{grid-column:span 4}
+  #treemap svg{overflow:hidden}
+  .cagrCard{grid-column:span 4}
+  .countryCard{grid-column:span 5}
+  .healthCard{grid-column:span 3}
+  .healthCard.card--row-stretch table.health{flex:1 1 0}
+
+  /* ── สถานะข้อมูล (label บน / ค่า+รายละเอียด ล่าง ชิดซ้าย) ─────────────── */
+  table.health{width:100%; border-collapse:collapse; font-size:var(--fs-ui-md)}
+  table.health tr.healthRow td{padding:12px 0; border-bottom:1px solid var(--line2);
+          vertical-align:top}
+  table.health tr.healthRow:last-child td{border-bottom:0}
+  table.health .hrLabel{display:flex; align-items:flex-start; gap:8px;
+          color:var(--muted); font-weight:600; font-size:var(--fs-ui-sm); line-height:1.45}
+  table.health .hrLabel .st{width:9px; height:9px; border-radius:50%; flex:none;
+          margin-top:6px}
+  table.health .hrVal{margin:6px 0 0 17px; font-weight:700; font-size:var(--fs-ui);
+          line-height:1.35; font-variant-numeric:tabular-nums; color:var(--ink)}
+  table.health .hrSub{margin:4px 0 0 17px; font-size:var(--fs-ui-sm); line-height:1.5;
+          color:var(--muted); overflow-wrap:break-word}
+
+
+  svg{display:block; width:100%; height:auto; overflow:visible}
+  .gridline{stroke:var(--line2); stroke-width:1}
+  .axis{fill:var(--muted); font-size:var(--fs-axis); font-weight:700}
+  .barlbl{fill:var(--ink); font-size:var(--fs-chart-data); font-weight:600}
+  .hit{cursor:pointer; transition:opacity .15s}
+  .hit:hover{opacity:.82}
+  .dim{opacity:.22}
+
+  #tip{position:fixed; pointer-events:none; opacity:0; transition:opacity .1s;
+       background:rgba(14,39,73,.97); color:#fff; padding:10px 14px; border-radius:8px;
+       font-size:var(--fs-tip); line-height:1.5; z-index:99; max-width:360px;
+       box-shadow:0 10px 26px rgba(8,24,46,.34)}
+  #tip b{font-weight:700}
+
+  @media (max-width:980px){
+    .filters{grid-template-columns:1fr; gap:8px}
+    .static-filters,.filterGroups{grid-column:1; justify-self:stretch}
+    #chips{justify-content:flex-start}
+    .kpis{grid-template-columns:repeat(2,1fr)}
+    .treemapCard,.cagrCard,.countryCard,.healthCard{grid-column:span 12}
+  }
+  @media (max-width:700px){
+    header .brandLogo{width:42px; height:42px}
+    header h1{font-size:26px}
+    header .right{text-align:left}
+    .kpis{grid-template-columns:1fr}
+  }
+  @media print{
+    body{background:#fff}
+    .filters{position:static; background:#fff}
+    .filters .chip{display:none}
+    .card,.kpi{box-shadow:none}
+    main{padding:8px}
+  }
+</style>
+  <link rel="stylesheet" href="shared/dash-sidebar.css">
+  <link rel="stylesheet" href="shared/dash-layout.css">
+<link rel="stylesheet" href="shared/dash-filters.css">
+</head>
+<body data-dash="1">
+<div id="dashPage"><script src="shared/dash-sidebar.js"></script>
+
+<header>
+  <div class="brand">
+    <span class="dash-header-logo"><img class="brandLogo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJiIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNDAiIGhlaWdodD0iMjQwIiB2aWV3Qm94PSIwIDAgMjQwIDI0MCI+PGRlZnM+PHN0eWxlPi5ke2ZpbGw6IzAwNGNhZjt9PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImMiPjxwYXRoIGNsYXNzPSJkIiBkPSJtMTE5LjE1LDBjLTIzLjcuMTctNDYuODEsNy4zNS02Ni40MywyMC42NC0xOS42MiwxMy4yOS0zNC44NywzMi4wOS00My44Miw1NC4wM0MtLjA2LDk2LjYxLTIuMzIsMTIwLjcxLDIuNDEsMTQzLjkzYzQuNzMsMjMuMjIsMTYuMjIsNDQuNTIsMzMuMDQsNjEuMjIsMTYuODIsMTYuNywzOC4yLDI4LjA0LDYxLjQ1LDMyLjYsMjMuMjUsNC41Niw0Ny4zNCwyLjEzLDY5LjIyLTYuOTcsMjEuODgtOS4xMSw0MC41Ny0yNC40OSw1My43Mi00NC4yLDEzLjE1LTE5LjcyLDIwLjE2LTQyLjg4LDIwLjE2LTY2LjU4LS4xMS0zMS45NC0xMi45MS02Mi41Mi0zNS41OC04NS4wM0MxODEuNzYsMTIuNDcsMTUxLjA5LS4xMSwxMTkuMTUsMFptMCwyMjQuN2MtMTQuOS4xLTI5LjY0LTIuOTctNDMuMjYtOS4wMi0xMy42MS02LjA1LTI1Ljc4LTE0LjkzLTM1LjY5LTI2LjA2LTkuOTEtMTEuMTItMTcuMzMtMjQuMjMtMjEuNzYtMzguNDUtNC40NC0xNC4yMi01Ljc5LTI5LjIyLTMuOTctNDQuMDFoNzAuNTljMS44LDAsMi4zNS41OCwyLjM1LDIuNDUtLjA1LDIxLjMxLS4wNiw0Mi42MS0uMDQsNjMuOTIsMCwuNTUuMjEsMS4xNi0uMzgsMS43OGwtMjYuNTItMjkuNTNoOC44OHEzLjEsMCwzLjExLTMuMTljMC0zLjEyLS4wNS02LjI0LDAtOS4zNS4wMy0xLjU1LS40OC0yLjI1LTIuMDQtMi4yNS0xMy4wOS4wMy0yNi4xOCwwLTM5LjI2LjAyLS41NCwwLTEuMjktLjE1LTEuNDcuNTEtLjE5LjY2LjQ4LDEuMTQuOSwxLjYsNi45Miw3LjY1LDEzLjg1LDE1LjMsMjAuNzgsMjIuOTUsMTMuNjcsMTUuMTIsMjcuMzQsMzAuMjUsNDEsNDUuMzcsMi43MSwyLjk5LDIuMDQsMi45NCw0LjY2LDAsMTMuNDItMTUuMTgsMjYuODItMzAuMzksNDAuMTktNDUuNjMsOS4xOS0xMC40MiwxOC4zOS0yMC44MywyNy42LTMxLjIzLDguOTUtMTAuMTMsMTcuODktMjAuMjYsMjYuODMtMzAuMzkuMTgtLjE5LjMzLS4zOS40Ny0uNi4yNS0uNDIuODgtLjcyLjY3LTEuMjlzLS44Ny0uMzgtMS4zMy0uMzhjLTQuNDksMC04Ljk3LDAtMTMuNDYtLjAyLS40Ny0uMDEtLjk0LjA4LTEuMzYuMjgtLjQzLjItLjguNDktMS4wOS44Ni04LjI4LDkuMzUtMTYuNTcsMTguNjktMjQuODcsMjguMDQtNS4wNyw1LjcyLTEwLjE0LDExLjQ1LTE1LjIsMTcuMTgtMTAuNTcsMTEuOTItMjEuMTUsMjMuODQtMzEuNzIsMzUuNzUtLjMuNDItLjU3Ljg2LS44LDEuMzMtLjI2LS4zMy0uNDUtLjcxLS41Ni0xLjEyLS4xMS0uNDEtLjEzLS44My0uMDYtMS4yNS0uMDItOC4xOC0uMDItMTYuMzcsMC0yNC41NSwwLTIuNTEuMDgtMi41OSwyLjU2LTIuNiw0LjExLDAsOC4yMy0uMDQsMTIuMzQsMCwxLjUyLjAyLDIuMTEtLjUzLDIuMDgtMi4xNi0uMDktMy41MS0uMDktNy4wMSwwLTEwLjUyLjA0LTEuNjQtLjU5LTIuMTYtMi4wOC0yLjE0LTQuMTcuMDYtOC4zNC0uMDUtMTIuNTMuMDUtMS43Ny4wNC0yLjQyLS41OS0yLjM5LTIuNDYuMDgtNi4zLjA4LTEyLjYsMC0xOC45LS4wMi0xLjgzLjUyLTIuNTQsMi4zNC0yLjUsNC4yNC4xMSw4LjQ4LDAsMTIuNzEuMDYsMS42My4wMywyLjIyLS42NCwyLjE5LTIuMy0uMDYtMy40NCwwLTYuODksMC0xMC4zMywwLTIuNjgtLjAzLTIuNy0yLjYzLTIuN0gxNy41M2M1LjEyLTE4Ljk4LDE1LjQ1LTM2LjE0LDI5LjgyLTQ5LjU2LDE0LjM3LTEzLjQxLDMyLjIxLTIyLjU0LDUxLjQ5LTI2LjM0LDE5LjI4LTMuOCwzOS4yNS0yLjE0LDU3LjY0LDQuODEsMTguMzksNi45NSwzNC40NiwxOC45MSw0Ni40MSwzNC41MiwxMS45NSwxNS42MSwxOS4yOSwzNC4yNSwyMS4xOSw1My44MiwxLjksMTkuNTYtMS43MSwzOS4yNy0xMC40Miw1Ni44OS04LjcxLDE3LjYyLTIyLjE4LDMyLjQ1LTM4Ljg4LDQyLjgyLTE2LjcsMTAuMzYtMzUuOTcsMTUuODUtNTUuNjMsMTUuODNaIi8+PC9nPjwvc3ZnPg==" alt="อย."></span>
+    <div>
+      <h1>ระบบวิเคราะห์ข้อมูลเศรษฐกิจผลิตภัณฑ์สุขภาพ</h1>
+      <div class="sub">หน้าจอที่ 1 · ภาพรวมเศรษฐกิจผลิตภัณฑ์สุขภาพ (Executive Overview)</div>
+    </div>
+  </div>
+  <div class="right">
+    <div class="asof">อัปเดตล่าสุด <span id="asOf"></span></div>
+    <div class="org">สำนักงานคณะกรรมการอาหารและยา</div><div class="dash-mock-badge" title="ตัวเลขในหน้านี้จัดทำขึ้นเพื่อสาธิตรูปแบบการแสดงผลเท่านั้น ไม่ใช่ข้อมูลจริงของสำนักงานคณะกรรมการอาหารและยา โปรดอย่านำไปอ้างอิง">ข้อมูลจำลอง</div>
+  </div>
+</header>
+
+<div class="filters">
+  <div class="static-filters">
+    <button type="button" class="dash-menu-btn" aria-label="แสดงเมนู" title="แสดงเมนู" aria-expanded="false"><i class="dash-menu-icon" aria-hidden="true"></i></button>
+    <span>ปี: <select id="filterYear" onchange="setFilters()"></select></span>
+    <span>เดือน: <select id="filterMonth" onchange="setFilters()"></select></span>
+    <span><button type="button" class="reset-btn" onclick="resetFilters()">คืนค่า</button></span>
+  </div>
+  <div class="filterGroups">
+    <span class="lbl">กลุ่มผลิตภัณฑ์:</span>
+    <span id="chips"></span>
+  </div>
+</div>
+
+<main>
+  <section class="kpis" id="kpis"></section>
+
+  <section class="card trend card--row-stretch card--chart-grow">
+    <h2>แนวโน้มมูลค่าการค้าผลิตภัณฑ์สุขภาพ
+      <span class="periodPick">
+        <button type="button" class="periodBtn" onclick="togglePeriod(event,'trend')" title="เลือกช่วงเวลา"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M1 2h14l-5.5 6.3V13.2l-3 1.3V8.3z"/></svg></button>
+        <div class="periodMenu" id="periodMenu-trend" onclick="event.stopPropagation()">
+          <div class="periodRow"><label>จาก</label><input type="month" id="periodFrom-trend"></div>
+          <div class="periodRow"><label>ถึง</label><input type="month" id="periodTo-trend"></div>
+          <div class="periodActions">
+            <button type="button" class="periodClear" onclick="clearPeriodRange(event,'trend')">ทั้งหมด</button>
+            <button type="button" class="periodApply" onclick="applyPeriodRange(event,'trend')">ใช้ช่วงนี้</button>
+          </div>
+        </div>
+      </span>
+    </h2>
+    <div class="cap" id="trendCap"></div>
+    <div class="trendLegend" id="trendLegend"></div>
+    <div id="trendChart"></div>
+  </section>
+
+  <section class="card treemapCard card--row-stretch card--chart-grow">
+    <h2>สัดส่วนมูลค่าเศรษฐกิจรายกลุ่มผลิตภัณฑ์
+      <span class="periodPick">
+        <button type="button" class="periodBtn" onclick="togglePeriod(event,'treemap')" title="เลือกช่วงเวลา"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M1 2h14l-5.5 6.3V13.2l-3 1.3V8.3z"/></svg></button>
+        <div class="periodMenu" id="periodMenu-treemap" onclick="event.stopPropagation()">
+          <div class="periodRow"><label>จาก</label><input type="month" id="periodFrom-treemap"></div>
+          <div class="periodRow"><label>ถึง</label><input type="month" id="periodTo-treemap"></div>
+          <div class="periodActions">
+            <button type="button" class="periodClear" onclick="clearPeriodRange(event,'treemap')">ทั้งหมด</button>
+            <button type="button" class="periodApply" onclick="applyPeriodRange(event,'treemap')">ใช้ช่วงนี้</button>
+          </div>
+        </div>
+      </span>
+    </h2>
+    <div class="cap" id="shareCap"></div>
+    <div id="treemap"></div>
+  </section>
+
+  <section class="card cagrCard card--row-stretch card--chart-grow">
+    <h2 id="cagrTitle">อันดับกลุ่มผลิตภัณฑ์ตามอัตราการเติบโต
+      <span class="periodPick">
+        <button type="button" class="periodBtn" onclick="togglePeriod(event,'cagr')" title="เลือกช่วงเวลา"><svg viewBox="0 0 16 16" width="15" height="15" fill="currentColor"><path d="M1 2h14l-5.5 6.3V13.2l-3 1.3V8.3z"/></svg></button>
+        <div class="periodMenu" id="periodMenu-cagr" onclick="event.stopPropagation()">
+          <div class="periodRow"><label>จาก</label><input type="month" id="periodFrom-cagr"></div>
+          <div class="periodRow"><label>ถึง</label><input type="month" id="periodTo-cagr"></div>
+          <div class="periodActions">
+            <button type="button" class="periodClear" onclick="clearPeriodRange(event,'cagr')">ทั้งหมด</button>
+            <button type="button" class="periodApply" onclick="applyPeriodRange(event,'cagr')">ใช้ช่วงนี้</button>
+          </div>
+        </div>
+      </span>
+    </h2>
+    <div class="cap" id="cagrCap"></div>
+    <div id="cagrChart"></div>
+  </section>
+
+  <section class="card countryCard card--row-stretch card--chart-grow">
+    <h2>ประเทศคู่ค้าสำคัญ</h2>
+    <div class="cap" id="countryCap"></div>
+    <div id="countryChart"></div>
+  </section>
+
+  <section class="card healthCard card--row-stretch">
+    <h2>สถานะข้อมูล</h2>
+    <table class="health"><tbody id="healthBody"></tbody></table>
+  </section>
+</main>
+
+<div id="tip"></div>
+
+<script>
+const DATA = {"meta": {"asOf": "13 ก.ย. 2569", "fyComplete": 2568, "fys": [2565, 2566, 2567, 2568, 2569], "hasCagr": true, "crossFilter": true}, "groups": [{"code": "DRUG", "name": "ยา", "color": "#1F6FB2"}, {"code": "MDC", "name": "เครื่องมือแพทย์", "color": "#12A594"}, {"code": "FOOD", "name": "อาหาร", "color": "#3E9F55"}, {"code": "CMT", "name": "เครื่องสำอาง", "color": "#E8A317"}, {"code": "HERB", "name": "สมุนไพร", "color": "#7E57C2"}, {"code": "TXC", "name": "วัตถุอันตราย", "color": "#C0392B"}, {"code": "NCT", "name": "วัตถุเสพติด", "color": "#7F8C8D"}], "kpi": [{"kpi_code": "import_value", "kpi_name_th": "มูลค่านำเข้าผลิตภัณฑ์สุขภาพ", "value": 1251658.3, "unit": "ล้านบาท", "yoy_pct": 0.0, "higher_is_better": true, "basis": "รวม 68 เดือน (ม.ค. 2564–ส.ค. 2569)", "drill_to": "หน้าจอที่ 2"}, {"kpi_code": "export_value", "kpi_name_th": "มูลค่าส่งออกผลิตภัณฑ์สุขภาพ", "value": 1030924.6, "unit": "ล้านบาท", "yoy_pct": 0.0, "higher_is_better": true, "basis": "รวม 68 เดือน (ม.ค. 2564–ส.ค. 2569)", "drill_to": "หน้าจอที่ 2"}, {"kpi_code": "trade_balance", "kpi_name_th": "ดุลการค้า", "value": -220733.7, "unit": "ล้านบาท", "yoy_pct": 0.0, "higher_is_better": true, "basis": "รวม 68 เดือน (ม.ค. 2564–ส.ค. 2569)", "drill_to": "หน้าจอที่ 2"}, {"kpi_code": "production_value", "kpi_name_th": "มูลค่าการผลิตภาคอุตสาหกรรม", "value": 1658993.7, "unit": "ล้านบาท", "yoy_pct": 0.0, "higher_is_better": true, "basis": "รวม 68 เดือน (ม.ค. 2564–ส.ค. 2569)", "drill_to": null}], "sparks": {"active_entity": [12243.0, 12246.0, 12261.0, 12229.0, 12335.0, 12313.0, 12365.0, 12407.0, 12448.0, 12490.0, 12527.0, 12548.0, 12574.0, 12591.0, 12596.0, 12663.0, 12702.0, 12699.0, 12710.0, 12814.0, 12910.0, 12837.0, 12885.0, 12881.0, 12937.0, 12950.0, 13065.0, 13083.0, 13039.0, 13098.0, 13143.0, 13173.0, 13198.0, 13179.0, 13266.0, 13285.0, 13299.0, 13357.0, 13390.0, 13471.0, 13498.0, 13397.0, 13511.0, 13581.0, 13571.0, 13654.0, 13660.0, 13676.0, 13744.0, 13775.0, 13772.0, 13780.0, 13899.0, 13951.0, 13901.0, 14021.0, 14032.0, 14060.0, 14159.0, 14140.0, 14099.0, 14240.0, 14233.0, 14302.0, 14327.0, 14356.0, 14373.0, 14338.0], "backlog": [9496.0, 8575.0, 9800.0, 8965.0, 8916.0, 9588.0, 9323.0, 9001.0, 9169.0, 9704.0, 10044.0, 9940.0, 8957.0, 9470.0, 9505.0, 8831.0, 8721.0, 8936.0, 9113.0, 8737.0, 9924.0, 8332.0, 9100.0, 9247.0, 8919.0, 9403.0, 8846.0, 8759.0, 9178.0, 9355.0, 9688.0, 8884.0, 9535.0, 8555.0, 8859.0, 9108.0, 8858.0, 9722.0, 9900.0, 9062.0, 9259.0, 9071.0, 8955.0, 9098.0, 8894.0, 9219.0, 9697.0, 8713.0, 9252.0, 9150.0, 8906.0, 9578.0, 9294.0, 8977.0, 9732.0, 9324.0, 9102.0, 8932.0, 9248.0, 9093.0, 8254.0, 9865.0, 8516.0, 8545.0, 9431.0, 9004.0, 9089.0, 9287.0], "export_value": [12469.51, 12317.92, 14382.93, 11681.57, 12738.57, 13167.43, 13790.31, 14125.97, 13152.4, 14755.67, 14537.2, 14705.64, 13501.73, 12661.9, 14346.64, 12235.97, 13732.52, 14038.84, 13876.01, 14303.94, 14401.18, 14357.23, 15042.22, 16422.81, 13471.15, 14012.55, 15381.28, 12953.31, 14132.33, 14334.05, 15186.8, 15315.31, 15171.0, 16085.5, 16193.87, 16359.82, 15004.15, 14863.85, 15276.39, 13949.84, 14972.51, 15254.47, 15694.79, 15343.49, 16131.65, 16889.35, 16947.68, 17012.06, 15661.77, 14942.11, 17096.08, 14844.87, 16697.22, 16390.71, 17553.02, 17635.12, 16423.88, 17994.12, 17249.81, 18888.55, 15910.47, 15802.68, 17399.87, 15531.71, 16229.21, 17981.58, 16877.32, 17131.23], "import_value": [15273.94, 14637.46, 16427.86, 13405.4, 15440.91, 16104.97, 15859.0, 17115.14, 17035.77, 16411.86, 17356.79, 18528.95, 15941.68, 15284.58, 17613.86, 14225.54, 16233.04, 17371.76, 16368.82, 17892.65, 17388.44, 17441.7, 17935.94, 19950.22, 16872.92, 16407.42, 18232.21, 15194.43, 17220.46, 17531.85, 17830.76, 17960.89, 18722.08, 18855.1, 19331.59, 21121.76, 18379.27, 16846.51, 19224.75, 16686.18, 19142.89, 19352.0, 19363.0, 19592.22, 19465.85, 20558.16, 20461.44, 21574.03, 18407.92, 18296.79, 19304.82, 18334.92, 19057.71, 21032.71, 20260.99, 20713.49, 20005.44, 21084.83, 21854.02, 23269.0, 20224.5, 19862.24, 21544.67, 18734.08, 21101.43, 21183.81, 22247.66, 21963.27], "product_stock": [166377.0, 166979.0, 168116.0, 168905.0, 169331.0, 170804.0, 171312.0, 171425.0, 171913.0, 173570.0, 173837.0, 174784.0, 175007.0, 176052.0, 176348.0, 177415.0, 178212.0, 179008.0, 179786.0, 180315.0, 181014.0, 181488.0, 181566.0, 182635.0, 184230.0, 184882.0, 185530.0, 186340.0, 186695.0, 187131.0, 188504.0, 189304.0, 190367.0, 190706.0, 191275.0, 191868.0, 192832.0, 194188.0, 194285.0, 195725.0, 196307.0, 196630.0, 197933.0, 199036.0, 199069.0, 200180.0, 200739.0, 201718.0, 202623.0, 204270.0, 204409.0, 204646.0, 205899.0, 206888.0, 207966.0, 207985.0, 209620.0, 210131.0, 210818.0, 211879.0, 212604.0, 213938.0, 215051.0, 215507.0, 216205.0, 218099.0, 218238.0, 218983.0], "production_value": [20513.7, 20926.1, 22807.4, 19511.1, 22193.7, 22458.1, 22659.6, 23162.8, 22671.2, 23908.9, 24379.7, 25239.7, 22436.2, 21729.6, 22813.1, 20161.4, 22668.8, 22386.6, 22612.5, 23495.8, 23725.0, 24994.3, 25781.9, 26244.3, 22475.1, 22411.2, 24433.7, 21033.9, 23262.8, 24178.2, 24551.4, 24277.3, 24402.4, 25061.7, 25399.8, 26492.0, 23305.3, 22894.2, 24821.9, 21635.0, 24293.1, 25542.4, 25275.9, 25282.0, 25893.2, 26376.4, 27970.4, 27679.4, 25733.7, 23273.6, 25729.1, 23177.6, 25255.1, 25689.5, 25132.3, 26733.1, 26620.2, 26898.8, 27438.7, 28750.7, 26068.3, 25085.0, 27250.4, 23947.9, 26616.1, 26918.1, 26225.5, 28019.8], "trade_balance": [-2804.42, -2319.54, -2044.92, -1723.84, -2702.34, -2937.53, -2068.69, -2989.17, -3883.36, -1656.19, -2819.59, -3823.31, -2439.95, -2622.68, -3267.22, -1989.56, -2500.52, -3332.92, -2492.81, -3588.71, -2987.27, -3084.47, -2893.72, -3527.42, -3401.77, -2394.88, -2850.93, -2241.12, -3088.14, -3197.8, -2643.96, -2645.58, -3551.09, -2769.6, -3137.72, -4761.94, -3375.12, -1982.66, -3948.36, -2736.34, -4170.38, -4097.53, -3668.21, -4248.73, -3334.2, -3668.81, -3513.75, -4561.97, -2746.15, -3354.67, -2208.75, -3490.04, -2360.49, -4641.99, -2707.97, -3078.38, -3581.56, -3090.71, -4604.21, -4380.46, -4314.03, -4059.56, -4144.8, -3202.37, -4872.22, -3202.23, -5370.34, -4832.04]}, "trend": [{"key": "import", "values": [200618.0, 211300.9, 227361.1, 238008.4, 254708.3], "isFc": [false, false, false, false, true], "lo": [null, null, null, null, 253964.8], "hi": [null, null, null, null, 255451.9]}, {"key": "export", "values": [167097.2, 175780.0, 185130.3, 198093.9, 204496.4], "isFc": [false, false, false, false, true], "lo": [null, null, null, null, 203863.4], "hi": [null, null, null, null, 205129.3]}, {"key": "balance", "values": [-33520.7, -35520.9, -42230.8, -39914.5, -50212.0], "isFc": [false, false, false, false, true], "lo": [null, null, null, null, null], "hi": [null, null, null, null, null]}], "share": [{"product_group": "DRUG", "name_th": "ยา", "trade_value_mb": 623198.24, "share_pct": 27.3}, {"product_group": "MDC", "name_th": "เครื่องมือแพทย์", "trade_value_mb": 563856.36, "share_pct": 24.7}, {"product_group": "FOOD", "name_th": "อาหาร", "trade_value_mb": 475492.82, "share_pct": 20.83}, {"product_group": "CMT", "name_th": "เครื่องสำอาง", "trade_value_mb": 408033.74, "share_pct": 17.88}, {"product_group": "HERB", "name_th": "สมุนไพร", "trade_value_mb": 99106.84, "share_pct": 4.34}, {"product_group": "TXC", "name_th": "วัตถุอันตราย", "trade_value_mb": 83416.62, "share_pct": 3.65}, {"product_group": "NCT", "name_th": "วัตถุเสพติด", "trade_value_mb": 29478.38, "share_pct": 1.29}], "cagr": [{"product_group": "DRUG", "name_th": "ยา", "cagr_3y_pct": 6.6, "active_entity_count": 2028.0}, {"product_group": "MDC", "name_th": "เครื่องมือแพทย์", "cagr_3y_pct": 9.08, "active_entity_count": 2264.0}, {"product_group": "FOOD", "name_th": "อาหาร", "cagr_3y_pct": 3.23, "active_entity_count": 4714.0}, {"product_group": "CMT", "name_th": "เครื่องสำอาง", "cagr_3y_pct": 4.95, "active_entity_count": 3302.0}, {"product_group": "HERB", "name_th": "สมุนไพร", "cagr_3y_pct": 12.23, "active_entity_count": 1298.0}, {"product_group": "TXC", "name_th": "วัตถุอันตราย", "cagr_3y_pct": -3.22, "active_entity_count": 512.0}, {"product_group": "NCT", "name_th": "วัตถุเสพติด", "cagr_3y_pct": -6.94, "active_entity_count": 220.0}], "country": [{"rank": 1, "country_name_th": "จีน", "import_value_mb": 5721.0}, {"rank": 2, "country_name_th": "สหรัฐอเมริกา", "import_value_mb": 4989.8}, {"rank": 3, "country_name_th": "เยอรมนี", "import_value_mb": 3171.6}, {"rank": 4, "country_name_th": "อินเดีย", "import_value_mb": 2843.8}, {"rank": 5, "country_name_th": "ญี่ปุ่น", "import_value_mb": 2190.5}, {"rank": 6, "country_name_th": "สวิตเซอร์แลนด์", "import_value_mb": 1368.9}], "countryByGroup": [{"product_group": "CMT", "country_name_th": "เกาหลีใต้", "import_value_mb": 614.1}, {"product_group": "CMT", "country_name_th": "ฝรั่งเศส", "import_value_mb": 531.5}, {"product_group": "CMT", "country_name_th": "ญี่ปุ่น", "import_value_mb": 401.4}, {"product_group": "CMT", "country_name_th": "สหรัฐอเมริกา", "import_value_mb": 349.5}, {"product_group": "CMT", "country_name_th": "จีน", "import_value_mb": 344.2}, {"product_group": "CMT", "country_name_th": "อิตาลี", "import_value_mb": 185.6}, {"product_group": "CMT", "country_name_th": "ไม่ระบุประเทศ", "import_value_mb": 49.5}, {"product_group": "DRUG", "country_name_th": "อินเดีย", "import_value_mb": 2220.2}, {"product_group": "DRUG", "country_name_th": "สหรัฐอเมริกา", "import_value_mb": 1734.5}, {"product_group": "DRUG", "country_name_th": "เยอรมนี", "import_value_mb": 1538.3}, {"product_group": "DRUG", "country_name_th": "สวิตเซอร์แลนด์", "import_value_mb": 1229.6}, {"product_group": "DRUG", "country_name_th": "จีน", "import_value_mb": 968.7}, {"product_group": "DRUG", "country_name_th": "ฝรั่งเศส", "import_value_mb": 748.4}, {"product_group": "DRUG", "country_name_th": "ไอร์แลนด์", "import_value_mb": 744.8}, {"product_group": "DRUG", "country_name_th": "สหราชอาณาจักร", "import_value_mb": 486.9}, {"product_group": "DRUG", "country_name_th": "ไม่ระบุประเทศ", "import_value_mb": 197.4}, {"product_group": "FOOD", "country_name_th": "จีน", "import_value_mb": 793.7}, {"product_group": "FOOD", "country_name_th": "สหรัฐอเมริกา", "import_value_mb": 703.1}, {"product_group": "FOOD", "country_name_th": "นิวซีแลนด์", "import_value_mb": 559.3}, {"product_group": "FOOD", "country_name_th": "ออสเตรเลีย", "import_value_mb": 549.5}, {"product_group": "FOOD", "country_name_th": "ญี่ปุ่น", "import_value_mb": 377.2}, {"product_group": "FOOD", "country_name_th": "มาเลเซีย", "import_value_mb": 310.6}, {"product_group": "FOOD", "country_name_th": "สิงคโปร์", "import_value_mb": 246.2}, {"product_group": "FOOD", "country_name_th": "ไม่ระบุประเทศ", "import_value_mb": 72.2}, {"product_group": "HERB", "country_name_th": "จีน", "import_value_mb": 438.2}, {"product_group": "HERB", "country_name_th": "อินเดีย", "import_value_mb": 240.8}, {"product_group": "HERB", "country_name_th": "เกาหลีใต้", "import_value_mb": 145.3}, {"product_group": "HERB", "country_name_th": "ญี่ปุ่น", "import_value_mb": 110.5}, {"product_group": "HERB", "country_name_th": "มาเลเซีย", "import_value_mb": 94.1}, {"product_group": "HERB", "country_name_th": "ไม่ระบุประเทศ", "import_value_mb": 21.0}, {"product_group": "MDC", "country_name_th": "จีน", "import_value_mb": 2721.7}, {"product_group": "MDC", "country_name_th": "สหรัฐอเมริกา", "import_value_mb": 1998.5}, {"product_group": "MDC", "country_name_th": "เยอรมนี", "import_value_mb": 1364.4}, {"product_group": "MDC", "country_name_th": "ญี่ปุ่น", "import_value_mb": 1152.7}, {"product_group": "MDC", "country_name_th": "สิงคโปร์", "import_value_mb": 758.1}, {"product_group": "MDC", "country_name_th": "ไอร์แลนด์", "import_value_mb": 546.4}, {"product_group": "MDC", "country_name_th": "Czech Republic", "import_value_mb": 419.8}, {"product_group": "MDC", "country_name_th": "ไม่ระบุประเทศ", "import_value_mb": 182.9}, {"product_group": "NCT", "country_name_th": "สวิตเซอร์แลนด์", "import_value_mb": 139.2}, {"product_group": "NCT", "country_name_th": "อินเดีย", "import_value_mb": 104.9}, {"product_group": "NCT", "country_name_th": "สหราชอาณาจักร", "import_value_mb": 86.6}, {"product_group": "NCT", "country_name_th": "สหรัฐอเมริกา", "import_value_mb": 66.8}, {"product_group": "NCT", "country_name_th": "เยอรมนี", "import_value_mb": 42.6}, {"product_group": "NCT", "country_name_th": "ไม่ระบุประเทศ", "import_value_mb": 9.0}, {"product_group": "TXC", "country_name_th": "จีน", "import_value_mb": 454.5}, {"product_group": "TXC", "country_name_th": "อินเดีย", "import_value_mb": 277.9}, {"product_group": "TXC", "country_name_th": "เยอรมนี", "import_value_mb": 226.4}, {"product_group": "TXC", "country_name_th": "ญี่ปุ่น", "import_value_mb": 148.8}, {"product_group": "TXC", "country_name_th": "สหรัฐอเมริกา", "import_value_mb": 137.4}, {"product_group": "TXC", "country_name_th": "ไม่ระบุประเทศ", "import_value_mb": 25.4}], "health": [{"metric_code": "completeness", "metric_name_th": "ความถูกต้องข้อมูล", "value": 99.2, "unit": "%", "detail_th": null, "display_text": null, "status": "ปกติ"}, {"metric_code": "coverage", "metric_name_th": "ช่วงข้อมูล", "value": null, "unit": null, "detail_th": null, "display_text": "ม.ค. 2564–ส.ค. 2569", "status": "ปกติ"}, {"metric_code": "last_refresh", "metric_name_th": "อัปเดตล่าสุด", "value": null, "unit": null, "detail_th": null, "display_text": "13 ก.ย. 2569", "status": "ปกติ"}], "byGroup": [{"m": "2021-01", "fy": 2564, "g": "CMT", "im": 1305.39, "ex": 3881.64, "bal": 2576.25, "ps": 47191.0, "ae": 2801.0, "bl": 2737.0, "pv": 2684.2}, {"m": "2021-01", "fy": 2564, "g": "DRUG", "im": 5602.52, "ex": 2143.18, "bal": -3459.34, "ps": 21294.0, "ae": 1721.0, "bl": 1267.0, "pv": 4837.4}, {"m": "2021-01", "fy": 2564, "g": "FOOD", "im": 2044.29, "ex": 3781.66, "bal": 1737.37, "ps": 72779.0, "ae": 4066.0, "bl": 3581.0, "pv": 8206.0}, {"m": "2021-01", "fy": 2564, "g": "HERB", "im": 479.96, "ex": 446.97, "bal": -32.99, "ps": 4934.0, "ae": 1093.0, "bl": 388.0, "pv": 683.1}, {"m": "2021-01", "fy": 2564, "g": "MDC", "im": 4410.79, "ex": 1819.7, "bal": -2591.09, "ps": 18340.0, "ae": 1944.0, "bl": 1268.0, "pv": 2806.5}, {"m": "2021-01", "fy": 2564, "g": "NCT", "im": 474.58, "ex": 79.85, "bal": -394.73, "ps": 412.0, "ae": 186.0, "bl": 75.0, "pv": 492.6}, {"m": "2021-01", "fy": 2564, "g": "TXC", "im": 956.41, "ex": 316.51, "bal": -639.91, "ps": 1427.0, "ae": 432.0, "bl": 180.0, "pv": 803.9}, {"m": "2021-02", "fy": 2564, "g": "CMT", "im": 1325.71, "ex": 3724.66, "bal": 2398.94, "ps": 47551.0, "ae": 2802.0, "bl": 1982.0, "pv": 2582.5}, {"m": "2021-02", "fy": 2564, "g": "DRUG", "im": 5109.95, "ex": 2043.74, "bal": -3066.21, "ps": 21458.0, "ae": 1737.0, "bl": 1548.0, "pv": 4733.7}, {"m": "2021-02", "fy": 2564, "g": "FOOD", "im": 2271.96, "ex": 4005.15, "bal": 1733.19, "ps": 72816.0, "ae": 4027.0, "bl": 3161.0, "pv": 8742.0}, {"m": "2021-02", "fy": 2564, "g": "HERB", "im": 470.49, "ex": 518.72, "bal": 48.22, "ps": 4961.0, "ae": 1091.0, "bl": 442.0, "pv": 699.3}, {"m": "2021-02", "fy": 2564, "g": "MDC", "im": 4053.78, "ex": 1631.47, "bal": -2422.32, "ps": 18340.0, "ae": 1961.0, "bl": 1180.0, "pv": 2942.0}, {"m": "2021-02", "fy": 2564, "g": "NCT", "im": 470.66, "ex": 76.62, "bal": -394.03, "ps": 414.0, "ae": 189.0, "bl": 73.0, "pv": 448.0}, {"m": "2021-02", "fy": 2564, "g": "TXC", "im": 934.9, "ex": 317.56, "bal": -617.34, "ps": 1439.0, "ae": 439.0, "bl": 189.0, "pv": 778.6}, {"m": "2021-03", "fy": 2564, "g": "CMT", "im": 1537.43, "ex": 4238.78, "bal": 2701.35, "ps": 47551.0, "ae": 2823.0, "bl": 2799.0, "pv": 2948.2}, {"m": "2021-03", "fy": 2564, "g": "DRUG", "im": 5983.68, "ex": 2515.36, "bal": -3468.32, "ps": 21529.0, "ae": 1726.0, "bl": 1412.0, "pv": 5081.4}, {"m": "2021-03", "fy": 2564, "g": "FOOD", "im": 2299.06, "ex": 4539.79, "bal": 2240.73, "ps": 73733.0, "ae": 4066.0, "bl": 3573.0, "pv": 9134.9}, {"m": "2021-03", "fy": 2564, "g": "HERB", "im": 469.16, "ex": 605.71, "bal": 136.55, "ps": 4979.0, "ae": 1097.0, "bl": 516.0, "pv": 786.7}, {"m": "2021-03", "fy": 2564, "g": "MDC", "im": 4566.85, "ex": 2022.81, "bal": -2544.04, "ps": 18467.0, "ae": 1927.0, "bl": 1434.0, "pv": 3504.7}, {"m": "2021-03", "fy": 2564, "g": "NCT", "im": 544.73, "ex": 102.66, "bal": -442.07, "ps": 414.0, "ae": 188.0, "bl": 66.0, "pv": 488.3}, {"m": "2021-03", "fy": 2564, "g": "TXC", "im": 1026.94, "ex": 357.81, "bal": -669.13, "ps": 1443.0, "ae": 434.0, "bl": 0.0, "pv": 863.2}, {"m": "2021-04", "fy": 2564, "g": "CMT", "im": 1321.14, "ex": 3477.89, "bal": 2156.74, "ps": 48051.0, "ae": 2805.0, "bl": 2337.0, "pv": 2448.8}, {"m": "2021-04", "fy": 2564, "g": "DRUG", "im": 4728.9, "ex": 1941.56, "bal": -2787.34, "ps": 21542.0, "ae": 1735.0, "bl": 1256.0, "pv": 4493.6}, {"m": "2021-04", "fy": 2564, "g": "FOOD", "im": 2058.05, "ex": 3574.51, "bal": 1516.46, "ps": 73948.0, "ae": 4032.0, "bl": 3305.0, "pv": 7766.5}, {"m": "2021-04", "fy": 2564, "g": "HERB", "im": 455.78, "ex": 520.67, "bal": 64.89, "ps": 5011.0, "ae": 1100.0, "bl": 407.0, "pv": 669.0}, {"m": "2021-04", "fy": 2564, "g": "MDC", "im": 3953.52, "ex": 1788.39, "bal": -2165.13, "ps": 18491.0, "ae": 1930.0, "bl": 1383.0, "pv": 2945.6}, {"m": "2021-04", "fy": 2564, "g": "NCT", "im": 0.0, "ex": 78.37, "bal": 78.37, "ps": 414.0, "ae": 190.0, "bl": 73.0, "pv": 400.3}, {"m": "2021-04", "fy": 2564, "g": "TXC", "im": 888.02, "ex": 300.19, "bal": -587.82, "ps": 1448.0, "ae": 437.0, "bl": 204.0, "pv": 787.3}, {"m": "2021-05", "fy": 2564, "g": "CMT", "im": 1416.02, "ex": 3396.85, "bal": 1980.84, "ps": 48204.0, "ae": 2821.0, "bl": 2081.0, "pv": 2713.6}, {"m": "2021-05", "fy": 2564, "g": "DRUG", "im": 5258.09, "ex": 2084.93, "bal": -3173.16, "ps": 21672.0, "ae": 1740.0, "bl": 1227.0, "pv": 4953.1}, {"m": "2021-05", "fy": 2564, "g": "FOOD", "im": 2409.1, "ex": 4169.48, "bal": 1760.38, "ps": 73948.0, "ae": 4063.0, "bl": 3385.0, "pv": 9058.4}, {"m": "2021-05", "fy": 2564, "g": "HERB", "im": 470.35, "ex": 642.93, "bal": 172.59, "ps": 5045.0, "ae": 1105.0, "bl": 488.0, "pv": 815.2}, {"m": "2021-05", "fy": 2564, "g": "MDC", "im": 4254.31, "ex": 2031.74, "bal": -2222.57, "ps": 18585.0, "ae": 1975.0, "bl": 1450.0, "pv": 3325.9}, {"m": "2021-05", "fy": 2564, "g": "NCT", "im": 512.41, "ex": 84.7, "bal": -427.72, "ps": 421.0, "ae": 190.0, "bl": 70.0, "pv": 475.8}, {"m": "2021-05", "fy": 2564, "g": "TXC", "im": 1120.63, "ex": 327.93, "bal": -792.7, "ps": 1456.0, "ae": 441.0, "bl": 215.0, "pv": 851.7}, {"m": "2021-06", "fy": 2564, "g": "CMT", "im": 1460.03, "ex": 3854.39, "bal": 2394.36, "ps": 48687.0, "ae": 2846.0, "bl": 2503.0, "pv": 2721.4}, {"m": "2021-06", "fy": 2564, "g": "DRUG", "im": 5763.22, "ex": 2298.3, "bal": -3464.92, "ps": 21754.0, "ae": 1731.0, "bl": 1341.0, "pv": 4994.6}, {"m": "2021-06", "fy": 2564, "g": "FOOD", "im": 2227.13, "ex": 4139.56, "bal": 1912.43, "ps": 74594.0, "ae": 4063.0, "bl": 3829.0, "pv": 9111.4}, {"m": "2021-06", "fy": 2564, "g": "HERB", "im": 497.98, "ex": 612.54, "bal": 114.56, "ps": 5100.0, "ae": 1108.0, "bl": 383.0, "pv": 760.0}, {"m": "2021-06", "fy": 2564, "g": "MDC", "im": 4631.01, "ex": 1852.13, "bal": -2778.89, "ps": 18786.0, "ae": 1934.0, "bl": 1274.0, "pv": 3547.0}, {"m": "2021-06", "fy": 2564, "g": "NCT", "im": 539.56, "ex": 86.88, "bal": -452.69, "ps": 421.0, "ae": 190.0, "bl": 64.0, "pv": 462.3}, {"m": "2021-06", "fy": 2564, "g": "TXC", "im": 986.03, "ex": 323.64, "bal": -662.39, "ps": 1462.0, "ae": 441.0, "bl": 194.0, "pv": 861.4}, {"m": "2021-07", "fy": 2564, "g": "CMT", "im": 1457.43, "ex": 3762.17, "bal": 2304.74, "ps": 48687.0, "ae": 2875.0, "bl": 2320.0, "pv": 2974.4}, {"m": "2021-07", "fy": 2564, "g": "DRUG", "im": 5428.77, "ex": 2399.69, "bal": -3029.08, "ps": 21952.0, "ae": 1743.0, "bl": 1488.0, "pv": 5362.5}, {"m": "2021-07", "fy": 2564, "g": "FOOD", "im": 2445.32, "ex": 4342.34, "bal": 1897.03, "ps": 74896.0, "ae": 4061.0, "bl": 3537.0, "pv": 8726.8}, {"m": "2021-07", "fy": 2564, "g": "HERB", "im": 493.38, "ex": 680.39, "bal": 187.0, "ps": 5100.0, "ae": 1107.0, "bl": 465.0, "pv": 795.8}, {"m": "2021-07", "fy": 2564, "g": "MDC", "im": 4520.27, "ex": 2160.61, "bal": -2359.66, "ps": 18786.0, "ae": 1954.0, "bl": 1205.0, "pv": 3438.9}, {"m": "2021-07", "fy": 2564, "g": "NCT", "im": 543.46, "ex": 84.71, "bal": -458.75, "ps": 421.0, "ae": 190.0, "bl": 71.0, "pv": 498.7}, {"m": "2021-07", "fy": 2564, "g": "TXC", "im": 970.37, "ex": 360.4, "bal": -609.97, "ps": 1470.0, "ae": 435.0, "bl": 237.0, "pv": 862.5}, {"m": "2021-08", "fy": 2564, "g": "CMT", "im": 1561.82, "ex": 4230.45, "bal": 2668.63, "ps": 48687.0, "ae": 2858.0, "bl": 2238.0, "pv": 2989.2}, {"m": "2021-08", "fy": 2564, "g": "DRUG", "im": 6245.89, "ex": 2115.16, "bal": -4130.73, "ps": 22026.0, "ae": 1749.0, "bl": 1469.0, "pv": 4977.1}, {"m": "2021-08", "fy": 2564, "g": "FOOD", "im": 2364.09, "ex": 4591.82, "bal": 2227.73, "ps": 74896.0, "ae": 4087.0, "bl": 3383.0, "pv": 9501.3}, {"m": "2021-08", "fy": 2564, "g": "HERB", "im": 475.33, "ex": 670.04, "bal": 194.71, "ps": 5100.0, "ae": 1122.0, "bl": 460.0, "pv": 799.8}, {"m": "2021-08", "fy": 2564, "g": "MDC", "im": 5006.59, "ex": 2088.09, "bal": -2918.51, "ps": 18824.0, "ae": 1962.0, "bl": 1170.0, "pv": 3537.3}, {"m": "2021-08", "fy": 2564, "g": "NCT", "im": 504.69, "ex": 89.49, "bal": -415.2, "ps": 422.0, "ae": 188.0, "bl": 74.0, "pv": 479.4}, {"m": "2021-08", "fy": 2564, "g": "TXC", "im": 956.73, "ex": 340.93, "bal": -615.8, "ps": 1470.0, "ae": 441.0, "bl": 207.0, "pv": 878.7}, {"m": "2021-09", "fy": 2564, "g": "CMT", "im": 1494.27, "ex": 4211.63, "bal": 2717.37, "ps": 48687.0, "ae": 2913.0, "bl": 2320.0, "pv": 2972.7}, {"m": "2021-09", "fy": 2564, "g": "DRUG", "im": 6006.77, "ex": 2310.83, "bal": -3695.94, "ps": 22095.0, "ae": 1739.0, "bl": 1304.0, "pv": 4964.5}, {"m": "2021-09", "fy": 2564, "g": "FOOD", "im": 2276.98, "ex": 3568.38, "bal": 1291.4, "ps": 75274.0, "ae": 4051.0, "bl": 3523.0, "pv": 9321.1}, {"m": "2021-09", "fy": 2564, "g": "HERB", "im": 503.21, "ex": 687.42, "bal": 184.21, "ps": 5126.0, "ae": 1116.0, "bl": 395.0, "pv": 785.3}, {"m": "2021-09", "fy": 2564, "g": "MDC", "im": 5287.28, "ex": 1986.55, "bal": -3300.73, "ps": 18824.0, "ae": 1996.0, "bl": 1371.0, "pv": 3281.9}, {"m": "2021-09", "fy": 2564, "g": "NCT", "im": 477.17, "ex": 75.16, "bal": -402.01, "ps": 426.0, "ae": 191.0, "bl": 64.0, "pv": 475.7}, {"m": "2021-09", "fy": 2564, "g": "TXC", "im": 990.09, "ex": 312.43, "bal": -677.66, "ps": 1481.0, "ae": 442.0, "bl": 192.0, "pv": 870.0}, {"m": "2021-10", "fy": 2565, "g": "CMT", "im": 1514.48, "ex": 4266.16, "bal": 2751.67, "ps": 49317.0, "ae": 2882.0, "bl": 2344.0, "pv": 3060.0}, {"m": "2021-10", "fy": 2565, "g": "DRUG", "im": 5665.78, "ex": 2408.62, "bal": -3257.16, "ps": 22095.0, "ae": 1775.0, "bl": 1535.0, "pv": 5487.2}, {"m": "2021-10", "fy": 2565, "g": "FOOD", "im": 2526.25, "ex": 4691.08, "bal": 2164.83, "ps": 76038.0, "ae": 4103.0, "bl": 3683.0, "pv": 9688.4}, {"m": "2021-10", "fy": 2565, "g": "HERB", "im": 530.69, "ex": 707.31, "bal": 176.61, "ps": 5147.0, "ae": 1112.0, "bl": 473.0, "pv": 849.6}, {"m": "2021-10", "fy": 2565, "g": "MDC", "im": 5145.98, "ex": 2245.07, "bal": -2900.91, "ps": 19066.0, "ae": 1986.0, "bl": 1391.0, "pv": 3423.9}, {"m": "2021-10", "fy": 2565, "g": "NCT", "im": 0.0, "ex": 90.26, "bal": 90.26, "ps": 426.0, "ae": 189.0, "bl": 80.0, "pv": 497.3}, {"m": "2021-10", "fy": 2565, "g": "TXC", "im": 1028.67, "ex": 347.17, "bal": -681.5, "ps": 1481.0, "ae": 443.0, "bl": 198.0, "pv": 902.5}, {"m": "2021-11", "fy": 2565, "g": "CMT", "im": 1581.38, "ex": 4266.2, "bal": 2684.82, "ps": 49317.0, "ae": 2895.0, "bl": 2566.0, "pv": 3162.4}, {"m": "2021-11", "fy": 2565, "g": "DRUG", "im": 5970.79, "ex": 2460.39, "bal": -3510.41, "ps": 22260.0, "ae": 1773.0, "bl": 1424.0, "pv": 5541.6}, {"m": "2021-11", "fy": 2565, "g": "FOOD", "im": 2483.83, "ex": 4666.3, "bal": 2182.46, "ps": 76038.0, "ae": 4119.0, "bl": 4002.0, "pv": 9666.3}, {"m": "2021-11", "fy": 2565, "g": "HERB", "im": 518.19, "ex": 672.91, "bal": 154.72, "ps": 5147.0, "ae": 1116.0, "bl": 469.0, "pv": 932.6}, {"m": "2021-11", "fy": 2565, "g": "MDC", "im": 5156.4, "ex": 2055.07, "bal": -3101.33, "ps": 19159.0, "ae": 1988.0, "bl": 1306.0, "pv": 3667.8}, {"m": "2021-11", "fy": 2565, "g": "NCT", "im": 543.92, "ex": 85.64, "bal": -458.28, "ps": 429.0, "ae": 192.0, "bl": 82.0, "pv": 464.1}, {"m": "2021-11", "fy": 2565, "g": "TXC", "im": 1102.27, "ex": 330.7, "bal": -771.57, "ps": 1487.0, "ae": 444.0, "bl": 195.0, "pv": 944.9}, {"m": "2021-12", "fy": 2565, "g": "CMT", "im": 1712.35, "ex": 4117.46, "bal": 2405.12, "ps": 49551.0, "ae": 2885.0, "bl": 2335.0, "pv": 3364.2}, {"m": "2021-12", "fy": 2565, "g": "DRUG", "im": 6513.54, "ex": 2393.49, "bal": -4120.05, "ps": 22384.0, "ae": 1771.0, "bl": 1465.0, "pv": 5459.6}, {"m": "2021-12", "fy": 2565, "g": "FOOD", "im": 2666.31, "ex": 4733.52, "bal": 2067.21, "ps": 76559.0, "ae": 4160.0, "bl": 3953.0, "pv": 10396.7}, {"m": "2021-12", "fy": 2565, "g": "HERB", "im": 604.2, "ex": 698.7, "bal": 94.5, "ps": 5147.0, "ae": 1121.0, "bl": 454.0, "pv": 876.6}, {"m": "2021-12", "fy": 2565, "g": "MDC", "im": 5454.32, "ex": 2290.65, "bal": -3163.67, "ps": 19205.0, "ae": 1976.0, "bl": 1449.0, "pv": 3755.0}, {"m": "2021-12", "fy": 2565, "g": "NCT", "im": 547.79, "ex": 92.02, "bal": -455.77, "ps": 429.0, "ae": 194.0, "bl": 70.0, "pv": 456.8}, {"m": "2021-12", "fy": 2565, "g": "TXC", "im": 1030.44, "ex": 379.8, "bal": -650.64, "ps": 1509.0, "ae": 441.0, "bl": 214.0, "pv": 930.8}, {"m": "2022-01", "fy": 2565, "g": "CMT", "im": 1390.07, "ex": 4188.49, "bal": 2798.42, "ps": 49639.0, "ae": 2945.0, "bl": 2411.0, "pv": 3015.1}, {"m": "2022-01", "fy": 2565, "g": "DRUG", "im": 5526.2, "ex": 2312.69, "bal": -3213.51, "ps": 22442.0, "ae": 1782.0, "bl": 1382.0, "pv": 4936.5}, {"m": "2022-01", "fy": 2565, "g": "FOOD", "im": 2164.97, "ex": 4054.65, "bal": 1889.68, "ps": 76559.0, "ae": 4107.0, "bl": 3143.0, "pv": 9054.5}, {"m": "2022-01", "fy": 2565, "g": "HERB", "im": 486.88, "ex": 574.38, "bal": 87.5, "ps": 5194.0, "ae": 1129.0, "bl": 527.0, "pv": 744.7}, {"m": "2022-01", "fy": 2565, "g": "MDC", "im": 4915.98, "ex": 2010.89, "bal": -2905.1, "ps": 19232.0, "ae": 1969.0, "bl": 1238.0, "pv": 3406.2}, {"m": "2022-01", "fy": 2565, "g": "NCT", "im": 441.71, "ex": 77.08, "bal": -364.63, "ps": 432.0, "ae": 194.0, "bl": 71.0, "pv": 435.0}, {"m": "2022-01", "fy": 2565, "g": "TXC", "im": 1015.86, "ex": 283.55, "bal": -732.32, "ps": 1509.0, "ae": 448.0, "bl": 185.0, "pv": 844.2}, {"m": "2022-02", "fy": 2565, "g": "CMT", "im": 1428.22, "ex": 3312.73, "bal": 1884.5, "ps": 50194.0, "ae": 2956.0, "bl": 2343.0, "pv": 2864.0}, {"m": "2022-02", "fy": 2565, "g": "DRUG", "im": 5243.99, "ex": 2294.91, "bal": -2949.08, "ps": 22494.0, "ae": 1777.0, "bl": 1433.0, "pv": 4832.0}, {"m": "2022-02", "fy": 2565, "g": "FOOD", "im": 2176.89, "ex": 3960.69, "bal": 1783.8, "ps": 76750.0, "ae": 4080.0, "bl": 3816.0, "pv": 8789.3}, {"m": "2022-02", "fy": 2565, "g": "HERB", "im": 507.9, "ex": 632.0, "bal": 124.1, "ps": 5210.0, "ae": 1133.0, "bl": 466.0, "pv": 750.1}, {"m": "2022-02", "fy": 2565, "g": "MDC", "im": 4638.75, "ex": 2069.7, "bal": -2569.05, "ps": 19462.0, "ae": 2006.0, "bl": 1131.0, "pv": 3265.3}, {"m": "2022-02", "fy": 2565, "g": "NCT", "im": 436.81, "ex": 73.23, "bal": -363.58, "ps": 433.0, "ae": 191.0, "bl": 74.0, "pv": 423.5}, {"m": "2022-02", "fy": 2565, "g": "TXC", "im": 852.02, "ex": 318.64, "bal": -533.37, "ps": 1509.0, "ae": 448.0, "bl": 207.0, "pv": 805.4}, {"m": "2022-03", "fy": 2565, "g": "CMT", "im": 1545.87, "ex": 3944.97, "bal": 2399.1, "ps": 50194.0, "ae": 2923.0, "bl": 2473.0, "pv": 2947.1}, {"m": "2022-03", "fy": 2565, "g": "DRUG", "im": 6142.32, "ex": 2267.68, "bal": -3874.64, "ps": 22677.0, "ae": 1781.0, "bl": 1425.0, "pv": 5357.6}, {"m": "2022-03", "fy": 2565, "g": "FOOD", "im": 2486.31, "ex": 4594.4, "bal": 2108.09, "ps": 76791.0, "ae": 4115.0, "bl": 3624.0, "pv": 9005.1}, {"m": "2022-03", "fy": 2565, "g": "HERB", "im": 555.46, "ex": 703.38, "bal": 147.92, "ps": 5274.0, "ae": 1124.0, "bl": 446.0, "pv": 863.0}, {"m": "2022-03", "fy": 2565, "g": "MDC", "im": 5399.26, "ex": 2442.11, "bal": -2957.16, "ps": 19462.0, "ae": 2008.0, "bl": 1257.0, "pv": 3332.9}, {"m": "2022-03", "fy": 2565, "g": "NCT", "im": 459.77, "ex": 79.8, "bal": -379.97, "ps": 436.0, "ae": 194.0, "bl": 73.0, "pv": 451.1}, {"m": "2022-03", "fy": 2565, "g": "TXC", "im": 1024.85, "ex": 314.31, "bal": -710.55, "ps": 1514.0, "ae": 451.0, "bl": 207.0, "pv": 856.3}, {"m": "2022-04", "fy": 2565, "g": "CMT", "im": 1311.56, "ex": 3396.38, "bal": 2084.82, "ps": 50337.0, "ae": 2946.0, "bl": 2235.0, "pv": 2530.5}, {"m": "2022-04", "fy": 2565, "g": "DRUG", "im": 5155.18, "ex": 2252.08, "bal": -2903.11, "ps": 22829.0, "ae": 1775.0, "bl": 1358.0, "pv": 4408.9}, {"m": "2022-04", "fy": 2565, "g": "FOOD", "im": 2064.56, "ex": 3735.23, "bal": 1670.67, "ps": 77521.0, "ae": 4156.0, "bl": 3246.0, "pv": 8343.0}, {"m": "2022-04", "fy": 2565, "g": "HERB", "im": 500.14, "ex": 592.57, "bal": 92.43, "ps": 5296.0, "ae": 1138.0, "bl": 476.0, "pv": 727.8}, {"m": "2022-04", "fy": 2565, "g": "MDC", "im": 4335.33, "ex": 1900.5, "bal": -2434.83, "ps": 19468.0, "ae": 2006.0, "bl": 1223.0, "pv": 2991.7}, {"m": "2022-04", "fy": 2565, "g": "NCT", "im": 0.0, "ex": 70.27, "bal": 70.27, "ps": 437.0, "ae": 196.0, "bl": 72.0, "pv": 396.8}, {"m": "2022-04", "fy": 2565, "g": "TXC", "im": 858.77, "ex": 288.95, "bal": -569.82, "ps": 1527.0, "ae": 446.0, "bl": 221.0, "pv": 762.7}, {"m": "2022-05", "fy": 2565, "g": "CMT", "im": 1453.97, "ex": 4101.54, "bal": 2647.57, "ps": 50589.0, "ae": 2947.0, "bl": 2239.0, "pv": 2815.6}, {"m": "2022-05", "fy": 2565, "g": "DRUG", "im": 5448.62, "ex": 2412.32, "bal": -3036.3, "ps": 22829.0, "ae": 1785.0, "bl": 1285.0, "pv": 5011.6}, {"m": "2022-05", "fy": 2565, "g": "FOOD", "im": 2291.4, "ex": 4176.76, "bal": 1885.36, "ps": 77761.0, "ae": 4172.0, "bl": 3210.0, "pv": 9142.0}, {"m": "2022-05", "fy": 2565, "g": "HERB", "im": 525.09, "ex": 650.46, "bal": 125.37, "ps": 5296.0, "ae": 1142.0, "bl": 500.0, "pv": 780.9}, {"m": "2022-05", "fy": 2565, "g": "MDC", "im": 5087.29, "ex": 2004.03, "bal": -3083.26, "ps": 19768.0, "ae": 2010.0, "bl": 1199.0, "pv": 3601.8}, {"m": "2022-05", "fy": 2565, "g": "NCT", "im": 490.43, "ex": 83.58, "bal": -406.85, "ps": 437.0, "ae": 193.0, "bl": 75.0, "pv": 437.7}, {"m": "2022-05", "fy": 2565, "g": "TXC", "im": 936.25, "ex": 303.84, "bal": -632.41, "ps": 1532.0, "ae": 453.0, "bl": 213.0, "pv": 879.2}, {"m": "2022-06", "fy": 2565, "g": "CMT", "im": 1508.63, "ex": 4149.08, "bal": 2640.45, "ps": 51027.0, "ae": 2948.0, "bl": 2243.0, "pv": 2887.2}, {"m": "2022-06", "fy": 2565, "g": "DRUG", "im": 6339.52, "ex": 2214.57, "bal": -4124.95, "ps": 22962.0, "ae": 1803.0, "bl": 1404.0, "pv": 4972.4}, {"m": "2022-06", "fy": 2565, "g": "FOOD", "im": 2465.66, "ex": 4296.44, "bal": 1830.78, "ps": 77969.0, "ae": 4167.0, "bl": 3388.0, "pv": 8859.4}, {"m": "2022-06", "fy": 2565, "g": "HERB", "im": 526.06, "ex": 690.48, "bal": 164.41, "ps": 5310.0, "ae": 1129.0, "bl": 400.0, "pv": 792.0}, {"m": "2022-06", "fy": 2565, "g": "MDC", "im": 5173.04, "ex": 2315.46, "bal": -2857.58, "ps": 19768.0, "ae": 2006.0, "bl": 1239.0, "pv": 3585.1}, {"m": "2022-06", "fy": 2565, "g": "NCT", "im": 449.11, "ex": 79.75, "bal": -369.36, "ps": 440.0, "ae": 193.0, "bl": 74.0, "pv": 464.9}, {"m": "2022-06", "fy": 2565, "g": "TXC", "im": 909.73, "ex": 293.07, "bal": -616.67, "ps": 1532.0, "ae": 453.0, "bl": 188.0, "pv": 825.6}, {"m": "2022-07", "fy": 2565, "g": "CMT", "im": 1408.13, "ex": 4087.52, "bal": 2679.39, "ps": 51027.0, "ae": 2927.0, "bl": 2286.0, "pv": 2864.5}, {"m": "2022-07", "fy": 2565, "g": "DRUG", "im": 5956.68, "ex": 2214.86, "bal": -3741.82, "ps": 23020.0, "ae": 1816.0, "bl": 1615.0, "pv": 5292.7}, {"m": "2022-07", "fy": 2565, "g": "FOOD", "im": 2263.8, "ex": 4308.49, "bal": 2044.7, "ps": 78649.0, "ae": 4155.0, "bl": 3208.0, "pv": 8706.1}, {"m": "2022-07", "fy": 2565, "g": "HERB", "im": 562.17, "ex": 709.69, "bal": 147.52, "ps": 5321.0, "ae": 1143.0, "bl": 430.0, "pv": 828.7}, {"m": "2022-07", "fy": 2565, "g": "MDC", "im": 4794.07, "ex": 2153.93, "bal": -2640.14, "ps": 19783.0, "ae": 2022.0, "bl": 1306.0, "pv": 3590.9}, {"m": "2022-07", "fy": 2565, "g": "NCT", "im": 447.14, "ex": 84.37, "bal": -362.77, "ps": 444.0, "ae": 197.0, "bl": 72.0, "pv": 452.0}, {"m": "2022-07", "fy": 2565, "g": "TXC", "im": 936.82, "ex": 317.14, "bal": -619.68, "ps": 1542.0, "ae": 450.0, "bl": 196.0, "pv": 877.6}, {"m": "2022-08", "fy": 2565, "g": "CMT", "im": 1472.81, "ex": 4309.67, "bal": 2836.86, "ps": 51027.0, "ae": 2965.0, "bl": 2393.0, "pv": 3111.0}, {"m": "2022-08", "fy": 2565, "g": "DRUG", "im": 6374.3, "ex": 2440.03, "bal": -3934.27, "ps": 23156.0, "ae": 1796.0, "bl": 1365.0, "pv": 5316.2}, {"m": "2022-08", "fy": 2565, "g": "FOOD", "im": 2581.88, "ex": 4299.43, "bal": 1717.54, "ps": 78925.0, "ae": 4212.0, "bl": 3105.0, "pv": 9133.4}, {"m": "2022-08", "fy": 2565, "g": "HERB", "im": 502.47, "ex": 701.06, "bal": 198.6, "ps": 5321.0, "ae": 1153.0, "bl": 509.0, "pv": 860.5}, {"m": "2022-08", "fy": 2565, "g": "MDC", "im": 5498.82, "ex": 2159.63, "bal": -3339.19, "ps": 19893.0, "ae": 2040.0, "bl": 1291.0, "pv": 3802.6}, {"m": "2022-08", "fy": 2565, "g": "NCT", "im": 497.16, "ex": 87.85, "bal": -409.31, "ps": 445.0, "ae": 197.0, "bl": 74.0, "pv": 433.7}, {"m": "2022-08", "fy": 2565, "g": "TXC", "im": 965.21, "ex": 306.27, "bal": -658.94, "ps": 1548.0, "ae": 451.0, "bl": 0.0, "pv": 838.4}, {"m": "2022-09", "fy": 2565, "g": "CMT", "im": 1675.11, "ex": 4275.79, "bal": 2600.68, "ps": 51114.0, "ae": 3005.0, "bl": 2254.0, "pv": 3082.4}, {"m": "2022-09", "fy": 2565, "g": "DRUG", "im": 6189.21, "ex": 2445.8, "bal": -3743.41, "ps": 23156.0, "ae": 1841.0, "bl": 1351.0, "pv": 5213.1}, {"m": "2022-09", "fy": 2565, "g": "FOOD", "im": 2531.26, "ex": 4572.99, "bal": 2041.74, "ps": 79442.0, "ae": 4234.0, "bl": 4203.0, "pv": 9631.0}, {"m": "2022-09", "fy": 2565, "g": "HERB", "im": 564.02, "ex": 759.53, "bal": 195.51, "ps": 5348.0, "ae": 1139.0, "bl": 477.0, "pv": 910.7}, {"m": "2022-09", "fy": 2565, "g": "MDC", "im": 4941.16, "ex": 1963.49, "bal": -2977.67, "ps": 19943.0, "ae": 2038.0, "bl": 1377.0, "pv": 3611.0}, {"m": "2022-09", "fy": 2565, "g": "NCT", "im": 484.44, "ex": 85.55, "bal": -398.89, "ps": 446.0, "ae": 195.0, "bl": 69.0, "pv": 428.6}, {"m": "2022-09", "fy": 2565, "g": "TXC", "im": 1003.24, "ex": 298.02, "bal": -705.22, "ps": 1565.0, "ae": 458.0, "bl": 193.0, "pv": 848.2}, {"m": "2022-10", "fy": 2566, "g": "CMT", "im": 1636.91, "ex": 4256.18, "bal": 2619.27, "ps": 51465.0, "ae": 2942.0, "bl": 1989.0, "pv": 3191.2}, {"m": "2022-10", "fy": 2566, "g": "DRUG", "im": 6396.2, "ex": 2544.27, "bal": -3851.93, "ps": 23218.0, "ae": 1803.0, "bl": 1447.0, "pv": 5764.9}, {"m": "2022-10", "fy": 2566, "g": "FOOD", "im": 2510.07, "ex": 4157.3, "bal": 1647.23, "ps": 79442.0, "ae": 4227.0, "bl": 3102.0, "pv": 10031.8}, {"m": "2022-10", "fy": 2566, "g": "HERB", "im": 601.4, "ex": 679.56, "bal": 78.17, "ps": 5409.0, "ae": 1154.0, "bl": 443.0, "pv": 950.3}, {"m": "2022-10", "fy": 2566, "g": "MDC", "im": 5282.7, "ex": 2321.55, "bal": -2961.15, "ps": 19943.0, "ae": 2056.0, "bl": 1078.0, "pv": 3735.3}, {"m": "2022-10", "fy": 2566, "g": "NCT", "im": 0.0, "ex": 74.76, "bal": 74.76, "ps": 446.0, "ae": 199.0, "bl": 65.0, "pv": 463.8}, {"m": "2022-10", "fy": 2566, "g": "TXC", "im": 1014.43, "ex": 323.62, "bal": -690.81, "ps": 1565.0, "ae": 456.0, "bl": 208.0, "pv": 857.0}, {"m": "2022-11", "fy": 2566, "g": "CMT", "im": 1788.75, "ex": 4555.44, "bal": 2766.69, "ps": 51502.0, "ae": 2954.0, "bl": 2419.0, "pv": 3185.4}, {"m": "2022-11", "fy": 2566, "g": "DRUG", "im": 6104.19, "ex": 2303.25, "bal": -3800.94, "ps": 23218.0, "ae": 1815.0, "bl": 1597.0, "pv": 6064.5}, {"m": "2022-11", "fy": 2566, "g": "FOOD", "im": 2577.1, "ex": 4646.25, "bal": 2069.15, "ps": 79442.0, "ae": 4242.0, "bl": 2916.0, "pv": 10200.5}, {"m": "2022-11", "fy": 2566, "g": "HERB", "im": 605.27, "ex": 726.4, "bal": 121.13, "ps": 5409.0, "ae": 1156.0, "bl": 443.0, "pv": 958.1}, {"m": "2022-11", "fy": 2566, "g": "MDC", "im": 5361.71, "ex": 2379.46, "bal": -2982.25, "ps": 19979.0, "ae": 2061.0, "bl": 1474.0, "pv": 4019.5}, {"m": "2022-11", "fy": 2566, "g": "NCT", "im": 454.72, "ex": 89.81, "bal": -364.91, "ps": 451.0, "ae": 199.0, "bl": 69.0, "pv": 456.5}, {"m": "2022-11", "fy": 2566, "g": "TXC", "im": 1044.18, "ex": 341.59, "bal": -702.6, "ps": 1565.0, "ae": 458.0, "bl": 182.0, "pv": 897.4}, {"m": "2022-12", "fy": 2566, "g": "CMT", "im": 1695.55, "ex": 4874.77, "bal": 3179.22, "ps": 51873.0, "ae": 2990.0, "bl": 2556.0, "pv": 3452.0}, {"m": "2022-12", "fy": 2566, "g": "DRUG", "im": 7328.88, "ex": 2968.47, "bal": -4360.41, "ps": 23464.0, "ae": 1820.0, "bl": 1572.0, "pv": 5738.1}, {"m": "2022-12", "fy": 2566, "g": "FOOD", "im": 2711.56, "ex": 4697.16, "bal": 1985.6, "ps": 79652.0, "ae": 4240.0, "bl": 3153.0, "pv": 10720.3}, {"m": "2022-12", "fy": 2566, "g": "HERB", "im": 648.15, "ex": 777.29, "bal": 129.14, "ps": 5475.0, "ae": 1151.0, "bl": 488.0, "pv": 1004.4}, {"m": "2022-12", "fy": 2566, "g": "MDC", "im": 5983.63, "ex": 2679.82, "bal": -3303.82, "ps": 20145.0, "ae": 2022.0, "bl": 1203.0, "pv": 3955.1}, {"m": "2022-12", "fy": 2566, "g": "NCT", "im": 504.27, "ex": 93.87, "bal": -410.41, "ps": 454.0, "ae": 196.0, "bl": 68.0, "pv": 477.7}, {"m": "2022-12", "fy": 2566, "g": "TXC", "im": 1078.17, "ex": 331.43, "bal": -746.74, "ps": 1572.0, "ae": 462.0, "bl": 207.0, "pv": 896.7}, {"m": "2023-01", "fy": 2566, "g": "CMT", "im": 1465.47, "ex": 3968.25, "bal": 2502.78, "ps": 52281.0, "ae": 2991.0, "bl": 2588.0, "pv": 2714.0}, {"m": "2023-01", "fy": 2566, "g": "DRUG", "im": 5889.57, "ex": 2360.27, "bal": -3529.3, "ps": 23746.0, "ae": 1815.0, "bl": 1719.0, "pv": 5183.8}, {"m": "2023-01", "fy": 2566, "g": "FOOD", "im": 2312.75, "ex": 3892.65, "bal": 1579.9, "ps": 80545.0, "ae": 4250.0, "bl": 3118.0, "pv": 9026.3}, {"m": "2023-01", "fy": 2566, "g": "HERB", "im": 599.86, "ex": 675.47, "bal": 75.61, "ps": 5475.0, "ae": 1164.0, "bl": 378.0, "pv": 881.8}, {"m": "2023-01", "fy": 2566, "g": "MDC", "im": 5242.43, "ex": 2213.02, "bal": -3029.41, "ps": 20157.0, "ae": 2059.0, "bl": 1048.0, "pv": 3538.8}, {"m": "2023-01", "fy": 2566, "g": "NCT", "im": 416.22, "ex": 73.48, "bal": -342.73, "ps": 454.0, "ae": 199.0, "bl": 68.0, "pv": 411.3}, {"m": "2023-01", "fy": 2566, "g": "TXC", "im": 946.62, "ex": 288.0, "bal": -658.62, "ps": 1572.0, "ae": 459.0, "bl": 0.0, "pv": 719.1}, {"m": "2023-02", "fy": 2566, "g": "CMT", "im": 1501.8, "ex": 3935.43, "bal": 2433.64, "ps": 52281.0, "ae": 3013.0, "bl": 2159.0, "pv": 2937.5}, {"m": "2023-02", "fy": 2566, "g": "DRUG", "im": 5912.94, "ex": 2374.16, "bal": -3538.79, "ps": 23786.0, "ae": 1815.0, "bl": 1442.0, "pv": 5170.1}, {"m": "2023-02", "fy": 2566, "g": "FOOD", "im": 2113.18, "ex": 4388.86, "bal": 2275.67, "ps": 80973.0, "ae": 4239.0, "bl": 3700.0, "pv": 8721.4}, {"m": "2023-02", "fy": 2566, "g": "HERB", "im": 524.08, "ex": 715.15, "bal": 191.07, "ps": 5485.0, "ae": 1165.0, "bl": 462.0, "pv": 803.0}, {"m": "2023-02", "fy": 2566, "g": "MDC", "im": 5144.85, "ex": 2222.4, "bal": -2922.46, "ps": 20323.0, "ae": 2060.0, "bl": 1384.0, "pv": 3601.1}, {"m": "2023-02", "fy": 2566, "g": "NCT", "im": 406.72, "ex": 69.15, "bal": -337.57, "ps": 454.0, "ae": 198.0, "bl": 70.0, "pv": 402.4}, {"m": "2023-02", "fy": 2566, "g": "TXC", "im": 803.85, "ex": 307.4, "bal": -496.44, "ps": 1580.0, "ae": 460.0, "bl": 186.0, "pv": 775.7}, {"m": "2023-03", "fy": 2566, "g": "CMT", "im": 1686.71, "ex": 4553.69, "bal": 2866.98, "ps": 52581.0, "ae": 3032.0, "bl": 2699.0, "pv": 3245.9}, {"m": "2023-03", "fy": 2566, "g": "DRUG", "im": 6338.28, "ex": 2701.01, "bal": -3637.27, "ps": 23786.0, "ae": 1851.0, "bl": 1470.0, "pv": 5496.7}, {"m": "2023-03", "fy": 2566, "g": "FOOD", "im": 2438.83, "ex": 4602.79, "bal": 2163.96, "ps": 80973.0, "ae": 4280.0, "bl": 2947.0, "pv": 9419.0}, {"m": "2023-03", "fy": 2566, "g": "HERB", "im": 606.49, "ex": 762.14, "bal": 155.65, "ps": 5507.0, "ae": 1175.0, "bl": 401.0, "pv": 924.0}, {"m": "2023-03", "fy": 2566, "g": "MDC", "im": 5660.12, "ex": 2373.46, "bal": -3286.66, "ps": 20632.0, "ae": 2067.0, "bl": 1061.0, "pv": 4063.3}, {"m": "2023-03", "fy": 2566, "g": "NCT", "im": 439.65, "ex": 76.17, "bal": -363.47, "ps": 457.0, "ae": 199.0, "bl": 78.0, "pv": 424.2}, {"m": "2023-03", "fy": 2566, "g": "TXC", "im": 1062.14, "ex": 312.02, "bal": -750.12, "ps": 1594.0, "ae": 461.0, "bl": 190.0, "pv": 860.6}, {"m": "2023-04", "fy": 2566, "g": "CMT", "im": 1283.11, "ex": 3947.23, "bal": 2664.12, "ps": 52838.0, "ae": 2997.0, "bl": 1982.0, "pv": 2639.6}, {"m": "2023-04", "fy": 2566, "g": "DRUG", "im": 5657.58, "ex": 2086.73, "bal": -3570.86, "ps": 23862.0, "ae": 1843.0, "bl": 1470.0, "pv": 4696.9}, {"m": "2023-04", "fy": 2566, "g": "FOOD", "im": 2125.03, "ex": 3772.23, "bal": 1647.21, "ps": 81428.0, "ae": 4334.0, "bl": 3367.0, "pv": 8456.6}, {"m": "2023-04", "fy": 2566, "g": "HERB", "im": 577.59, "ex": 675.73, "bal": 98.14, "ps": 5522.0, "ae": 1178.0, "bl": 387.0, "pv": 858.8}, {"m": "2023-04", "fy": 2566, "g": "MDC", "im": 4754.47, "ex": 2119.31, "bal": -2635.16, "ps": 20632.0, "ae": 2069.0, "bl": 1260.0, "pv": 3279.5}, {"m": "2023-04", "fy": 2566, "g": "NCT", "im": 0.0, "ex": 63.06, "bal": 63.06, "ps": 457.0, "ae": 199.0, "bl": 78.0, "pv": 379.7}, {"m": "2023-04", "fy": 2566, "g": "TXC", "im": 796.66, "ex": 289.03, "bal": -507.63, "ps": 1601.0, "ae": 463.0, "bl": 215.0, "pv": 722.8}, {"m": "2023-05", "fy": 2566, "g": "CMT", "im": 1725.22, "ex": 4096.13, "bal": 2370.9, "ps": 52838.0, "ae": 3014.0, "bl": 2462.0, "pv": 2987.5}, {"m": "2023-05", "fy": 2566, "g": "DRUG", "im": 5670.36, "ex": 2338.24, "bal": -3332.11, "ps": 23894.0, "ae": 1842.0, "bl": 1313.0, "pv": 5590.4}, {"m": "2023-05", "fy": 2566, "g": "FOOD", "im": 2271.3, "ex": 4356.34, "bal": 2085.04, "ps": 81746.0, "ae": 4265.0, "bl": 3184.0, "pv": 8937.0}, {"m": "2023-05", "fy": 2566, "g": "HERB", "im": 588.02, "ex": 801.45, "bal": 213.43, "ps": 5522.0, "ae": 1169.0, "bl": 484.0, "pv": 886.3}, {"m": "2023-05", "fy": 2566, "g": "MDC", "im": 5572.58, "ex": 2170.83, "bal": -3401.75, "ps": 20632.0, "ae": 2080.0, "bl": 1448.0, "pv": 3612.5}, {"m": "2023-05", "fy": 2566, "g": "NCT", "im": 415.42, "ex": 75.8, "bal": -339.62, "ps": 461.0, "ae": 200.0, "bl": 70.0, "pv": 406.0}, {"m": "2023-05", "fy": 2566, "g": "TXC", "im": 977.58, "ex": 293.54, "bal": -684.03, "ps": 1602.0, "ae": 469.0, "bl": 217.0, "pv": 843.1}, {"m": "2023-06", "fy": 2566, "g": "CMT", "im": 1563.16, "ex": 4251.76, "bal": 2688.6, "ps": 53108.0, "ae": 3017.0, "bl": 2352.0, "pv": 3190.7}, {"m": "2023-06", "fy": 2566, "g": "DRUG", "im": 5951.05, "ex": 2335.1, "bal": -3615.94, "ps": 23894.0, "ae": 1858.0, "bl": 1397.0, "pv": 5571.8}, {"m": "2023-06", "fy": 2566, "g": "FOOD", "im": 2353.52, "ex": 4490.98, "bal": 2137.45, "ps": 81792.0, "ae": 4316.0, "bl": 3612.0, "pv": 9403.7}, {"m": "2023-06", "fy": 2566, "g": "HERB", "im": 652.78, "ex": 787.96, "bal": 135.18, "ps": 5559.0, "ae": 1173.0, "bl": 479.0, "pv": 947.8}, {"m": "2023-06", "fy": 2566, "g": "MDC", "im": 5657.81, "ex": 2111.57, "bal": -3546.25, "ps": 20704.0, "ae": 2066.0, "bl": 1245.0, "pv": 3882.2}, {"m": "2023-06", "fy": 2566, "g": "NCT", "im": 447.6, "ex": 74.66, "bal": -372.94, "ps": 463.0, "ae": 199.0, "bl": 62.0, "pv": 416.5}, {"m": "2023-06", "fy": 2566, "g": "TXC", "im": 905.93, "ex": 282.02, "bal": -623.91, "ps": 1611.0, "ae": 469.0, "bl": 208.0, "pv": 765.5}, {"m": "2023-07", "fy": 2566, "g": "CMT", "im": 1596.74, "ex": 4285.17, "bal": 2688.43, "ps": 53593.0, "ae": 3022.0, "bl": 2548.0, "pv": 3128.7}, {"m": "2023-07", "fy": 2566, "g": "DRUG", "im": 6247.72, "ex": 2456.67, "bal": -3791.05, "ps": 23918.0, "ae": 1864.0, "bl": 1413.0, "pv": 5533.9}, {"m": "2023-07", "fy": 2566, "g": "FOOD", "im": 2334.54, "ex": 4708.23, "bal": 2373.69, "ps": 82614.0, "ae": 4355.0, "bl": 3752.0, "pv": 9872.9}, {"m": "2023-07", "fy": 2566, "g": "HERB", "im": 594.04, "ex": 734.12, "bal": 140.08, "ps": 5599.0, "ae": 1169.0, "bl": 417.0, "pv": 942.3}, {"m": "2023-07", "fy": 2566, "g": "MDC", "im": 5626.9, "ex": 2637.61, "bal": -2989.29, "ps": 20704.0, "ae": 2066.0, "bl": 1308.0, "pv": 3848.5}, {"m": "2023-07", "fy": 2566, "g": "NCT", "im": 419.33, "ex": 79.39, "bal": -339.94, "ps": 465.0, "ae": 203.0, "bl": 59.0, "pv": 426.7}, {"m": "2023-07", "fy": 2566, "g": "TXC", "im": 1011.49, "ex": 285.61, "bal": -725.88, "ps": 1611.0, "ae": 464.0, "bl": 191.0, "pv": 798.4}, {"m": "2023-08", "fy": 2566, "g": "CMT", "im": 1675.11, "ex": 4559.34, "bal": 2884.23, "ps": 54031.0, "ae": 3045.0, "bl": 2317.0, "pv": 3124.4}, {"m": "2023-08", "fy": 2566, "g": "DRUG", "im": 6353.36, "ex": 2547.3, "bal": -3806.06, "ps": 24164.0, "ae": 1866.0, "bl": 1509.0, "pv": 5530.6}, {"m": "2023-08", "fy": 2566, "g": "FOOD", "im": 2638.79, "ex": 4697.64, "bal": 2058.85, "ps": 82614.0, "ae": 4333.0, "bl": 3020.0, "pv": 9746.9}, {"m": "2023-08", "fy": 2566, "g": "HERB", "im": 637.41, "ex": 698.15, "bal": 60.75, "ps": 5626.0, "ae": 1188.0, "bl": 401.0, "pv": 910.2}, {"m": "2023-08", "fy": 2566, "g": "MDC", "im": 5269.54, "ex": 2428.99, "bal": -2840.54, "ps": 20783.0, "ae": 2072.0, "bl": 1399.0, "pv": 3690.1}, {"m": "2023-08", "fy": 2566, "g": "NCT", "im": 465.14, "ex": 74.34, "bal": -390.8, "ps": 466.0, "ae": 201.0, "bl": 65.0, "pv": 420.3}, {"m": "2023-08", "fy": 2566, "g": "TXC", "im": 921.54, "ex": 309.54, "bal": -612.0, "ps": 1620.0, "ae": 468.0, "bl": 173.0, "pv": 854.8}, {"m": "2023-09", "fy": 2566, "g": "CMT", "im": 1554.49, "ex": 4291.92, "bal": 2737.43, "ps": 54031.0, "ae": 3058.0, "bl": 2527.0, "pv": 3187.3}, {"m": "2023-09", "fy": 2566, "g": "DRUG", "im": 6732.9, "ex": 2790.8, "bal": -3942.1, "ps": 24386.0, "ae": 1867.0, "bl": 1449.0, "pv": 5434.8}, {"m": "2023-09", "fy": 2566, "g": "FOOD", "im": 2544.62, "ex": 4421.12, "bal": 1876.49, "ps": 83237.0, "ae": 4323.0, "bl": 3721.0, "pv": 9698.6}, {"m": "2023-09", "fy": 2566, "g": "HERB", "im": 611.4, "ex": 800.28, "bal": 188.88, "ps": 5648.0, "ae": 1188.0, "bl": 367.0, "pv": 955.0}, {"m": "2023-09", "fy": 2566, "g": "MDC", "im": 5936.81, "ex": 2493.12, "bal": -3443.69, "ps": 20969.0, "ae": 2092.0, "bl": 1194.0, "pv": 3871.8}, {"m": "2023-09", "fy": 2566, "g": "NCT", "im": 421.26, "ex": 82.63, "bal": -338.63, "ps": 470.0, "ae": 202.0, "bl": 76.0, "pv": 399.9}, {"m": "2023-09", "fy": 2566, "g": "TXC", "im": 920.59, "ex": 291.12, "bal": -629.47, "ps": 1626.0, "ae": 468.0, "bl": 201.0, "pv": 855.0}, {"m": "2023-10", "fy": 2567, "g": "CMT", "im": 1682.65, "ex": 4494.98, "bal": 2812.33, "ps": 54116.0, "ae": 3068.0, "bl": 2438.0, "pv": 3124.0}, {"m": "2023-10", "fy": 2567, "g": "DRUG", "im": 6922.83, "ex": 2854.4, "bal": -4068.42, "ps": 24386.0, "ae": 1847.0, "bl": 1307.0, "pv": 5937.1}, {"m": "2023-10", "fy": 2567, "g": "FOOD", "im": 2718.34, "ex": 4980.12, "bal": 2261.78, "ps": 83418.0, "ae": 4303.0, "bl": 2781.0, "pv": 9802.8}, {"m": "2023-10", "fy": 2567, "g": "HERB", "im": 668.07, "ex": 900.46, "bal": 232.39, "ps": 5680.0, "ae": 1187.0, "bl": 468.0, "pv": 1008.3}, {"m": "2023-10", "fy": 2567, "g": "MDC", "im": 5916.58, "ex": 2476.92, "bal": -3439.67, "ps": 21008.0, "ae": 2102.0, "bl": 1290.0, "pv": 3881.6}, {"m": "2023-10", "fy": 2567, "g": "NCT", "im": 0.0, "ex": 75.87, "bal": 75.87, "ps": 470.0, "ae": 204.0, "bl": 71.0, "pv": 442.9}, {"m": "2023-10", "fy": 2567, "g": "TXC", "im": 946.63, "ex": 302.74, "bal": -643.89, "ps": 1628.0, "ae": 468.0, "bl": 200.0, "pv": 865.0}, {"m": "2023-11", "fy": 2567, "g": "CMT", "im": 1722.94, "ex": 4859.54, "bal": 3136.6, "ps": 54446.0, "ae": 3075.0, "bl": 2568.0, "pv": 3448.0}, {"m": "2023-11", "fy": 2567, "g": "DRUG", "im": 6827.16, "ex": 2736.25, "bal": -4090.9, "ps": 24470.0, "ae": 1877.0, "bl": 1241.0, "pv": 5911.6}, {"m": "2023-11", "fy": 2567, "g": "FOOD", "im": 2725.71, "ex": 4687.94, "bal": 1962.23, "ps": 83500.0, "ae": 4377.0, "bl": 3205.0, "pv": 9669.4}, {"m": "2023-11", "fy": 2567, "g": "HERB", "im": 619.9, "ex": 873.0, "bal": 253.1, "ps": 5688.0, "ae": 1187.0, "bl": 497.0, "pv": 1070.5}, {"m": "2023-11", "fy": 2567, "g": "MDC", "im": 6099.15, "ex": 2641.56, "bal": -3457.59, "ps": 21055.0, "ae": 2077.0, "bl": 1081.0, "pv": 4057.0}, {"m": "2023-11", "fy": 2567, "g": "NCT", "im": 456.23, "ex": 78.41, "bal": -377.82, "ps": 471.0, "ae": 204.0, "bl": 72.0, "pv": 415.5}, {"m": "2023-11", "fy": 2567, "g": "TXC", "im": 880.51, "ex": 317.17, "bal": -563.34, "ps": 1645.0, "ae": 469.0, "bl": 195.0, "pv": 827.8}, {"m": "2023-12", "fy": 2567, "g": "CMT", "im": 1887.27, "ex": 5256.57, "bal": 3369.31, "ps": 54698.0, "ae": 3059.0, "bl": 2155.0, "pv": 3396.6}, {"m": "2023-12", "fy": 2567, "g": "DRUG", "im": 7998.14, "ex": 2695.15, "bal": -5302.99, "ps": 24629.0, "ae": 1880.0, "bl": 1577.0, "pv": 5862.3}, {"m": "2023-12", "fy": 2567, "g": "FOOD", "im": 2885.95, "ex": 4509.1, "bal": 1623.14, "ps": 83623.0, "ae": 4369.0, "bl": 3356.0, "pv": 10391.1}, {"m": "2023-12", "fy": 2567, "g": "HERB", "im": 751.81, "ex": 861.59, "bal": 109.78, "ps": 5727.0, "ae": 1193.0, "bl": 398.0, "pv": 1128.7}, {"m": "2023-12", "fy": 2567, "g": "MDC", "im": 6165.74, "ex": 2636.02, "bal": -3529.72, "ps": 21065.0, "ae": 2112.0, "bl": 1349.0, "pv": 4326.7}, {"m": "2023-12", "fy": 2567, "g": "NCT", "im": 465.84, "ex": 83.89, "bal": -381.95, "ps": 476.0, "ae": 205.0, "bl": 67.0, "pv": 455.7}, {"m": "2023-12", "fy": 2567, "g": "TXC", "im": 967.02, "ex": 317.51, "bal": -649.5, "ps": 1650.0, "ae": 467.0, "bl": 206.0, "pv": 930.9}, {"m": "2024-01", "fy": 2567, "g": "CMT", "im": 1541.75, "ex": 4432.29, "bal": 2890.54, "ps": 54698.0, "ae": 3092.0, "bl": 2129.0, "pv": 3046.5}, {"m": "2024-01", "fy": 2567, "g": "DRUG", "im": 6611.31, "ex": 2623.46, "bal": -3987.85, "ps": 24825.0, "ae": 1889.0, "bl": 1439.0, "pv": 5656.5}, {"m": "2024-01", "fy": 2567, "g": "FOOD", "im": 2550.47, "ex": 4474.65, "bal": 1924.18, "ps": 84180.0, "ae": 4361.0, "bl": 3337.0, "pv": 8887.6}, {"m": "2024-01", "fy": 2567, "g": "HERB", "im": 655.58, "ex": 774.92, "bal": 119.34, "ps": 5733.0, "ae": 1192.0, "bl": 441.0, "pv": 903.6}, {"m": "2024-01", "fy": 2567, "g": "MDC", "im": 5735.46, "ex": 2330.56, "bal": -3404.9, "ps": 21260.0, "ae": 2090.0, "bl": 1222.0, "pv": 3698.0}, {"m": "2024-01", "fy": 2567, "g": "NCT", "im": 395.29, "ex": 73.93, "bal": -321.37, "ps": 478.0, "ae": 204.0, "bl": 62.0, "pv": 361.9}, {"m": "2024-01", "fy": 2567, "g": "TXC", "im": 889.41, "ex": 294.34, "bal": -595.07, "ps": 1658.0, "ae": 471.0, "bl": 228.0, "pv": 751.2}, {"m": "2024-02", "fy": 2567, "g": "CMT", "im": 1578.05, "ex": 4285.14, "bal": 2707.09, "ps": 55040.0, "ae": 3098.0, "bl": 2441.0, "pv": 2879.1}, {"m": "2024-02", "fy": 2567, "g": "DRUG", "im": 6230.16, "ex": 2512.52, "bal": -3717.64, "ps": 25010.0, "ae": 1899.0, "bl": 1577.0, "pv": 5395.6}, {"m": "2024-02", "fy": 2567, "g": "FOOD", "im": 2327.94, "ex": 4415.33, "bal": 2087.39, "ps": 84867.0, "ae": 4358.0, "bl": 3923.0, "pv": 8944.8}, {"m": "2024-02", "fy": 2567, "g": "HERB", "im": 561.09, "ex": 767.51, "bal": 206.42, "ps": 5779.0, "ae": 1204.0, "bl": 416.0, "pv": 894.7}, {"m": "2024-02", "fy": 2567, "g": "MDC", "im": 4853.33, "ex": 2548.72, "bal": -2304.61, "ps": 21353.0, "ae": 2119.0, "bl": 1075.0, "pv": 3686.7}, {"m": "2024-02", "fy": 2567, "g": "NCT", "im": 396.71, "ex": 66.7, "bal": -330.01, "ps": 481.0, "ae": 204.0, "bl": 71.0, "pv": 358.8}, {"m": "2024-02", "fy": 2567, "g": "TXC", "im": 899.22, "ex": 267.92, "bal": -631.3, "ps": 1658.0, "ae": 475.0, "bl": 219.0, "pv": 734.5}, {"m": "2024-03", "fy": 2567, "g": "CMT", "im": 1735.55, "ex": 4180.04, "bal": 2444.48, "ps": 55040.0, "ae": 3108.0, "bl": 2544.0, "pv": 2909.0}, {"m": "2024-03", "fy": 2567, "g": "DRUG", "im": 6544.53, "ex": 2496.29, "bal": -4048.24, "ps": 25010.0, "ae": 1893.0, "bl": 1458.0, "pv": 6082.5}, {"m": "2024-03", "fy": 2567, "g": "FOOD", "im": 2540.94, "ex": 4779.86, "bal": 2238.93, "ps": 84925.0, "ae": 4390.0, "bl": 3812.0, "pv": 9369.9}, {"m": "2024-03", "fy": 2567, "g": "HERB", "im": 699.8, "ex": 821.51, "bal": 121.71, "ps": 5779.0, "ae": 1202.0, "bl": 462.0, "pv": 1021.5}, {"m": "2024-03", "fy": 2567, "g": "MDC", "im": 6305.46, "ex": 2622.31, "bal": -3683.15, "ps": 21370.0, "ae": 2117.0, "bl": 1336.0, "pv": 4155.3}, {"m": "2024-03", "fy": 2567, "g": "NCT", "im": 432.75, "ex": 67.78, "bal": -364.97, "ps": 481.0, "ae": 205.0, "bl": 71.0, "pv": 420.8}, {"m": "2024-03", "fy": 2567, "g": "TXC", "im": 965.73, "ex": 308.6, "bal": -657.13, "ps": 1680.0, "ae": 475.0, "bl": 217.0, "pv": 862.9}, {"m": "2024-04", "fy": 2567, "g": "CMT", "im": 1443.62, "ex": 4060.07, "bal": 2616.44, "ps": 55828.0, "ae": 3112.0, "bl": 2649.0, "pv": 2791.9}, {"m": "2024-04", "fy": 2567, "g": "DRUG", "im": 6020.62, "ex": 2327.08, "bal": -3693.54, "ps": 25010.0, "ae": 1899.0, "bl": 1316.0, "pv": 4898.3}, {"m": "2024-04", "fy": 2567, "g": "FOOD", "im": 2286.54, "ex": 4457.38, "bal": 2170.83, "ps": 85325.0, "ae": 4448.0, "bl": 2905.0, "pv": 8368.4}, {"m": "2024-04", "fy": 2567, "g": "HERB", "im": 578.92, "ex": 744.1, "bal": 165.18, "ps": 5830.0, "ae": 1210.0, "bl": 458.0, "pv": 886.6}, {"m": "2024-04", "fy": 2567, "g": "MDC", "im": 5543.84, "ex": 2037.61, "bal": -3506.23, "ps": 21571.0, "ae": 2122.0, "bl": 1481.0, "pv": 3599.7}, {"m": "2024-04", "fy": 2567, "g": "NCT", "im": 0.0, "ex": 63.05, "bal": 63.05, "ps": 481.0, "ae": 206.0, "bl": 74.0, "pv": 388.8}, {"m": "2024-04", "fy": 2567, "g": "TXC", "im": 812.64, "ex": 260.56, "bal": -552.08, "ps": 1680.0, "ae": 474.0, "bl": 179.0, "pv": 701.3}, {"m": "2024-05", "fy": 2567, "g": "CMT", "im": 1681.12, "ex": 4339.36, "bal": 2658.25, "ps": 55828.0, "ae": 3093.0, "bl": 2600.0, "pv": 3009.4}, {"m": "2024-05", "fy": 2567, "g": "DRUG", "im": 6678.81, "ex": 2651.55, "bal": -4027.26, "ps": 25049.0, "ae": 1905.0, "bl": 1375.0, "pv": 5548.6}, {"m": "2024-05", "fy": 2567, "g": "FOOD", "im": 2458.24, "ex": 4265.56, "bal": 1807.32, "ps": 85835.0, "ae": 4459.0, "bl": 3057.0, "pv": 9820.8}, {"m": "2024-05", "fy": 2567, "g": "HERB", "im": 689.92, "ex": 883.12, "bal": 193.2, "ps": 5858.0, "ae": 1208.0, "bl": 435.0, "pv": 999.2}, {"m": "2024-05", "fy": 2567, "g": "MDC", "im": 6256.72, "ex": 2468.39, "bal": -3788.34, "ps": 21571.0, "ae": 2151.0, "bl": 1518.0, "pv": 3788.1}, {"m": "2024-05", "fy": 2567, "g": "NCT", "im": 390.97, "ex": 73.31, "bal": -317.65, "ps": 481.0, "ae": 206.0, "bl": 72.0, "pv": 391.0}, {"m": "2024-05", "fy": 2567, "g": "TXC", "im": 987.12, "ex": 291.22, "bal": -695.9, "ps": 1685.0, "ae": 476.0, "bl": 202.0, "pv": 736.0}, {"m": "2024-06", "fy": 2567, "g": "CMT", "im": 1664.7, "ex": 4133.34, "bal": 2468.63, "ps": 55879.0, "ae": 3097.0, "bl": 2227.0, "pv": 3480.6}, {"m": "2024-06", "fy": 2567, "g": "DRUG", "im": 7155.71, "ex": 2640.37, "bal": -4515.34, "ps": 25198.0, "ae": 1898.0, "bl": 1308.0, "pv": 5722.6}, {"m": "2024-06", "fy": 2567, "g": "FOOD", "im": 2434.66, "ex": 4532.3, "bal": 2097.64, "ps": 85835.0, "ae": 4376.0, "bl": 3657.0, "pv": 9913.3}, {"m": "2024-06", "fy": 2567, "g": "HERB", "im": 631.92, "ex": 808.24, "bal": 176.31, "ps": 5858.0, "ae": 1215.0, "bl": 463.0, "pv": 1079.0}, {"m": "2024-06", "fy": 2567, "g": "MDC", "im": 6154.74, "ex": 2761.42, "bal": -3393.32, "ps": 21689.0, "ae": 2127.0, "bl": 1139.0, "pv": 4174.8}, {"m": "2024-06", "fy": 2567, "g": "NCT", "im": 397.12, "ex": 67.85, "bal": -329.27, "ps": 486.0, "ae": 207.0, "bl": 74.0, "pv": 408.6}, {"m": "2024-06", "fy": 2567, "g": "TXC", "im": 913.15, "ex": 310.96, "bal": -602.2, "ps": 1685.0, "ae": 477.0, "bl": 203.0, "pv": 763.5}, {"m": "2024-07", "fy": 2567, "g": "CMT", "im": 1739.79, "ex": 4357.12, "bal": 2617.33, "ps": 55937.0, "ae": 3121.0, "bl": 2230.0, "pv": 3251.4}, {"m": "2024-07", "fy": 2567, "g": "DRUG", "im": 7025.64, "ex": 2896.29, "bal": -4129.35, "ps": 25247.0, "ae": 1903.0, "bl": 1417.0, "pv": 5979.2}, {"m": "2024-07", "fy": 2567, "g": "FOOD", "im": 2546.35, "ex": 4409.16, "bal": 1862.8, "ps": 86775.0, "ae": 4450.0, "bl": 3154.0, "pv": 9533.3}, {"m": "2024-07", "fy": 2567, "g": "HERB", "im": 721.92, "ex": 875.9, "bal": 153.99, "ps": 5858.0, "ae": 1215.0, "bl": 373.0, "pv": 1027.6}, {"m": "2024-07", "fy": 2567, "g": "MDC", "im": 6079.73, "ex": 2776.91, "bal": -3302.81, "ps": 21925.0, "ae": 2138.0, "bl": 1486.0, "pv": 4304.4}, {"m": "2024-07", "fy": 2567, "g": "NCT", "im": 413.95, "ex": 70.99, "bal": -342.96, "ps": 491.0, "ae": 205.0, "bl": 63.0, "pv": 401.6}, {"m": "2024-07", "fy": 2567, "g": "TXC", "im": 835.62, "ex": 308.42, "bal": -527.2, "ps": 1700.0, "ae": 479.0, "bl": 232.0, "pv": 778.4}, {"m": "2024-08", "fy": 2567, "g": "CMT", "im": 1762.89, "ex": 4080.35, "bal": 2317.46, "ps": 56324.0, "ae": 3137.0, "bl": 2220.0, "pv": 3284.1}, {"m": "2024-08", "fy": 2567, "g": "DRUG", "im": 6573.79, "ex": 2574.22, "bal": -3999.58, "ps": 25415.0, "ae": 1917.0, "bl": 1605.0, "pv": 5899.0}, {"m": "2024-08", "fy": 2567, "g": "FOOD", "im": 2706.37, "ex": 4771.97, "bal": 2065.6, "ps": 87314.0, "ae": 4460.0, "bl": 3605.0, "pv": 9707.8}, {"m": "2024-08", "fy": 2567, "g": "HERB", "im": 684.38, "ex": 820.96, "bal": 136.58, "ps": 5867.0, "ae": 1227.0, "bl": 353.0, "pv": 960.9}, {"m": "2024-08", "fy": 2567, "g": "MDC", "im": 6588.19, "ex": 2704.06, "bal": -3884.13, "ps": 21925.0, "ae": 2153.0, "bl": 1257.0, "pv": 4169.5}, {"m": "2024-08", "fy": 2567, "g": "NCT", "im": 390.81, "ex": 62.18, "bal": -328.63, "ps": 491.0, "ae": 208.0, "bl": 58.0, "pv": 426.9}, {"m": "2024-08", "fy": 2567, "g": "TXC", "im": 885.78, "ex": 329.74, "bal": -556.03, "ps": 1700.0, "ae": 479.0, "bl": 0.0, "pv": 833.8}, {"m": "2024-09", "fy": 2567, "g": "CMT", "im": 1695.93, "ex": 4550.73, "bal": 2854.8, "ps": 56324.0, "ae": 3167.0, "bl": 2387.0, "pv": 3358.9}, {"m": "2024-09", "fy": 2567, "g": "DRUG", "im": 6552.19, "ex": 2789.43, "bal": -3762.75, "ps": 25415.0, "ae": 1901.0, "bl": 1415.0, "pv": 6262.8}, {"m": "2024-09", "fy": 2567, "g": "FOOD", "im": 2821.35, "ex": 4788.15, "bal": 1966.8, "ps": 87314.0, "ae": 4460.0, "bl": 2995.0, "pv": 9859.8}, {"m": "2024-09", "fy": 2567, "g": "HERB", "im": 647.15, "ex": 870.83, "bal": 223.68, "ps": 5898.0, "ae": 1227.0, "bl": 377.0, "pv": 1026.7}, {"m": "2024-09", "fy": 2567, "g": "MDC", "im": 6413.24, "ex": 2790.88, "bal": -3622.36, "ps": 21925.0, "ae": 2127.0, "bl": 1454.0, "pv": 4183.0}, {"m": "2024-09", "fy": 2567, "g": "NCT", "im": 415.78, "ex": 67.92, "bal": -347.86, "ps": 491.0, "ae": 209.0, "bl": 66.0, "pv": 406.9}, {"m": "2024-09", "fy": 2567, "g": "TXC", "im": 920.21, "ex": 273.71, "bal": -646.5, "ps": 1702.0, "ae": 480.0, "bl": 200.0, "pv": 795.1}, {"m": "2024-10", "fy": 2568, "g": "CMT", "im": 1862.53, "ex": 4910.24, "bal": 3047.71, "ps": 57031.0, "ae": 3153.0, "bl": 2318.0, "pv": 3259.1}, {"m": "2024-10", "fy": 2568, "g": "DRUG", "im": 7716.85, "ex": 2837.03, "bal": -4879.82, "ps": 25698.0, "ae": 1914.0, "bl": 1550.0, "pv": 6605.7}, {"m": "2024-10", "fy": 2568, "g": "FOOD", "im": 2599.53, "ex": 5011.12, "bal": 2411.59, "ps": 87314.0, "ae": 4502.0, "bl": 3326.0, "pv": 9883.9}, {"m": "2024-10", "fy": 2568, "g": "HERB", "im": 738.75, "ex": 886.42, "bal": 147.67, "ps": 5956.0, "ae": 1210.0, "bl": 413.0, "pv": 1107.5}, {"m": "2024-10", "fy": 2568, "g": "MDC", "im": 6659.99, "ex": 2888.21, "bal": -3771.79, "ps": 21974.0, "ae": 2179.0, "bl": 1338.0, "pv": 4355.1}, {"m": "2024-10", "fy": 2568, "g": "NCT", "im": 0.0, "ex": 68.27, "bal": 68.27, "ps": 491.0, "ae": 210.0, "bl": 82.0, "pv": 402.7}, {"m": "2024-10", "fy": 2568, "g": "TXC", "im": 980.51, "ex": 288.07, "bal": -692.44, "ps": 1716.0, "ae": 486.0, "bl": 192.0, "pv": 762.4}, {"m": "2024-11", "fy": 2568, "g": "CMT", "im": 1736.62, "ex": 4821.94, "bal": 3085.32, "ps": 57031.0, "ae": 3132.0, "bl": 2491.0, "pv": 3455.9}, {"m": "2024-11", "fy": 2568, "g": "DRUG", "im": 7556.06, "ex": 2950.95, "bal": -4605.11, "ps": 25730.0, "ae": 1924.0, "bl": 1471.0, "pv": 6645.1}, {"m": "2024-11", "fy": 2568, "g": "FOOD", "im": 2737.15, "ex": 4937.67, "bal": 2200.51, "ps": 87656.0, "ae": 4505.0, "bl": 3434.0, "pv": 11020.3}, {"m": "2024-11", "fy": 2568, "g": "HERB", "im": 811.12, "ex": 916.63, "bal": 105.51, "ps": 5958.0, "ae": 1221.0, "bl": 540.0, "pv": 1104.5}, {"m": "2024-11", "fy": 2568, "g": "MDC", "im": 6224.28, "ex": 2948.4, "bal": -3275.88, "ps": 22134.0, "ae": 2185.0, "bl": 1482.0, "pv": 4507.8}, {"m": "2024-11", "fy": 2568, "g": "NCT", "im": 436.01, "ex": 71.88, "bal": -364.12, "ps": 497.0, "ae": 208.0, "bl": 79.0, "pv": 402.4}, {"m": "2024-11", "fy": 2568, "g": "TXC", "im": 960.19, "ex": 300.22, "bal": -659.97, "ps": 1733.0, "ae": 485.0, "bl": 200.0, "pv": 834.4}, {"m": "2024-12", "fy": 2568, "g": "CMT", "im": 1959.06, "ex": 4537.85, "bal": 2578.78, "ps": 57354.0, "ae": 3172.0, "bl": 1848.0, "pv": 3574.1}, {"m": "2024-12", "fy": 2568, "g": "DRUG", "im": 7764.47, "ex": 3044.49, "bal": -4719.98, "ps": 26060.0, "ae": 1931.0, "bl": 982.0, "pv": 6426.6}, {"m": "2024-12", "fy": 2568, "g": "FOOD", "im": 2792.77, "ex": 5145.33, "bal": 2352.56, "ps": 87960.0, "ae": 4483.0, "bl": 3656.0, "pv": 10699.8}, {"m": "2024-12", "fy": 2568, "g": "HERB", "im": 833.54, "ex": 974.24, "bal": 140.7, "ps": 5972.0, "ae": 1225.0, "bl": 495.0, "pv": 1176.1}, {"m": "2024-12", "fy": 2568, "g": "MDC", "im": 6777.08, "ex": 2939.94, "bal": -3837.15, "ps": 22134.0, "ae": 2171.0, "bl": 1418.0, "pv": 4537.7}, {"m": "2024-12", "fy": 2568, "g": "NCT", "im": 429.18, "ex": 72.39, "bal": -356.79, "ps": 498.0, "ae": 211.0, "bl": 72.0, "pv": 442.2}, {"m": "2024-12", "fy": 2568, "g": "TXC", "im": 1017.92, "ex": 297.83, "bal": -720.09, "ps": 1740.0, "ae": 483.0, "bl": 242.0, "pv": 822.9}, {"m": "2025-01", "fy": 2568, "g": "CMT", "im": 1632.94, "ex": 4157.51, "bal": 2524.58, "ps": 57364.0, "ae": 3176.0, "bl": 2230.0, "pv": 3113.2}, {"m": "2025-01", "fy": 2568, "g": "DRUG", "im": 6535.5, "ex": 3083.26, "bal": -3452.24, "ps": 26060.0, "ae": 1942.0, "bl": 1345.0, "pv": 6016.2}, {"m": "2025-01", "fy": 2568, "g": "FOOD", "im": 2403.51, "ex": 4336.23, "bal": 1932.72, "ps": 88598.0, "ae": 4521.0, "bl": 3744.0, "pv": 10073.5}, {"m": "2025-01", "fy": 2568, "g": "HERB", "im": 716.86, "ex": 918.13, "bal": 201.27, "ps": 5993.0, "ae": 1242.0, "bl": 399.0, "pv": 1080.0}, {"m": "2025-01", "fy": 2568, "g": "MDC", "im": 5909.86, "ex": 2840.12, "bal": -3069.74, "ps": 22359.0, "ae": 2166.0, "bl": 1251.0, "pv": 4306.4}, {"m": "2025-01", "fy": 2568, "g": "NCT", "im": 347.82, "ex": 64.33, "bal": -283.49, "ps": 499.0, "ae": 211.0, "bl": 79.0, "pv": 378.5}, {"m": "2025-01", "fy": 2568, "g": "TXC", "im": 861.44, "ex": 262.2, "bal": -599.24, "ps": 1750.0, "ae": 486.0, "bl": 204.0, "pv": 765.9}, {"m": "2025-02", "fy": 2568, "g": "CMT", "im": 1534.27, "ex": 4173.1, "bal": 2638.83, "ps": 57846.0, "ae": 3175.0, "bl": 2534.0, "pv": 3017.7}, {"m": "2025-02", "fy": 2568, "g": "DRUG", "im": 6363.58, "ex": 2554.87, "bal": -3808.71, "ps": 26060.0, "ae": 1942.0, "bl": 1354.0, "pv": 5507.4}, {"m": "2025-02", "fy": 2568, "g": "FOOD", "im": 2414.52, "ex": 4469.87, "bal": 2055.34, "ps": 89706.0, "ae": 4556.0, "bl": 3182.0, "pv": 9132.8}, {"m": "2025-02", "fy": 2568, "g": "HERB", "im": 724.93, "ex": 898.96, "bal": 174.03, "ps": 6046.0, "ae": 1225.0, "bl": 500.0, "pv": 925.1}, {"m": "2025-02", "fy": 2568, "g": "MDC", "im": 6132.31, "ex": 2526.24, "bal": -3606.06, "ps": 22359.0, "ae": 2188.0, "bl": 1288.0, "pv": 3618.3}, {"m": "2025-02", "fy": 2568, "g": "NCT", "im": 362.03, "ex": 57.48, "bal": -304.55, "ps": 503.0, "ae": 212.0, "bl": 70.0, "pv": 364.7}, {"m": "2025-02", "fy": 2568, "g": "TXC", "im": 765.15, "ex": 261.59, "bal": -503.56, "ps": 1750.0, "ae": 477.0, "bl": 222.0, "pv": 707.6}, {"m": "2025-03", "fy": 2568, "g": "CMT", "im": 1603.13, "ex": 4991.99, "bal": 3388.86, "ps": 57846.0, "ae": 3190.0, "bl": 2403.0, "pv": 3487.7}, {"m": "2025-03", "fy": 2568, "g": "DRUG", "im": 6452.84, "ex": 2742.48, "bal": -3710.36, "ps": 26063.0, "ae": 1954.0, "bl": 1449.0, "pv": 6192.0}, {"m": "2025-03", "fy": 2568, "g": "FOOD", "im": 2597.08, "ex": 4918.39, "bal": 2321.32, "ps": 89706.0, "ae": 4519.0, "bl": 3117.0, "pv": 9497.9}, {"m": "2025-03", "fy": 2568, "g": "HERB", "im": 762.15, "ex": 961.41, "bal": 199.26, "ps": 6097.0, "ae": 1233.0, "bl": 472.0, "pv": 1016.9}, {"m": "2025-03", "fy": 2568, "g": "MDC", "im": 6503.04, "ex": 3113.41, "bal": -3389.63, "ps": 22434.0, "ae": 2173.0, "bl": 1210.0, "pv": 4308.1}, {"m": "2025-03", "fy": 2568, "g": "NCT", "im": 438.75, "ex": 63.91, "bal": -374.84, "ps": 507.0, "ae": 212.0, "bl": 73.0, "pv": 380.5}, {"m": "2025-03", "fy": 2568, "g": "TXC", "im": 947.82, "ex": 304.48, "bal": -643.34, "ps": 1756.0, "ae": 491.0, "bl": 182.0, "pv": 846.0}, {"m": "2025-04", "fy": 2568, "g": "CMT", "im": 1666.22, "ex": 4244.7, "bal": 2578.47, "ps": 57863.0, "ae": 3178.0, "bl": 2883.0, "pv": 2815.5}, {"m": "2025-04", "fy": 2568, "g": "DRUG", "im": 6607.29, "ex": 2598.05, "bal": -4009.24, "ps": 26187.0, "ae": 1938.0, "bl": 1511.0, "pv": 5509.6}, {"m": "2025-04", "fy": 2568, "g": "FOOD", "im": 2481.06, "ex": 4354.45, "bal": 1873.39, "ps": 89801.0, "ae": 4552.0, "bl": 3294.0, "pv": 9081.4}, {"m": "2025-04", "fy": 2568, "g": "HERB", "im": 675.14, "ex": 769.7, "bal": 94.55, "ps": 6097.0, "ae": 1240.0, "bl": 491.0, "pv": 939.2}, {"m": "2025-04", "fy": 2568, "g": "MDC", "im": 6133.41, "ex": 2559.99, "bal": -3573.41, "ps": 22434.0, "ae": 2176.0, "bl": 1121.0, "pv": 3837.2}, {"m": "2025-04", "fy": 2568, "g": "NCT", "im": 0.0, "ex": 61.84, "bal": 61.84, "ps": 508.0, "ae": 211.0, "bl": 64.0, "pv": 328.3}, {"m": "2025-04", "fy": 2568, "g": "TXC", "im": 771.79, "ex": 256.14, "bal": -515.65, "ps": 1756.0, "ae": 485.0, "bl": 214.0, "pv": 666.4}, {"m": "2025-05", "fy": 2568, "g": "CMT", "im": 1665.36, "ex": 4733.87, "bal": 3068.51, "ps": 58769.0, "ae": 3246.0, "bl": 2438.0, "pv": 3365.0}, {"m": "2025-05", "fy": 2568, "g": "DRUG", "im": 6586.79, "ex": 2842.28, "bal": -3744.51, "ps": 26279.0, "ae": 1972.0, "bl": 1293.0, "pv": 5856.6}, {"m": "2025-05", "fy": 2568, "g": "FOOD", "im": 2347.71, "ex": 5068.36, "bal": 2720.65, "ps": 89801.0, "ae": 4522.0, "bl": 3710.0, "pv": 9664.8}, {"m": "2025-05", "fy": 2568, "g": "HERB", "im": 771.86, "ex": 948.82, "bal": 176.96, "ps": 6108.0, "ae": 1254.0, "bl": 429.0, "pv": 1090.4}, {"m": "2025-05", "fy": 2568, "g": "MDC", "im": 6430.11, "ex": 2769.91, "bal": -3660.19, "ps": 22658.0, "ae": 2204.0, "bl": 1152.0, "pv": 4151.6}, {"m": "2025-05", "fy": 2568, "g": "NCT", "im": 375.71, "ex": 57.87, "bal": -317.84, "ps": 512.0, "ae": 212.0, "bl": 76.0, "pv": 381.3}, {"m": "2025-05", "fy": 2568, "g": "TXC", "im": 880.17, "ex": 276.1, "bal": -604.07, "ps": 1772.0, "ae": 489.0, "bl": 196.0, "pv": 745.4}, {"m": "2025-06", "fy": 2568, "g": "CMT", "im": 1817.2, "ex": 4445.59, "bal": 2628.4, "ps": 58769.0, "ae": 3254.0, "bl": 1920.0, "pv": 3234.1}, {"m": "2025-06", "fy": 2568, "g": "DRUG", "im": 7295.09, "ex": 2970.21, "bal": -4324.89, "ps": 26520.0, "ae": 1981.0, "bl": 1446.0, "pv": 5852.0}, {"m": "2025-06", "fy": 2568, "g": "FOOD", "im": 2821.7, "ex": 4886.74, "bal": 2065.04, "ps": 90261.0, "ae": 4564.0, "bl": 3610.0, "pv": 9948.3}, {"m": "2025-06", "fy": 2568, "g": "HERB", "im": 827.98, "ex": 961.72, "bal": 133.75, "ps": 6138.0, "ae": 1240.0, "bl": 497.0, "pv": 1166.2}, {"m": "2025-06", "fy": 2568, "g": "MDC", "im": 7012.35, "ex": 2826.16, "bal": -4186.19, "ps": 22914.0, "ae": 2209.0, "bl": 1262.0, "pv": 4339.3}, {"m": "2025-06", "fy": 2568, "g": "NCT", "im": 387.02, "ex": 62.17, "bal": -324.86, "ps": 512.0, "ae": 212.0, "bl": 79.0, "pv": 372.4}, {"m": "2025-06", "fy": 2568, "g": "TXC", "im": 871.37, "ex": 238.13, "bal": -633.24, "ps": 1774.0, "ae": 491.0, "bl": 163.0, "pv": 777.2}, {"m": "2025-07", "fy": 2568, "g": "CMT", "im": 1716.18, "ex": 5051.74, "bal": 3335.56, "ps": 59039.0, "ae": 3224.0, "bl": 2791.0, "pv": 3164.9}, {"m": "2025-07", "fy": 2568, "g": "DRUG", "im": 7334.95, "ex": 3285.91, "bal": -4049.05, "ps": 26520.0, "ae": 1953.0, "bl": 1459.0, "pv": 5375.5}, {"m": "2025-07", "fy": 2568, "g": "FOOD", "im": 2511.01, "ex": 4881.74, "bal": 2370.74, "ps": 90962.0, "ae": 4564.0, "bl": 3521.0, "pv": 9963.3}, {"m": "2025-07", "fy": 2568, "g": "HERB", "im": 771.62, "ex": 1031.89, "bal": 260.27, "ps": 6179.0, "ae": 1250.0, "bl": 444.0, "pv": 1121.4}, {"m": "2025-07", "fy": 2568, "g": "MDC", "im": 6667.22, "ex": 2958.16, "bal": -3709.06, "ps": 22976.0, "ae": 2208.0, "bl": 1225.0, "pv": 4341.5}, {"m": "2025-07", "fy": 2568, "g": "NCT", "im": 376.42, "ex": 62.08, "bal": -314.34, "ps": 513.0, "ae": 212.0, "bl": 65.0, "pv": 384.0}, {"m": "2025-07", "fy": 2568, "g": "TXC", "im": 883.58, "ex": 281.51, "bal": -602.08, "ps": 1777.0, "ae": 490.0, "bl": 227.0, "pv": 781.7}, {"m": "2025-08", "fy": 2568, "g": "CMT", "im": 1852.43, "ex": 5073.17, "bal": 3220.75, "ps": 59039.0, "ae": 3232.0, "bl": 2212.0, "pv": 3226.3}, {"m": "2025-08", "fy": 2568, "g": "DRUG", "im": 7733.03, "ex": 2797.13, "bal": -4935.9, "ps": 26520.0, "ae": 1982.0, "bl": 1539.0, "pv": 6169.9}, {"m": "2025-08", "fy": 2568, "g": "FOOD", "im": 2518.04, "ex": 5439.82, "bal": 2921.78, "ps": 90962.0, "ae": 4616.0, "bl": 3449.0, "pv": 10295.6}, {"m": "2025-08", "fy": 2568, "g": "HERB", "im": 769.66, "ex": 1044.19, "bal": 274.53, "ps": 6179.0, "ae": 1252.0, "bl": 498.0, "pv": 1162.5}, {"m": "2025-08", "fy": 2568, "g": "MDC", "im": 6632.17, "ex": 2921.68, "bal": -3710.49, "ps": 22987.0, "ae": 2233.0, "bl": 1343.0, "pv": 4690.2}, {"m": "2025-08", "fy": 2568, "g": "NCT", "im": 357.56, "ex": 64.38, "bal": -293.18, "ps": 516.0, "ae": 213.0, "bl": 76.0, "pv": 386.3}, {"m": "2025-08", "fy": 2568, "g": "TXC", "im": 850.6, "ex": 294.74, "bal": -555.86, "ps": 1782.0, "ae": 493.0, "bl": 207.0, "pv": 802.3}, {"m": "2025-09", "fy": 2568, "g": "CMT", "im": 1720.68, "ex": 4866.74, "bal": 3146.06, "ps": 59462.0, "ae": 3240.0, "bl": 2340.0, "pv": 3358.5}, {"m": "2025-09", "fy": 2568, "g": "DRUG", "im": 7085.41, "ex": 2764.21, "bal": -4321.19, "ps": 26832.0, "ae": 1972.0, "bl": 1350.0, "pv": 6273.3}, {"m": "2025-09", "fy": 2568, "g": "FOOD", "im": 2624.26, "ex": 4576.11, "bal": 1951.85, "ps": 91794.0, "ae": 4623.0, "bl": 3195.0, "pv": 10180.6}, {"m": "2025-09", "fy": 2568, "g": "HERB", "im": 784.27, "ex": 962.71, "bal": 178.44, "ps": 6225.0, "ae": 1264.0, "bl": 420.0, "pv": 1165.3}, {"m": "2025-09", "fy": 2568, "g": "MDC", "im": 6567.09, "ex": 2880.26, "bal": -3686.82, "ps": 22992.0, "ae": 2220.0, "bl": 1509.0, "pv": 4449.6}, {"m": "2025-09", "fy": 2568, "g": "NCT", "im": 383.66, "ex": 63.89, "bal": -319.78, "ps": 518.0, "ae": 214.0, "bl": 66.0, "pv": 381.9}, {"m": "2025-09", "fy": 2568, "g": "TXC", "im": 840.07, "ex": 309.96, "bal": -530.12, "ps": 1797.0, "ae": 499.0, "bl": 222.0, "pv": 811.0}, {"m": "2025-10", "fy": 2569, "g": "CMT", "im": 1874.48, "ex": 4849.6, "bal": 2975.12, "ps": 59865.0, "ae": 3253.0, "bl": 2151.0, "pv": 3218.0}, {"m": "2025-10", "fy": 2569, "g": "DRUG", "im": 7942.06, "ex": 3311.49, "bal": -4630.58, "ps": 26874.0, "ae": 1979.0, "bl": 1460.0, "pv": 6030.8}, {"m": "2025-10", "fy": 2569, "g": "FOOD", "im": 2615.34, "ex": 5212.68, "bal": 2597.34, "ps": 91794.0, "ae": 4617.0, "bl": 3318.0, "pv": 10688.6}, {"m": "2025-10", "fy": 2569, "g": "HERB", "im": 824.67, "ex": 1074.29, "bal": 249.63, "ps": 6247.0, "ae": 1280.0, "bl": 463.0, "pv": 1155.3}, {"m": "2025-10", "fy": 2569, "g": "MDC", "im": 6926.57, "ex": 3200.13, "bal": -3726.44, "ps": 23013.0, "ae": 2216.0, "bl": 1279.0, "pv": 4570.5}, {"m": "2025-10", "fy": 2569, "g": "NCT", "im": 0.0, "ex": 65.23, "bal": 65.23, "ps": 522.0, "ae": 214.0, "bl": 69.0, "pv": 382.0}, {"m": "2025-10", "fy": 2569, "g": "TXC", "im": 901.71, "ex": 280.7, "bal": -621.01, "ps": 1816.0, "ae": 501.0, "bl": 192.0, "pv": 853.6}, {"m": "2025-11", "fy": 2569, "g": "CMT", "im": 1842.65, "ex": 4678.4, "bal": 2835.75, "ps": 60042.0, "ae": 3243.0, "bl": 2284.0, "pv": 3796.0}, {"m": "2025-11", "fy": 2569, "g": "DRUG", "im": 7623.3, "ex": 3204.39, "bal": -4418.9, "ps": 26948.0, "ae": 1997.0, "bl": 1303.0, "pv": 6391.4}, {"m": "2025-11", "fy": 2569, "g": "FOOD", "im": 2885.81, "ex": 5032.03, "bal": 2146.22, "ps": 92046.0, "ae": 4706.0, "bl": 3400.0, "pv": 10253.7}, {"m": "2025-11", "fy": 2569, "g": "HERB", "im": 861.01, "ex": 943.72, "bal": 82.72, "ps": 6290.0, "ae": 1266.0, "bl": 444.0, "pv": 1112.8}, {"m": "2025-11", "fy": 2569, "g": "MDC", "im": 7270.65, "ex": 3024.39, "bal": -4246.26, "ps": 23149.0, "ae": 2234.0, "bl": 1547.0, "pv": 4702.8}, {"m": "2025-11", "fy": 2569, "g": "NCT", "im": 385.05, "ex": 67.32, "bal": -317.72, "ps": 522.0, "ae": 216.0, "bl": 87.0, "pv": 396.9}, {"m": "2025-11", "fy": 2569, "g": "TXC", "im": 985.56, "ex": 299.55, "bal": -686.01, "ps": 1821.0, "ae": 497.0, "bl": 183.0, "pv": 785.1}, {"m": "2025-12", "fy": 2569, "g": "CMT", "im": 1933.95, "ex": 5103.68, "bal": 3169.73, "ps": 60050.0, "ae": 3271.0, "bl": 1842.0, "pv": 3729.8}, {"m": "2025-12", "fy": 2569, "g": "DRUG", "im": 8481.62, "ex": 3553.74, "bal": -4927.88, "ps": 27254.0, "ae": 2000.0, "bl": 1452.0, "pv": 6809.6}, {"m": "2025-12", "fy": 2569, "g": "FOOD", "im": 3028.81, "ex": 5524.01, "bal": 2495.2, "ps": 92589.0, "ae": 4627.0, "bl": 3546.0, "pv": 10837.6}, {"m": "2025-12", "fy": 2569, "g": "HERB", "im": 936.74, "ex": 1104.11, "bal": 167.37, "ps": 6290.0, "ae": 1269.0, "bl": 424.0, "pv": 1321.1}, {"m": "2025-12", "fy": 2569, "g": "MDC", "im": 7524.79, "ex": 3219.69, "bal": -4305.1, "ps": 23350.0, "ae": 2254.0, "bl": 1560.0, "pv": 4801.1}, {"m": "2025-12", "fy": 2569, "g": "NCT", "im": 420.92, "ex": 66.69, "bal": -354.22, "ps": 525.0, "ae": 216.0, "bl": 69.0, "pv": 408.0}, {"m": "2025-12", "fy": 2569, "g": "TXC", "im": 942.19, "ex": 316.63, "bal": -625.56, "ps": 1821.0, "ae": 503.0, "bl": 200.0, "pv": 843.5}, {"m": "2026-01", "fy": 2569, "g": "CMT", "im": 1653.88, "ex": 4467.4, "bal": 2813.52, "ps": 60050.0, "ae": 3281.0, "bl": 1892.0, "pv": 3221.4}, {"m": "2026-01", "fy": 2569, "g": "DRUG", "im": 7425.17, "ex": 3056.05, "bal": -4369.12, "ps": 27254.0, "ae": 1981.0, "bl": 1302.0, "pv": 6261.7}, {"m": "2026-01", "fy": 2569, "g": "FOOD", "im": 2448.83, "ex": 4394.71, "bal": 1945.88, "ps": 93275.0, "ae": 4620.0, "bl": 3082.0, "pv": 10161.5}, {"m": "2026-01", "fy": 2569, "g": "HERB", "im": 775.94, "ex": 955.85, "bal": 179.91, "ps": 6328.0, "ae": 1263.0, "bl": 450.0, "pv": 1082.3}, {"m": "2026-01", "fy": 2569, "g": "MDC", "im": 6802.7, "ex": 2713.59, "bal": -4089.11, "ps": 23351.0, "ae": 2239.0, "bl": 1267.0, "pv": 4259.0}, {"m": "2026-01", "fy": 2569, "g": "NCT", "im": 335.84, "ex": 59.16, "bal": -276.68, "ps": 525.0, "ae": 217.0, "bl": 62.0, "pv": 361.4}, {"m": "2026-01", "fy": 2569, "g": "TXC", "im": 782.14, "ex": 263.71, "bal": -518.44, "ps": 1821.0, "ae": 498.0, "bl": 199.0, "pv": 721.0}, {"m": "2026-02", "fy": 2569, "g": "CMT", "im": 1649.57, "ex": 4789.48, "bal": 3139.91, "ps": 60246.0, "ae": 3332.0, "bl": 2429.0, "pv": 3058.7}, {"m": "2026-02", "fy": 2569, "g": "DRUG", "im": 7540.62, "ex": 2846.89, "bal": -4693.74, "ps": 27552.0, "ae": 1992.0, "bl": 1687.0, "pv": 6285.1}, {"m": "2026-02", "fy": 2569, "g": "FOOD", "im": 2437.86, "ex": 4148.07, "bal": 1710.21, "ps": 93715.0, "ae": 4676.0, "bl": 3696.0, "pv": 9324.2}, {"m": "2026-02", "fy": 2569, "g": "HERB", "im": 781.81, "ex": 931.27, "bal": 149.47, "ps": 6328.0, "ae": 1281.0, "bl": 401.0, "pv": 1026.2}, {"m": "2026-02", "fy": 2569, "g": "MDC", "im": 6319.05, "ex": 2769.52, "bal": -3549.54, "ps": 23731.0, "ae": 2246.0, "bl": 1379.0, "pv": 4330.3}, {"m": "2026-02", "fy": 2569, "g": "NCT", "im": 308.23, "ex": 62.91, "bal": -245.32, "ps": 525.0, "ae": 215.0, "bl": 67.0, "pv": 353.9}, {"m": "2026-02", "fy": 2569, "g": "TXC", "im": 825.11, "ex": 254.55, "bal": -570.56, "ps": 1841.0, "ae": 498.0, "bl": 206.0, "pv": 706.6}, {"m": "2026-03", "fy": 2569, "g": "CMT", "im": 1950.23, "ex": 5095.48, "bal": 3145.25, "ps": 60926.0, "ae": 3314.0, "bl": 2353.0, "pv": 3485.1}, {"m": "2026-03", "fy": 2569, "g": "DRUG", "im": 7229.15, "ex": 3311.74, "bal": -3917.41, "ps": 27552.0, "ae": 1998.0, "bl": 1539.0, "pv": 6112.9}, {"m": "2026-03", "fy": 2569, "g": "FOOD", "im": 2614.1, "ex": 4436.73, "bal": 1822.63, "ps": 94112.0, "ae": 4657.0, "bl": 2844.0, "pv": 10750.4}, {"m": "2026-03", "fy": 2569, "g": "HERB", "im": 909.21, "ex": 1017.11, "bal": 107.89, "ps": 6361.0, "ae": 1278.0, "bl": 447.0, "pv": 1226.9}, {"m": "2026-03", "fy": 2569, "g": "MDC", "im": 7564.76, "ex": 3170.43, "bal": -4394.33, "ps": 23731.0, "ae": 2270.0, "bl": 1086.0, "pv": 4513.1}, {"m": "2026-03", "fy": 2569, "g": "NCT", "im": 335.43, "ex": 60.58, "bal": -274.85, "ps": 528.0, "ae": 214.0, "bl": 70.0, "pv": 386.2}, {"m": "2026-03", "fy": 2569, "g": "TXC", "im": 941.79, "ex": 307.81, "bal": -633.98, "ps": 1841.0, "ae": 502.0, "bl": 177.0, "pv": 775.8}, {"m": "2026-04", "fy": 2569, "g": "CMT", "im": 1734.81, "ex": 4372.77, "bal": 2637.95, "ps": 60926.0, "ae": 3335.0, "bl": 2468.0, "pv": 3155.8}, {"m": "2026-04", "fy": 2569, "g": "DRUG", "im": 6812.77, "ex": 2848.06, "bal": -3964.71, "ps": 27704.0, "ae": 2014.0, "bl": 1241.0, "pv": 5583.9}, {"m": "2026-04", "fy": 2569, "g": "FOOD", "im": 2315.85, "ex": 4219.87, "bal": 1904.02, "ps": 94412.0, "ae": 4665.0, "bl": 3065.0, "pv": 8950.3}, {"m": "2026-04", "fy": 2569, "g": "HERB", "im": 728.89, "ex": 999.71, "bal": 270.81, "ps": 6361.0, "ae": 1278.0, "bl": 451.0, "pv": 1072.9}, {"m": "2026-04", "fy": 2569, "g": "MDC", "im": 6424.42, "ex": 2788.61, "bal": -3635.82, "ps": 23731.0, "ae": 2287.0, "bl": 1061.0, "pv": 4172.8}, {"m": "2026-04", "fy": 2569, "g": "NCT", "im": 0.0, "ex": 54.53, "bal": 54.53, "ps": 531.0, "ae": 219.0, "bl": 73.0, "pv": 344.3}, {"m": "2026-04", "fy": 2569, "g": "TXC", "im": 717.32, "ex": 248.17, "bal": -469.15, "ps": 1842.0, "ae": 504.0, "bl": 186.0, "pv": 667.9}, {"m": "2026-05", "fy": 2569, "g": "CMT", "im": 1737.71, "ex": 4857.64, "bal": 3119.93, "ps": 61036.0, "ae": 3300.0, "bl": 2361.0, "pv": 3414.2}, {"m": "2026-05", "fy": 2569, "g": "DRUG", "im": 7684.67, "ex": 2947.92, "bal": -4736.75, "ps": 27704.0, "ae": 2017.0, "bl": 1491.0, "pv": 6377.3}, {"m": "2026-05", "fy": 2569, "g": "FOOD", "im": 2529.87, "ex": 4463.59, "bal": 1933.72, "ps": 94750.0, "ae": 4701.0, "bl": 3432.0, "pv": 10077.2}, {"m": "2026-05", "fy": 2569, "g": "HERB", "im": 848.22, "ex": 949.85, "bal": 101.62, "ps": 6434.0, "ae": 1296.0, "bl": 416.0, "pv": 1209.6}, {"m": "2026-05", "fy": 2569, "g": "MDC", "im": 7186.66, "ex": 2682.73, "bal": -4503.93, "ps": 23892.0, "ae": 2290.0, "bl": 1426.0, "pv": 4461.2}, {"m": "2026-05", "fy": 2569, "g": "NCT", "im": 349.37, "ex": 63.46, "bal": -285.9, "ps": 531.0, "ae": 218.0, "bl": 78.0, "pv": 342.2}, {"m": "2026-05", "fy": 2569, "g": "TXC", "im": 764.94, "ex": 264.03, "bal": -500.91, "ps": 1858.0, "ae": 505.0, "bl": 227.0, "pv": 734.4}, {"m": "2026-06", "fy": 2569, "g": "CMT", "im": 1773.66, "ex": 5274.36, "bal": 3500.7, "ps": 61683.0, "ae": 3306.0, "bl": 2477.0, "pv": 3260.4}, {"m": "2026-06", "fy": 2569, "g": "DRUG", "im": 7080.81, "ex": 3292.17, "bal": -3788.64, "ps": 27935.0, "ae": 2030.0, "bl": 1287.0, "pv": 6542.5}, {"m": "2026-06", "fy": 2569, "g": "FOOD", "im": 2720.83, "ex": 4913.27, "bal": 2192.44, "ps": 95728.0, "ae": 4734.0, "bl": 3187.0, "pv": 10196.3}, {"m": "2026-06", "fy": 2569, "g": "HERB", "im": 877.87, "ex": 1005.02, "bal": 127.15, "ps": 6434.0, "ae": 1276.0, "bl": 468.0, "pv": 1184.5}, {"m": "2026-06", "fy": 2569, "g": "MDC", "im": 7479.91, "ex": 3168.02, "bal": -4311.89, "ps": 23912.0, "ae": 2291.0, "bl": 1286.0, "pv": 4667.0}, {"m": "2026-06", "fy": 2569, "g": "NCT", "im": 375.33, "ex": 63.01, "bal": -312.32, "ps": 534.0, "ae": 216.0, "bl": 70.0, "pv": 351.9}, {"m": "2026-06", "fy": 2569, "g": "TXC", "im": 875.42, "ex": 265.74, "bal": -609.67, "ps": 1873.0, "ae": 503.0, "bl": 229.0, "pv": 715.5}, {"m": "2026-07", "fy": 2569, "g": "CMT", "im": 1863.35, "ex": 4806.75, "bal": 2943.39, "ps": 61683.0, "ae": 3348.0, "bl": 2119.0, "pv": 3397.3}, {"m": "2026-07", "fy": 2569, "g": "DRUG", "im": 7949.44, "ex": 2876.37, "bal": -5073.07, "ps": 27935.0, "ae": 2042.0, "bl": 1583.0, "pv": 6038.0}, {"m": "2026-07", "fy": 2569, "g": "FOOD", "im": 2802.51, "ex": 4780.98, "bal": 1978.47, "ps": 95728.0, "ae": 4711.0, "bl": 3430.0, "pv": 10129.5}, {"m": "2026-07", "fy": 2569, "g": "HERB", "im": 890.14, "ex": 1011.52, "bal": 121.38, "ps": 6516.0, "ae": 1279.0, "bl": 390.0, "pv": 1179.0}, {"m": "2026-07", "fy": 2569, "g": "MDC", "im": 7526.92, "ex": 3081.91, "bal": -4445.0, "ps": 23969.0, "ae": 2265.0, "bl": 1285.0, "pv": 4345.4}, {"m": "2026-07", "fy": 2569, "g": "NCT", "im": 326.54, "ex": 61.62, "bal": -264.92, "ps": 534.0, "ae": 218.0, "bl": 73.0, "pv": 348.3}, {"m": "2026-07", "fy": 2569, "g": "TXC", "im": 888.76, "ex": 258.17, "bal": -630.58, "ps": 1873.0, "ae": 510.0, "bl": 209.0, "pv": 788.0}, {"m": "2026-08", "fy": 2569, "g": "CMT", "im": 1951.08, "ex": 5007.37, "bal": 3056.29, "ps": 62100.0, "ae": 3302.0, "bl": 2129.0, "pv": 3558.3}, {"m": "2026-08", "fy": 2569, "g": "DRUG", "im": 7555.27, "ex": 3170.45, "bal": -4384.82, "ps": 27935.0, "ae": 2028.0, "bl": 1434.0, "pv": 6426.4}, {"m": "2026-08", "fy": 2569, "g": "FOOD", "im": 2870.48, "ex": 4483.41, "bal": 1612.92, "ps": 95920.0, "ae": 4714.0, "bl": 3745.0, "pv": 11096.4}, {"m": "2026-08", "fy": 2569, "g": "HERB", "im": 926.43, "ex": 1121.22, "bal": 194.78, "ps": 6516.0, "ae": 1298.0, "bl": 422.0, "pv": 1219.7}, {"m": "2026-08", "fy": 2569, "g": "MDC", "im": 7406.55, "ex": 3013.9, "bal": -4392.65, "ps": 24098.0, "ae": 2264.0, "bl": 1263.0, "pv": 4587.9}, {"m": "2026-08", "fy": 2569, "g": "NCT", "im": 355.94, "ex": 58.42, "bal": -297.51, "ps": 541.0, "ae": 220.0, "bl": 62.0, "pv": 334.0}, {"m": "2026-08", "fy": 2569, "g": "TXC", "im": 897.51, "ex": 276.46, "bal": -621.05, "ps": 1873.0, "ae": 512.0, "bl": 232.0, "pv": 797.1}]};
+const NAVY = "#12305B", MUTED = "#61738A", LINE = "#DFE6EE";
+const GOOD = "#217A46", BAD = "#BF3A2B", WARN = "#B87400";
+const GOOD_TINT = "#E7F2EB", BAD_TINT = "#FAEAE7", WARN_TINT = "#FBF1DF";
+const SERIES = {
+  import:  {color:"#1F6FB2", label:"มูลค่านำเข้า"},
+  export:  {color:"#12A594", label:"มูลค่าส่งออก"},
+  balance: {color:"#C0392B", label:"ดุลการค้า"}
+};
+let selected = "ALL";
+// ค่าเริ่มต้นของตัวกรองปี = ปีล่าสุดที่มีข้อมูลครบ 12 เดือน (ปีที่ยังไม่จบไม่นับ)
+const DEFAULT_YEAR = latestFullYear();
+let filterYear = DEFAULT_YEAR, filterMonth = "ALL";   // "yyyy" / "MM" (2 หลัก) หรือ "ALL"
+// กราฟแนวโน้มต้องเห็นหลายปีเสมอ — ไม่ใช้ตัวกรองปี (กลุ่มผลิตภัณฑ์/เดือนยังมีผล)
+function trendViewMode(){
+  return filterMonth !== "ALL" ? "month" : "year";
+}
+
+// ตัวเลือกช่วงเวลารายการ์ด (อิสระจาก filterYear/filterMonth ด้านบน — คนละกลไก)
+// null = ทั้งหมด (ไม่กรอง) — ไม่ก็ {from:"yyyy-mm", to:"yyyy-mm"} ช่วงที่ผู้ใช้เลือกเอง
+// ใช้ได้เฉพาะโหมดข้อมูลจริง (ดู isRealDataMode()) เพราะต้องมี DATA.byGroup แบบรายเดือน
+// จริงมาคำนวณ กราฟมอคยังไม่รองรับ ปุ่มจะถูกซ่อนอัตโนมัติ (ดู renderAll())
+let periodTrend = null, periodTreemap = null;
+// การ์ด "อันดับกลุ่มผลิตภัณฑ์" ต้องโชว์ "อัตราการเติบโต" เป็นค่าเริ่มต้นเสมอ (ไม่ใช่
+// จำนวนผู้ประกอบการ) — ตั้งช่วงเริ่มต้นเป็น 12 เดือนล่าสุดที่จบเดือนแล้วจริงให้อัตโนมัติ
+// เทียบ 12 เดือนก่อนหน้า ผู้ใช้ค่อยกดไอคอนกรวยเปลี่ยนช่วงเองทีหลังได้ ถ้าข้อมูลย้อนหลัง
+// ไม่พอ (< 24 เดือนที่จบแล้ว) ค่อย fallback เป็น null (โชว์จำนวนผู้ประกอบการแทน)
+function defaultCagrPeriod(){
+  const months = completeMonths();
+  if (months.length < 24) return null;
+  return {from: months[months.length - 12], to: months[months.length - 1]};
+}
+let periodCagr = defaultCagrPeriod();
+
+/* ── helper ──────────────────────────────────────────────────────── */
+const esc = s => String(s).replace(/[&<>"]/g, c =>
+  ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const fmt = (v, d=0) => v == null || isNaN(v) ? "—"
+  : v.toLocaleString("en-US", {minimumFractionDigits:d, maximumFractionDigits:d});
+const tag = (n, a, inner="") =>
+  `<${n} ${Object.entries(a).map(([k,v]) => `${k}="${v}"`).join(" ")}>${inner}</${n}>`;
+const tip = t => `data-tip="${esc(t)}"`;
+
+/* ── ตัวกรอง Year / Month (ตัวกรองไขว้เดียวกับกลุ่มผลิตภัณฑ์ มีผลทุกส่วนในหน้าจอ) ──
+   Year = "ALL" ดูทุกปี | เลือกปีหนึ่ง ดูเฉพาะปีนั้น
+   Month = "ALL" ดูทุกเดือน | เลือกเดือนหนึ่ง ดูเฉพาะเดือนนั้นของทุกปี (เทียบตามฤดูกาล) */
+const TH_MONTH_NAME = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.",
+                       "ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+function allMonths(){
+  return [...new Set(DATA.byGroup.map(r => r.m))].sort();
+}
+function isUnfiltered(){
+  return filterYear === "ALL" && filterMonth === "ALL";
+}
+function latestFullYear(){
+  const counts = {};
+  completeMonths().forEach(m => { const y = m.slice(0,4); counts[y] = (counts[y] || 0) + 1; });
+  const full = Object.keys(counts).filter(y => counts[y] === 12).sort();
+  return full.length ? full[full.length - 1] : "ALL";
+}
+function populateYearMonthFilters(){
+  const months = allMonths();
+  const selY = document.getElementById("filterYear"), selM = document.getElementById("filterMonth");
+  if (!selY || !selM) return;
+  const years = [...new Set(months.map(m => m.slice(0,4)))].sort();
+  selY.innerHTML = '<option value="ALL">ทั้งหมด</option>' +
+    years.map(y => `<option value="${y}">${+y + 543}</option>`).join("");
+  selM.innerHTML = '<option value="ALL">ทั้งหมด</option>' +
+    TH_MONTH_NAME.map((n,i) => `<option value="${String(i+1).padStart(2,"0")}">${n}</option>`).join("");
+  selY.value = filterYear;
+  selM.value = filterMonth;
+}
+function setFilters(){
+  filterYear = document.getElementById("filterYear").value;
+  filterMonth = document.getElementById("filterMonth").value;
+  renderAll();
+}
+function resetFilters(){
+  filterYear = DEFAULT_YEAR; filterMonth = "ALL";
+  const selY = document.getElementById("filterYear"), selM = document.getElementById("filterMonth");
+  if (selY) selY.value = DEFAULT_YEAR;
+  if (selM) selM.value = "ALL";
+  renderAll();
+}
+
+/* ── ตัวเลขบนการ์ด: คำนวณใหม่เมื่อเปลี่ยนกลุ่มผลิตภัณฑ์/Year/Month ───────── */
+function rowsFor(g){
+  let rows = g === "ALL" ? DATA.byGroup : DATA.byGroup.filter(r => r.g === g);
+  if (filterYear !== "ALL") rows = rows.filter(r => r.m.slice(0,4) === filterYear);
+  if (filterMonth !== "ALL") rows = rows.filter(r => r.m.slice(5,7) === filterMonth);
+  return rows;
+}
+function trendRowsFor(g){
+  let rows = g === "ALL" ? DATA.byGroup : DATA.byGroup.filter(r => r.g === g);
+  if (filterMonth !== "ALL") rows = rows.filter(r => r.m.slice(5,7) === filterMonth);
+  return rows;
+}
+
+/* ── ตัวเลือกช่วงเวลารายการ์ด (ไอคอนกรวยมุมขวาบนของการ์ด) ───────────── */
+// เดือนทั้งหมดที่ "มีข้อมูลจริงให้เชื่อได้" — ตัด 2 กรณีออก:
+//  1) เดือนปัจจุบันที่ยังไม่จบ (ตามนาฬิกาเครื่องที่เปิดดู) ยอดจะต่ำเตี้ยเพราะสะสมไม่ครบ
+//  2) เดือนท้าย ๆ ที่ "ไม่มีมูลค่าการค้าเลยทั้ง 7 กลุ่มพร้อมกัน" (import+export = 0 ทุกกลุ่ม)
+//     ซึ่งมักเกิดจากไฟล์ต้นทาง (เช่น customs_trade_7groups_....csv) ยังอัปเดตไม่ถึงเดือนนั้น
+//     ไม่ใช่การค้าจริงเป็นศูนย์ — เจอเคสนี้ตอนเลือกช่วง 12 เดือนล่าสุดแล้วดันครอบคลุมเดือน
+//     ที่ไฟล์ศุลกากรยังไม่มีข้อมูล (มีถึงแค่ 2025-12 ทั้งที่วันนี้ ก.ย. 2569 แล้ว) ทำให้ค่า
+//     ติดลบหลอก ๆ เท่ากันเกือบทุกกลุ่มพร้อมกัน (ไม่ใช่ธุรกิจหดตัวจริง)
+// ใช้ฟังก์ชันนี้จุดเดียวทั้งกราฟเติบโตและตัวกรองช่วงเวลาการ์ดอื่น กันปัญหาซ้ำ
+function completeMonths(){
+  const months = [...new Set(DATA.byGroup.map(r => r.m))].sort();
+  if (!months.length) return months;
+  const totalByMonth = new Map();
+  DATA.byGroup.forEach(r => totalByMonth.set(r.m, (totalByMonth.get(r.m) || 0) + r.im + r.ex));
+  let end = months.length;
+  while (end > 0 && !(totalByMonth.get(months[end - 1]) > 0)) end--;
+  let out = months.slice(0, end);
+  if (!out.length) return out;
+  const now = new Date();
+  const curYm = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,"0")}`;
+  if (out[out.length - 1] === curYm) out = out.slice(0, -1);
+  return out;
+}
+// ตัดแถวให้เหลือแค่ช่วง [from,to] (รูปแบบ "yyyy-mm" เทียบกันตรง ๆ ได้เพราะเรียงตัวอักษร
+// = เรียงเวลาพอดี) — period=null คืนของเดิมทั้งหมดไม่ตัดอะไร (เท่ากับ "ทั้งหมด")
+function clipRowsToPeriod(rows, period){
+  if (!period) return rows;
+  return rows.filter(r => r.m >= period.from && r.m <= period.to);
+}
+const PERIOD_KEYS = ["trend", "treemap", "cagr"];
+const periodLabel = p => !p ? "" : ` — ${p.from} ถึง ${p.to}`;
+function closeAllPeriodMenus(){
+  PERIOD_KEYS.forEach(k => {
+    const el = document.getElementById("periodMenu-" + k);
+    if (el) el.classList.remove("open");
+  });
+}
+function togglePeriod(e, key){
+  e.stopPropagation();
+  const el = document.getElementById("periodMenu-" + key);
+  if (!el) return;
+  const willOpen = !el.classList.contains("open");
+  closeAllPeriodMenus();
+  if (willOpen) el.classList.add("open");
+}
+function periodVar(key){
+  return key === "trend" ? periodTrend : key === "treemap" ? periodTreemap : periodCagr;
+}
+function applyPeriodRange(e, key){
+  e.stopPropagation();
+  const from = document.getElementById("periodFrom-" + key).value;
+  const to = document.getElementById("periodTo-" + key).value;
+  if (!from || !to || from > to) return;   // ว่าง หรือ จาก > ถึง — ไม่ทำอะไร ให้แก้ก่อน
+  const range = {from, to};
+  if (key === "trend") periodTrend = range;
+  else if (key === "treemap") periodTreemap = range;
+  else if (key === "cagr") periodCagr = range;
+  closeAllPeriodMenus();
+  renderAll();
+}
+function clearPeriodRange(e, key){
+  e.stopPropagation();
+  if (key === "trend") periodTrend = null;
+  else if (key === "treemap") periodTreemap = null;
+  else if (key === "cagr") periodCagr = null;
+  document.getElementById("periodFrom-" + key).value = "";
+  document.getElementById("periodTo-" + key).value = "";
+  closeAllPeriodMenus();
+  renderAll();
+}
+// ใส่ค่าที่เลือกอยู่กลับเข้าช่อง input เวลาเปิดเมนู (ไม่งั้นเปิดใหม่แล้วช่องว่างเปล่า
+// ทั้งที่มีตัวกรองอยู่) + ซ่อนปุ่มทั้งหมดถ้าเป็นโหมดข้อมูลมอค (กราฟมอคยังไม่รองรับ
+// ตัวกรองนี้ ปุ่มที่กดแล้วไม่มีผลจะสร้างความสับสนมากกว่าเป็นประโยชน์)
+function syncPeriodPickers(){
+  const real = isRealDataMode();
+  document.querySelectorAll(".periodPick").forEach(el => { el.style.display = real ? "" : "none"; });
+  if (!real) return;
+  PERIOD_KEYS.forEach(k => {
+    const range = periodVar(k);
+    const fromEl = document.getElementById("periodFrom-" + k);
+    const toEl = document.getElementById("periodTo-" + k);
+    if (fromEl) fromEl.value = range ? range.from : "";
+    if (toEl) toEl.value = range ? range.to : "";
+  });
+}
+document.addEventListener("click", closeAllPeriodMenus);
+function sumByFy(rows, fy, key){
+  return rows.reduce((s, r) => r.fy === fy ? s + r[key] : s, 0);
+}
+function monthlyTotals(rows, key){
+  const m = new Map();
+  rows.forEach(r => m.set(r.m, (m.get(r.m) || 0) + r[key]));
+  return [...m.entries()].sort((a,b) => a[0] < b[0] ? -1 : 1);
+}
+function stockAt(rows, key, back = 0){
+  const s = monthlyTotals(rows, key);
+  return s.length > back ? s[s.length - 1 - back][1] : null;
+}
+function kpisFor(g){
+  if (g === "ALL" && isUnfiltered()) return {cards: DATA.kpi, sparks: DATA.sparks};
+  const rows = rowsFor(g);
+  // เลือกกลุ่ม/ช่วงเวลาเอง ต้องหาปีงบประมาณ "ล่าสุดในช่วงที่กรอง" เอง
+  // ไม่ใช้ fyComplete ตายตัว เพราะผู้ใช้อาจเลือกช่วงเวลาเก่ากว่าที่ fyComplete ชี้ไว้
+  const rowFys = [...new Set(rows.map(r => r.fy))];
+  const fy = rowFys.length ? Math.max(...rowFys) : DATA.meta.fyComplete;
+  const base = DATA.kpi;                          // ยืมชื่อ/หน่วย/ฐานเวลามาใช้ซ้ำ
+  // *** โหมดข้อมูลจริง: ค่าเริ่มต้น "ทั้งหมด" (DATA.kpi ด้านบน) รวมทุกเดือนในหน้าต่าง
+  // ข้อมูลทั้งหมด ไม่ใช่แค่ปีงบประมาณล่าสุด — ถ้าพอกรองเฉพาะกลุ่มแล้วดันไปรวมแค่ปีงบฯ
+  // ล่าสุด (sumByFy) ยอดรวมของทุกกลุ่มบวกกันจะไม่เท่ากับยอด "ทั้งหมด" ที่เห็นตอนแรก
+  // ทำให้ผู้ใช้เช็คยอดไขว้กันเองแล้วงง จึงต้องรวมทุกเดือนเหมือนกันเสมอในโหมดข้อมูลจริง
+  // ส่วนโหมดมอคยังยึดกรอบปีงบประมาณเหมือนเดิม (ออกแบบไว้แบบนั้นตั้งแต่แรก) ***
+  const sumAll = key => rows.reduce((s, r) => s + r[key], 0);
+  const im = isRealDataMode() ? sumAll("im") : sumByFy(rows, fy, "im"),
+        ex = isRealDataMode() ? sumAll("ex") : sumByFy(rows, fy, "ex");
+  const ps = stockAt(rows, "ps"), ae = stockAt(rows, "ae"), bl = stockAt(rows, "bl");
+  const hasPv = rows.length && rows[0].pv != null;
+  const v = {import_value: im, export_value: ex, trade_balance: ex - im,
+             product_stock: ps, active_entity: ae, backlog: bl};
+  if (hasPv) v.production_value = sumAll("pv");
+  // basis ของ DATA.kpi บอกช่วง "ทั้งหมด" — เมื่อกรองแล้วต้องบอกช่วงที่รวมจริง
+  const ms = [...new Set(rows.map(r => r.m))].sort();
+  const thYm = m => `${TH_MONTH_NAME[+m.slice(5,7) - 1]} ${+m.slice(0,4) + 543}`;
+  const SUM_CODES = ["import_value", "export_value", "trade_balance", "production_value"];
+  const basisFor = c => isRealDataMode() && ms.length && SUM_CODES.includes(c.kpi_code)
+    ? `รวม ${ms.length} เดือน (${thYm(ms[0])}–${thYm(ms[ms.length - 1])})` : c.basis;
+  const cards = base.map(c => ({...c, value: c.kpi_code in v ? v[c.kpi_code] : c.value, basis: basisFor(c)}));
+  const sk = {};
+  [["import_value","im"],["export_value","ex"],["trade_balance","bal"],
+   ["product_stock","ps"],["active_entity","ae"],["backlog","bl"]]
+    .forEach(([code, key]) => sk[code] = monthlyTotals(rows, key).slice(-24).map(x => x[1]));
+  if (hasPv)
+    sk.production_value = monthlyTotals(rows, "pv").slice(-24).map(x => x[1]);
+  return {cards, sparks: sk};
+}
+
+/* ── กราฟเส้นขนาดเล็กในการ์ด ─────────────────────────────────────── */
+function sparkSvg(vals, color){
+  if (!vals || vals.length < 2) return "";
+  const w = 96, h = 36, lo = Math.min(...vals), hi = Math.max(...vals);
+  const sx = i => i / (vals.length - 1) * w;
+  const sy = v => hi === lo ? h/2 : h - (v - lo) / (hi - lo) * (h - 8) - 4;
+  const pts = vals.map((v,i) => `${sx(i).toFixed(1)},${sy(v).toFixed(1)}`).join(" ");
+  const ex = w, ey = sy(vals[vals.length - 1]);
+  // ไล่เฉดจากเส้นลงมาให้จางหาย ดีกว่าเติมสีทึบทั้งพื้นที่ใต้เส้น
+  const id = "sg" + Math.random().toString(36).slice(2, 8);
+  return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}">
+    <defs><linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${color}" stop-opacity=".22"/>
+      <stop offset="1" stop-color="${color}" stop-opacity="0"/></linearGradient></defs>
+    <polygon points="0,${h} ${pts} ${w},${h}" fill="url(#${id})"/>
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.8"
+     stroke-linejoin="round" stroke-linecap="round"/>
+    <circle cx="${ex}" cy="${ey.toFixed(1)}" r="2.4" fill="${color}"
+     stroke="#fff" stroke-width="1.2"/></svg>`;
+}
+
+function renderKpis(){
+  const {cards, sparks} = kpisFor(selected);
+  document.getElementById("kpis").innerHTML = cards.map(c => {
+    const t = `${c.kpi_name_th}\n${fmt(c.value)} ${c.unit} · ${c.basis}`
+            + (c.drill_to ? `\nเจาะลึกต่อที่ ${c.drill_to}` : "");
+    return `<div class="kpi" ${tip(t)}>
+      <div class="bar" style="background:linear-gradient(90deg,${NAVY},${NAVY}99)"></div>
+      ${sparkSvg(sparks[c.kpi_code], NAVY)}
+      <div class="body">
+        <div class="name">${esc(c.kpi_name_th)}</div>
+        <div class="val">${fmt(c.value)}</div>
+        <div class="unit">${esc(c.unit)}</div>
+      </div></div>`;
+  }).join("");
+}
+
+/* ── ส่วนที่ 2: แนวโน้มมูลค่าการค้า ───────────────────────────────── */
+function renderTrendLegend(){
+  const el = document.getElementById("trendLegend");
+  if (!el) return;
+  el.innerHTML = Object.entries(SERIES).map(([k, v]) =>
+    `<span class="lg"><i style="background:${v.color}"></i>${v.label}</span>`
+  ).join("");
+}
+function trendPlotX(i, n, W, P){
+  const plotW = W - P.l - P.r;
+  const pad = n <= 6 ? plotW * 0.08 : 0;
+  return P.l + pad + i * (plotW - 2 * pad) / Math.max(n - 1, 1);
+}
+function trendScaleY(allValues, nTicks){
+  const nums = allValues.filter(v => v != null);
+  if (!nums.length) return niceScale(0, 1, nTicks);
+  let lo = Math.min(0, ...nums), hi = Math.max(0, ...nums);
+  const span = hi - lo || Math.max(Math.abs(hi), 1);
+  const padLo = span * 0.06;
+  const padHi = span * 0.14;
+  return niceScale(lo - padLo, hi + padHi, nTicks);
+}
+
+const TREND_DISPLAY_YEARS = 5;
+function sliceTrendYears(fys, series){
+  if (fys.length <= TREND_DISPLAY_YEARS) return {fys, series};
+  const n = TREND_DISPLAY_YEARS;
+  return {
+    fys: fys.slice(-n),
+    series: series.map(s => ({
+      key: s.key, values: s.values.slice(-n),
+      isFc: (s.isFc || []).slice(-n),
+      lo: (s.lo || []).slice(-n), hi: (s.hi || []).slice(-n),
+    })),
+  };
+}
+function trendSeries(){
+  if (selected === "ALL" && filterMonth === "ALL"){
+    const s = sliceTrendYears(DATA.meta.fys, DATA.trend);
+    return {...s, hasFc: s.series.some(x => (x.isFc || []).some(Boolean))};
+  }
+  const rows = trendRowsFor(selected);
+  const fys = [...new Set(rows.map(r => r.fy))].sort((a,b) => a - b);
+  const g = k => fys.map(f => +sumByFy(rows, f, k).toFixed(1));
+  const im = g("im"), ex = g("ex");
+  return {fys, hasFc: false, series: [
+    {key:"import",  values: im, isFc: fys.map(()=>false), lo:[], hi:[]},
+    {key:"export",  values: ex, isFc: fys.map(()=>false), lo:[], hi:[]},
+    {key:"balance", values: ex.map((v,i) => +(v - im[i]).toFixed(1)),
+     isFc: fys.map(()=>false), lo:[], hi:[]}
+  ]};
+}
+
+/* ── กราฟแนวโน้มรายเดือน — ใช้เมื่อไม่มีค่าพยากรณ์จริงในข้อมูล (โหมดข้อมูลจริง) ──
+   ข้อมูลมอคมี SARIMAX พยากรณ์รายปีงบประมาณจริง เก็บ path เดิมไว้ไม่แตะเลย
+   ส่วนข้อมูลจริงที่ต่อ DB ตรง ยังไม่มีพยากรณ์ (ต้องมี >=12 เดือนต่อรอบ) แสดง
+   รายเดือนจะเห็นแนวโน้มได้ชัดกว่าการยุบเหลือแค่ 2-3 จุดต่อปีงบประมาณ */
+const TREND_SVG = { W: 980, H: 300, P: { t: 32, r: 18, b: 36, l: 72 } };
+
+function trendChartDataFontPx() {
+  const v = getComputedStyle(document.documentElement).getPropertyValue("--fs-chart-data").trim();
+  const n = parseInt(v, 10);
+  return n && !isNaN(n) ? n : 14;
+}
+function trendPointValueLabel(cx, cy, value, color, opts) {
+  const o = opts || {};
+  const P = o.P || TREND_SVG.P;
+  const H = o.H || TREND_SVG.H;
+  const n = Number(value);
+  let dy = o.dy != null ? o.dy : (isFinite(n) && n < 0 ? 14 : -8);
+  const fs = trendChartDataFontPx() + (o.compact ? -1 : 0);
+  const labelY = cy + dy;
+  if (labelY < P.t + 4 && dy < 0) dy = 14;
+  if (labelY > H - P.b - 6 && dy > 0) dy = -10;
+  if (cy < P.t + 22 && dy < 0) dy = 15;
+  return `<text class="barlbl" x="${cx}" y="${cy + dy}" text-anchor="middle"
+    style="fill:${color};font-size:${fs}px;font-weight:600">${fmt(value)}</text>`;
+}
+function trendYAxisUnitLabel(P) {
+  return `<text class="axis" x="${P.l - 4}" y="${Math.max(14, P.t - 10)}" text-anchor="end"
+    style="font-size:17px">ล้านบาท</text>`;
+}
+function trendLineLabelShow(i, total, seriesCount) {
+  if (seriesCount <= 1) return true;
+  if (i === 0 || i === total - 1) return true;
+  if (total <= 6) return i === total - 2;
+  if (total >= 7) return i % 2 === 1;
+  return true;
+}
+function trendLineLabelDy(seriesIndex, value, cy, P) {
+  const n = Number(value);
+  const pad = P || TREND_SVG.P;
+  if (isFinite(n) && n < 0) return 14;
+  if (cy != null && cy < pad.t + 26) return 12 + seriesIndex * 2;
+  const offsets = [-9, 13, -9];
+  return offsets[seriesIndex % 3];
+}
+
+function trendSeriesMonthly(){
+  const rows = clipRowsToPeriod(trendRowsFor(selected), periodTrend);
+  const xs = [...new Set(rows.map(r => r.m))].sort();
+  const sumAt = (m, key) => rows.reduce((s,r) => r.m === m ? s + r[key] : s, 0);
+  const g = key => xs.map(m => +sumAt(m, key).toFixed(1));
+  const im = g("im"), ex = g("ex");
+  return {xs, series: [
+    {key:"import", values: im, isFc: xs.map(()=>false)},
+    {key:"export", values: ex, isFc: xs.map(()=>false)},
+    {key:"balance", values: ex.map((v,i) => +(v - im[i]).toFixed(1)), isFc: xs.map(()=>false)}
+  ]};
+}
+
+function renderTrendMonthly(){
+  renderTrendLegend();
+  const {xs, series} = trendSeriesMonthly();
+  const { W, H, P } = TREND_SVG;
+  const all = series.flatMap(s => s.values).filter(v => v != null);
+  const sc = trendScaleY(all, 6);
+  const lo = sc.lo, hi = sc.hi;
+  const x = i => trendPlotX(i, xs.length, W, P);
+  const y = v => P.t + (hi - v) / (hi - lo) * (H - P.t - P.b);
+
+  let s = "";
+  sc.ticks.forEach(v => {
+    const yy = y(v);
+    s += `<line class="gridline" x1="${P.l}" y1="${yy}" x2="${W-P.r}" y2="${yy}"
+           ${v === 0 ? 'stroke="#B3BFCC"' : ''}/>`;
+    s += `<text class="axis" x="${P.l-10}" y="${yy+4}" text-anchor="end">${fmt(v)}</text>`;
+  });
+
+  series.forEach((ser, si) => {
+    const c = SERIES[ser.key].color;
+    const pts = ser.values.map((v,i) => v == null ? null : `${x(i)},${y(v)}`)
+                          .filter(Boolean);
+    if (pts.length > 1) s += `<polyline points="${pts.join(" ")}" fill="none"
+                           stroke="${c}" stroke-width="2.2" stroke-linejoin="round"
+                           stroke-linecap="round"/>`;
+    ser.values.forEach((v,i) => {
+      if (v == null) return;
+      const t = `${SERIES[ser.key].label} ${xs[i]}\n${fmt(v)} ล้านบาท`;
+      s += `<circle class="hit" cx="${x(i)}" cy="${y(v)}" r="3" fill="${c}"
+             stroke="#fff" stroke-width="1.4" ${tip(t)}/>`;
+      if (trendLineLabelShow(i, xs.length, series.length)) {
+        const cy = y(v);
+        s += trendPointValueLabel(x(i), cy, v, c, {
+          dy: trendLineLabelDy(si, v, cy, P), compact: xs.length > 14, P, H,
+        });
+      }
+    });
+  });
+
+  // เดือนเยอะจนป้ายทับกัน — โชว์แค่บางจุด (ประมาณ 10-12 ป้ายทั้งกราฟ) + จุดสุดท้ายเสมอ
+  const skip = Math.max(1, Math.ceil(xs.length / 11));
+  xs.forEach((m,i) => {
+    if (i % skip !== 0 && i !== xs.length - 1) return;
+    s += `<text class="axis" x="${x(i)}" y="${H-P.b+20}" text-anchor="middle">${m}</text>`;
+  });
+  s += trendYAxisUnitLabel(P);
+
+  document.getElementById("trendChart").innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${s}</svg>`;
+  document.getElementById("trendCap").textContent = "";
+}
+
+/* ── กราฟแนวโน้มรายปีงบประมาณสำหรับข้อมูลจริง (รายเดือนเมื่อเลือกปี/เดือน) ──
+   ต่างจาก renderTrend()/trendSeries() (path มอค) ตรงที่ไม่มีเส้นพยากรณ์/แถบ
+   ความเชื่อมั่นเลย เพราะข้อมูลจริงยังไม่มี SARIMAX ให้ใช้ */
+function renderTrendYearly(){
+  renderTrendLegend();
+  const rows = clipRowsToPeriod(trendRowsFor(selected), periodTrend);
+  const fys = [...new Set(rows.map(r => r.fy))].sort((a,b) => a - b);
+  const g = k => fys.map(f => +sumByFy(rows, f, k).toFixed(1));
+  const im = g("im"), ex = g("ex");
+  const series = [
+    {key:"import", values: im},
+    {key:"export", values: ex},
+    {key:"balance", values: ex.map((v,i) => +(v - im[i]).toFixed(1))},
+  ];
+
+  const { W, H, P } = TREND_SVG;
+  const all = series.flatMap(s => s.values).filter(v => v != null);
+  const sc = trendScaleY(all, 6);
+  const lo = sc.lo, hi = sc.hi;
+  const x = i => trendPlotX(i, fys.length, W, P);
+  const y = v => P.t + (hi - v) / (hi - lo) * (H - P.t - P.b);
+
+  let s = "";
+  sc.ticks.forEach(v => {
+    const yy = y(v);
+    s += `<line class="gridline" x1="${P.l}" y1="${yy}" x2="${W-P.r}" y2="${yy}"
+           ${v === 0 ? 'stroke="#B3BFCC"' : ''}/>`;
+    s += `<text class="axis" x="${P.l-10}" y="${yy+4}" text-anchor="end">${fmt(v)}</text>`;
+  });
+
+  series.forEach((ser, si) => {
+    const c = SERIES[ser.key].color;
+    const pts = ser.values.map((v,i) => v == null ? null : `${x(i)},${y(v)}`).filter(Boolean);
+    if (pts.length > 1) s += `<polyline points="${pts.join(" ")}" fill="none"
+                           stroke="${c}" stroke-width="2.8" stroke-linejoin="round"
+                           stroke-linecap="round"/>`;
+    ser.values.forEach((v,i) => {
+      if (v == null) return;
+      const t = `${SERIES[ser.key].label} ปีงบประมาณ ${fys[i]}\n${fmt(v)} ล้านบาท`;
+      const cy = y(v);
+      s += `<circle class="hit" cx="${x(i)}" cy="${cy}" r="4.8" fill="${c}"
+             stroke="#fff" stroke-width="2.6" ${tip(t)}/>`;
+      if (trendLineLabelShow(i, fys.length, series.length))
+        s += trendPointValueLabel(x(i), cy, v, c, { dy: trendLineLabelDy(si, v, cy, P), P, H });
+    });
+  });
+
+  fys.forEach((f,i) => {
+    s += `<text class="axis" x="${x(i)}" y="${H-P.b+20}" text-anchor="middle">${f}</text>`;
+  });
+  s += trendYAxisUnitLabel(P);
+
+  document.getElementById("trendChart").innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${s}</svg>`;
+  document.getElementById("trendCap").textContent = "";
+}
+
+/* ปัดช่วงแกนให้ลงตัวเป็นเลขกลม (1/2/5 x 10^n) แทนการหารช่วงดิบเท่า ๆ กัน */
+function niceScale(lo, hi, n){
+  const step0 = (hi - lo) / n, mag = Math.pow(10, Math.floor(Math.log10(step0)));
+  const norm = step0 / mag;
+  const step = (norm <= 1 ? 1 : norm <= 2 ? 2 : norm <= 5 ? 5 : 10) * mag;
+  const start = Math.floor(lo / step) * step, end = Math.ceil(hi / step) * step;
+  const ticks = [];
+  for (let v = start; v <= end + step * 1e-6; v += step) ticks.push(v);
+  return {lo: start, hi: end, ticks};
+}
+
+// crossFilter = มี DATA.byGroup รายเดือน (กรองทั้งหน้าได้) — แยกจากค่าพยากรณ์
+// mockup ที่มี byGroup + SARIMAX พยากรณ์รวมประเทศใช้ทั้งสองพร้อมกันได้
+function isRealDataMode(){
+  return !!(DATA.meta && DATA.meta.crossFilter);
+}
+function trendHasForecast(){
+  return DATA.trend.some(s => (s.isFc || []).some(Boolean));
+}
+
+function renderTrend(){
+  // ยังไม่มีพยากรณ์รายปี → รายเดือนเมื่อเลือกปี/เดือน ไม่เช่นนั้นรายปี
+  // มีพยากรณ์ (มอคเต็มหรือ mockup ต่อ DB) → กราฟรายปีงบประมาณ + เส้นประ/ช่วง CI
+  if (isRealDataMode() && !trendHasForecast()){
+    if (trendViewMode() === "year") renderTrendYearly(); else renderTrendMonthly();
+    return;
+  }
+  renderTrendLegend();
+  const {fys, series, hasFc} = trendSeries();
+  const { W, H, P } = TREND_SVG;
+  const all = series.flatMap(s => s.values.concat(s.lo || [], s.hi || []))
+                    .filter(v => v != null);
+  const sc = trendScaleY(all, 6);
+  const lo = sc.lo, hi = sc.hi;
+  const x = i => trendPlotX(i, fys.length, W, P);
+  const y = v => P.t + (hi - v) / (hi - lo) * (H - P.t - P.b);
+
+  let s = "";
+  // เส้นกริดและแกนค่า
+  sc.ticks.forEach(v => {
+    const yy = y(v);
+    s += `<line class="gridline" x1="${P.l}" y1="${yy}" x2="${W-P.r}" y2="${yy}"
+           ${v === 0 ? 'stroke="#B3BFCC"' : ''}/>`;
+    s += `<text class="axis" x="${P.l-10}" y="${yy+4}" text-anchor="end">${fmt(v)}</text>`;
+  });
+  // แรเงาช่วงพยากรณ์ พร้อมป้ายกำกับ เพื่อไม่ต้องเดาว่าแถบเทาคืออะไร
+  const fcIdx = series[0].isFc.findIndex(Boolean);
+  if (hasFc && fcIdx > 0){
+    const step = x(fcIdx) - x(fcIdx - 1);
+    const bx = x(fcIdx - 1) + step * 0.42;
+    const bw = W - P.r - bx;
+    s += `<rect x="${bx}" y="${P.t}" width="${bw}" height="${H-P.t-P.b}"
+           fill="${NAVY}" opacity=".05"/>
+          <line x1="${bx}" y1="${P.t}" x2="${bx}" y2="${H-P.b}"
+           stroke="${NAVY}" stroke-width="1" stroke-dasharray="3 4" opacity=".35"/>
+          <text class="axis" x="${bx + Math.min(8, bw * 0.08)}" y="${P.t + 14}"
+           style="fill:${NAVY};opacity:.58;font-size:17px">ช่วงพยากรณ์</text>`;
+  }
+  // แถบความเชื่อมั่น
+  series.forEach(ser => {
+    const pts = [];
+    ser.values.forEach((v,i) => { if (ser.lo[i] != null) pts.push(i); });
+    if (pts.length){
+      const up = pts.map(i => `${x(i)},${y(ser.hi[i])}`);
+      const dn = pts.slice().reverse().map(i => `${x(i)},${y(ser.lo[i])}`);
+      s += `<polygon points="${up.concat(dn).join(" ")}"
+             fill="${SERIES[ser.key].color}" opacity=".13"/>`;
+    }
+  });
+  // เส้นข้อมูลจริง (ทึบ) และเส้นพยากรณ์ (ประ)
+  series.forEach((ser, si) => {
+    const c = SERIES[ser.key].color;
+    const solid = [], dashed = [];
+    ser.values.forEach((v,i) => {
+      if (v == null) return;
+      (ser.isFc[i] ? dashed : solid).push(`${x(i)},${y(v)}`);
+      if (ser.isFc[i] && dashed.length === 1 && i > 0)
+        dashed.unshift(`${x(i-1)},${y(ser.values[i-1])}`);
+    });
+    if (solid.length) s += `<polyline points="${solid.join(" ")}" fill="none"
+                             stroke="${c}" stroke-width="2.8" stroke-linejoin="round"
+                             stroke-linecap="round"/>`;
+    if (dashed.length > 1) s += `<polyline points="${dashed.join(" ")}" fill="none"
+                             stroke="${c}" stroke-width="2.4" stroke-dasharray="7 5"
+                             stroke-linecap="round"/>`;
+    ser.values.forEach((v,i) => {
+      if (v == null) return;
+      const t = `${SERIES[ser.key].label} ปีงบประมาณ ${fys[i]}${ser.isFc[i] ? " (พยากรณ์)" : ""}\n${fmt(v)} ล้านบาท`;
+      // วงกลมขาวรองอีกชั้น ให้จุดข้อมูลไม่จมกับเส้นที่ตัดผ่านกัน
+      s += `<circle class="hit" cx="${x(i)}" cy="${y(v)}" r="4.8"
+             fill="${ser.isFc[i] ? "#fff" : c}" stroke="#fff" stroke-width="2.6" ${tip(t)}/>
+            <circle class="hit" cx="${x(i)}" cy="${y(v)}" r="4.8" fill="none"
+             stroke="${c}" stroke-width="2" ${tip(t)}/>`;
+      if (trendLineLabelShow(i, fys.length, series.length)) {
+        const cy = y(v);
+        s += trendPointValueLabel(x(i), cy, v, c, {
+          dy: trendLineLabelDy(si, v, cy, P), P, H,
+        });
+      }
+    });
+  });
+  // แกนปี
+  fys.forEach((f,i) => {
+    const fc = series[0].isFc[i];
+    s += `<text class="axis" x="${x(i)}" y="${H-P.b+20}" text-anchor="middle">${f}${fc?"F":""}</text>`;
+  });
+  s += trendYAxisUnitLabel(P);
+  document.getElementById("trendChart").innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${s}</svg>`;
+
+  document.getElementById("trendCap").textContent = "";
+}
+
+/* ── ส่วนที่ 3: Treemap ──────────────────────────────────────────── */
+function squarify(vals, x, y, w, h){
+  const out = [], t = vals.reduce((a,b) => a+b, 0);
+  let i = 0, cx = x, cy = y, cw = w, ch = h;
+  while (i < vals.length){
+    const remain = vals.slice(i).reduce((a,b) => a+b, 0) / t;
+    const take = Math.min(2, vals.length - i);
+    const part = vals.slice(i, i+take), ps = part.reduce((a,b)=>a+b,0) / t;
+    if (cw >= ch){
+      const colw = cw * ps / remain; let yy = cy;
+      part.forEach(v => { const hh = ch * v / (ps*t); out.push([cx, yy, colw, hh]); yy += hh; });
+      cx += colw; cw -= colw;
+    } else {
+      const rowh = ch * ps / remain; let xx = cx;
+      part.forEach(v => { const ww = cw * v / (ps*t); out.push([xx, cy, ww, rowh]); xx += ww; });
+      cy += rowh; ch -= rowh;
+    }
+    i += take;
+  }
+  return out;
+}
+
+// period="ALL" (หรือโหมดมอค) ใช้ DATA.share ที่ Python คำนวณมาให้ตรง ๆ — เลือกช่วงเวลา
+// อื่นคำนวณสด ๆ จาก DATA.byGroup (มีรายละเอียดรายเดือนอยู่แล้ว ไม่ต้องขอข้อมูลเพิ่ม)
+function shareForPeriod(period){
+  if (period === "ALL" || !isRealDataMode()) return DATA.share;
+  const rows = clipRowsToPeriod(DATA.byGroup, period);
+  const sums = new Map();
+  rows.forEach(r => sums.set(r.g, (sums.get(r.g) || 0) + r.im + r.ex));
+  const total = [...sums.values()].reduce((a,b) => a+b, 0) || 1;
+  return DATA.groups.map(g => {
+    const v = sums.get(g.code) || 0;
+    return {product_group: g.code, name_th: g.name, trade_value_mb: v, share_pct: v / total * 100};
+  }).sort((a,b) => b.trade_value_mb - a.trade_value_mb);
+}
+
+function treemapStatForCell(w, d){
+  const full = `${fmt(d.trade_value_mb)} ลบ. · ${fmt(d.share_pct,1)}%`;
+  const valOnly = `${fmt(d.trade_value_mb)} ลบ.`;
+  const pct = `${fmt(d.share_pct,1)}%`;
+  const innerW = Math.max(w - 20, 0);
+  const maxChars = innerW / 7.5;
+  if (full.length <= maxChars) return full;
+  if (valOnly.length <= maxChars) return valOnly;
+  if (innerW >= 34) return pct;
+  return "";
+}
+function treemapStatFs(w, stat){
+  if (!stat) return 14;
+  if (stat.includes("·")) return w >= 140 ? 18 : (w >= 105 ? 15 : 14);
+  return w >= 100 ? 16 : 14;
+}
+function treemapCellText(x, y, w, h, d, dim, t, SH, W, H){
+  const dc = dim.trim(), area = w * h;
+  const stat = treemapStatForCell(w, d);
+  const big = area > W * H * 0.10;
+  let s = "";
+  // ช่องแคบสูง (เช่น อาหาร/เครื่องสำอาง) — ชื่อ + มูลค่า/% (ย่อตามความกว้าง)
+  if (w <= 78 && h > 68){
+    const fs = h > 120 ? 17.5 : 16;
+    s += `<text class="hit${dim}" x="${x+9}" y="${y+20}" fill="#fff" ${SH}
+           font-size="${fs}" font-weight="700" data-group="${d.product_group}" ${tip(t)}>${esc(d.name_th)}</text>`;
+    if (h > 52 && stat)
+      s += `<text class="${dc}" x="${x+9}" y="${y+38}" fill="#fff" font-size="${treemapStatFs(w, stat)}"
+             opacity=".95" ${SH} data-group="${d.product_group}" ${tip(t)}>${stat}</text>`;
+    else if (h > 40)
+      s += `<text class="${dc}" x="${x+9}" y="${y+h-8}" fill="#fff" font-size="14"
+             opacity=".95" ${SH} data-group="${d.product_group}" ${tip(t)}>${fmt(d.share_pct,1)}%</text>`;
+    return s;
+  }
+  if (w <= 74 || h <= 26) return s;
+  const titleFs = big ? 21 : (w > 100 ? 17.5 : 16);
+  const title = w > 132 ? `${esc(d.name_th)} (${d.product_group})`
+              : w > 82 ? esc(d.name_th) : d.product_group;
+  s += `<text class="hit${dim}" x="${x+11}" y="${y+22}" fill="#fff" ${SH}
+         font-size="${titleFs}" font-weight="700"
+         data-group="${d.product_group}" ${tip(t)}>${title}</text>`;
+  if (h > 46 && w > 78 && stat){
+    const statFs = treemapStatFs(w, stat);
+    const statY = h > 58 ? y + 42 : y + h - 10;
+    s += `<text class="${dc}" x="${x+11}" y="${statY}" fill="#fff" font-size="${statFs}"
+           opacity=".95" ${SH} data-group="${d.product_group}" ${tip(t)}>${stat}</text>`;
+  } else if (h > 32 && w > 55 && stat){
+    s += `<text class="${dc}" x="${x+11}" y="${y+h-7}" fill="#fff" font-size="14"
+           opacity=".92" ${SH} data-group="${d.product_group}" ${tip(t)}>${stat}</text>`;
+  }
+  return s;
+}
+
+function renderTreemap(){
+  const W = 420, H = 300, items = shareForPeriod(periodTreemap);
+  const rects = squarify(items.map(d => d.trade_value_mb), 0, 0, W, H);
+  const SH = 'style="text-shadow:0 1px 3px rgba(0,0,0,.35)"';
+  const clips = rects.map(([x,y,w,h], i) =>
+    `<clipPath id="tmC${i}"><rect x="${x+1.5}" y="${y+1.5}" width="${Math.max(w-3,0)}" height="${Math.max(h-3,0)}" rx="4"/></clipPath>`
+  ).join("");
+  const s = rects.map(([x,y,w,h], i) => {
+    const d = items[i], col = (DATA.groups.find(g => g.code === d.product_group) || {}).color || NAVY;
+    const dim = selected !== "ALL" && selected !== d.product_group ? " dim" : "";
+    const t = `${d.name_th} (${d.product_group})\n${fmt(d.trade_value_mb)} ล้านบาท · ${fmt(d.share_pct,1)}%`;
+    let inner = `<rect class="hit${dim}" x="${x+1.5}" y="${y+1.5}"
+                  width="${Math.max(w-3,0)}" height="${Math.max(h-3,0)}" rx="4"
+                  fill="${col}" data-group="${d.product_group}" ${tip(t)}/>`;
+    inner += treemapCellText(x, y, w, h, d, dim, t, SH, W, H);
+    return `<g clip-path="url(#tmC${i})">${inner}</g>`;
+  }).join("");
+  document.getElementById("treemap").innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet"><defs>${clips}</defs>${s}</svg>`;
+  document.getElementById("shareCap").textContent = isRealDataMode()
+    ? `มูลค่าการค้ารวม (นำเข้า+ส่งออก) ${periodTreemap ? periodTreemap.from + " ถึง " + periodTreemap.to : "สะสมทั้งช่วงข้อมูล"}`
+    : `มูลค่าการค้ารวม (นำเข้า+ส่งออก) ปีงบประมาณ ${DATA.meta.fyComplete}`;
+}
+
+/* ── ส่วนที่ 4: อันดับการเติบโต ──────────────────────────────────── */
+// เปรียบเทียบมูลค่าการค้า (นำเข้า+ส่งออก) N เดือนล่าสุด กับ N เดือนก่อนหน้านั้น
+// (คนละก้อนกัน ไม่ทับซ้อน) ต่อกลุ่ม — แทนที่ CAGR 3 ปีตายตัวเดิม ด้วยช่วงที่เลือกได้จริง
+// period="ALL" ไม่มี "ช่วงก่อนหน้า" ให้เทียบ คืน null ไปเลย (ให้ fallback ไปโชว์จำนวน
+// ผู้ประกอบการแทน) เช่นเดียวกับกรณีข้อมูลย้อนหลังไม่พอ (< 2 เท่าของ N เดือน)
+function growthForPeriod(period){
+  if (!period) return null;
+  // ตัดเดือนปัจจุบันที่ยังไม่จบออกก่อนเสมอ (ดู completeMonths()) ไม่งั้นถ้าช่วงที่
+  // เลือกดันไปชนเดือนล่าสุดที่ยังไม่จบพอดี จะได้ % เติบโตติดลบหลอก ๆ ทุกกลุ่ม
+  const months = completeMonths();
+  const inRange = months.filter(m => m >= period.from && m <= period.to);
+  const n = inRange.length;
+  const startIdx = months.indexOf(inRange[0]);
+  if (n === 0 || startIdx < n) return null;   // ไม่มีช่วงก่อนหน้ายาวพอให้เทียบ
+  const recentSet = new Set(inRange);
+  const priorSet = new Set(months.slice(startIdx - n, startIdx));
+  const sums = {};
+  DATA.groups.forEach(g => sums[g.code] = {recent: 0, prior: 0});
+  DATA.byGroup.forEach(r => {
+    if (!(r.g in sums)) return;
+    if (recentSet.has(r.m)) sums[r.g].recent += r.im + r.ex;
+    else if (priorSet.has(r.m)) sums[r.g].prior += r.im + r.ex;
+  });
+  const out = {};
+  Object.keys(sums).forEach(g => {
+    const {recent, prior} = sums[g];
+    out[g] = prior > 0 ? (recent - prior) / prior * 100 : 0;
+  });
+  return out;
+}
+
+function renderCagr(){
+  const real = isRealDataMode();
+  const growth = real ? growthForPeriod(periodCagr) : null;
+  const titleEl = document.getElementById("cagrTitle");
+  const W = 420, rowH = 36, L = 152, R = 48, barH = rowH - 15;
+
+  if (real && !growth){
+    // *** เลือก "ทั้งหมด" (ไม่มีช่วงก่อนหน้าให้เทียบ) หรือข้อมูลย้อนหลังไม่พอสำหรับ
+    // ช่วงที่เลือก — โชว์ "จำนวนผู้ประกอบการที่ยังดำเนินการ" ต่อกลุ่มแทนไปก่อน เป็นค่า
+    // ณ ปัจจุบัน ไม่ต้องเทียบย้อนหลังเลย จึงมีให้ดูได้เสมอ ***
+    if (titleEl) titleEl.textContent = "อันดับกลุ่มผลิตภัณฑ์ตามจำนวนผู้ประกอบการที่ยังดำเนินการ";
+    const items = DATA.cagr.slice().sort((a,b) => b.active_entity_count - a.active_entity_count);
+    const H = items.length * rowH + 8;
+    const max = Math.max(...items.map(d => d.active_entity_count)) || 1;
+    const s = items.map((d,i) => {
+      const y = i * rowH + 6, bw = Math.max((d.active_entity_count / max) * (W - L - R), 3);
+      const col = (DATA.groups.find(g => g.code === d.product_group) || {}).color || NAVY;
+      const dim = selected !== "ALL" && selected !== d.product_group ? " dim" : "";
+      const t = `${d.name_th} (${d.product_group})\nผู้ประกอบการที่ยังดำเนินการ ${fmt(d.active_entity_count)} ราย`;
+      return `<text class="axis" x="${L-11}" y="${y+barH/2+5}" text-anchor="end"
+               style="fill:#16222E;font-size:24px;font-weight:700">${esc(d.name_th)} (${d.product_group})</text>
+        <rect x="${L}" y="${y}" width="${W-L-R}" height="${barH}" rx="4" fill="#F1F4F8"/>
+        <rect class="hit${dim}" x="${L}" y="${y}" width="${bw}" height="${barH}" rx="4"
+         fill="${col}" data-group="${d.product_group}" ${tip(t)}/>
+        <text class="barlbl" x="${L+bw+8}" y="${y+barH/2+5}">${fmt(d.active_entity_count)}</text>`;
+    }).join("");
+    document.getElementById("cagrChart").innerHTML =
+      `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${s}</svg>`;
+    document.getElementById("cagrCap").textContent = !periodCagr
+      ? `จำนวนผู้ประกอบการที่ยังดำเนินการ ณ ${DATA.meta.asOf} — เลือกช่วงเวลา (ปุ่มกรวย) เพื่อดูอัตราการเติบโตแทน`
+      : `ข้อมูลย้อนหลังก่อนช่วงที่เลือกยังไม่พอเทียบ — โชว์จำนวนผู้ประกอบการแทนไปก่อน`;
+    return;
+  }
+
+  if (titleEl) titleEl.textContent = "อันดับกลุ่มผลิตภัณฑ์ตามอัตราการเติบโต";
+  const items = (real
+    ? DATA.cagr.map(d => ({...d, cagr_3y_pct: growth[d.product_group] || 0}))
+    : DATA.cagr.slice()
+  ).sort((a,b) => b.cagr_3y_pct - a.cagr_3y_pct);
+  const H = items.length * rowH + 8;
+  // แท่งแบบ diverging จากเส้นศูนย์ — บวกยื่นขวา ลบยื่นซ้าย แทนที่จะยื่นทิศเดียวกันแล้ว
+  // เปลี่ยนแค่สี (ของเดิมทำให้ดูไม่ออกว่าอันไหนโต/หดจริง ต้องอ่านเครื่องหมาย +/- เอา)
+  // ข้อมูลมอคเป็นบวกเสมอ (maxNeg=0) → zeroX ตกที่ L พอดี หน้าตาจะเหมือนแท่งทางเดียวเดิม
+  // เผื่อ LBL_PAD ไว้ทั้ง 2 ฝั่งเสมอ กันป้าย % ของแท่งที่ยาวสุดชนชื่อกลุ่ม/ขอบกราฟ
+  const LBL_PAD = 80;
+  const barAreaW = W - L - R;
+  const drawW = Math.max(barAreaW - LBL_PAD, barAreaW * 0.5);
+  const maxPos = Math.max(0, ...items.map(d => d.cagr_3y_pct));
+  const maxNeg = Math.max(0, ...items.map(d => -d.cagr_3y_pct));
+  const totalRange = (maxPos + maxNeg) || 1;
+  const zeroX = L + LBL_PAD / 2 + drawW * (maxNeg / totalRange);
+  const s = items.map((d,i) => {
+    const y = i * rowH + 6;
+    const neg = d.cagr_3y_pct < 0;
+    const bw = d.cagr_3y_pct === 0 ? 0
+             : Math.max((Math.abs(d.cagr_3y_pct) / totalRange) * drawW, 3);
+    const barX = neg ? zeroX - bw : zeroX;
+    const col = neg ? BAD : ((DATA.groups.find(g => g.code === d.product_group) || {}).color || NAVY);
+    const dim = selected !== "ALL" && selected !== d.product_group ? " dim" : "";
+    const sign = d.cagr_3y_pct > 0 ? "+" : "";
+    const growthLabel = real ? `เติบโต ${periodCagr.from} ถึง ${periodCagr.to}` : "อัตราเติบโตเฉลี่ย 3 ปี";
+    const t = `${d.name_th} (${d.product_group})\n${growthLabel} ${sign}${fmt(d.cagr_3y_pct,1)}%`;
+    const lblX = neg ? barX - 8 : barX + bw + 8;
+    const anchor = neg ? "end" : "start";
+    // รางสีอ่อนเต็มความกว้าง ช่วยให้เทียบสัดส่วนแท่งกับค่าสูงสุดได้ด้วยตา
+    return `<text class="axis" x="${L-11}" y="${y+barH/2+5}" text-anchor="end"
+             style="fill:#16222E;font-size:24px;font-weight:700">${esc(d.name_th)} (${d.product_group})</text>
+      <rect x="${L}" y="${y}" width="${barAreaW}" height="${barH}" rx="4" fill="#F1F4F8"/>
+      <rect class="hit${dim}" x="${barX}" y="${y}" width="${bw}" height="${barH}" rx="4"
+       fill="${col}" data-group="${d.product_group}" ${tip(t)}/>
+      <text class="barlbl" x="${lblX}" y="${y+barH/2+5}" text-anchor="${anchor}">${sign}${fmt(d.cagr_3y_pct,1)}%</text>`;
+  }).join("");
+  // เส้นศูนย์ — ต้องมีให้เห็นชัดว่า 0% อยู่ตรงไหน (โชว์เฉพาะตอนมีทั้งบวกและลบปนกัน)
+  const zeroLine = maxNeg > 0
+    ? `<line x1="${zeroX}" y1="2" x2="${zeroX}" y2="${H-2}" stroke="#B7C2CE" stroke-width="1.2"/>`
+    : "";
+  document.getElementById("cagrChart").innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${s}${zeroLine}</svg>`;
+  document.getElementById("cagrCap").textContent = real
+    ? `% เติบโตของมูลค่าการค้า ${periodCagr.from} ถึง ${periodCagr.to}`
+    : `อัตราเติบโตเฉลี่ย 3 ปี (${DATA.meta.fyComplete-3}–${DATA.meta.fyComplete})`;
+}
+
+/* ── ส่วนที่ 5: ประเทศคู่ค้าสำคัญ ────────────────────────────────── */
+function countryData(){
+  if (selected === "ALL")
+    return DATA.country.map(d => ({name: d.country_name_th, value: d.import_value_mb}));
+  return DATA.countryByGroup
+    .filter(d => d.product_group === selected && d.country_name_th !== "อื่น ๆ")
+    .map(d => ({name: d.country_name_th, value: d.import_value_mb}))
+    .sort((a,b) => b.value - a.value).slice(0,6);
+}
+
+function renderCountry(){
+  const items = countryData();
+  const W = 620, H = 300, P = {t:30, b:36, l:10, r:10};
+  const bw = (W - P.l - P.r) / items.length, max = Math.max(...items.map(d => d.value));
+  const pal = ["#1F6FB2","#12A594","#3E9F55","#E8A317","#7E57C2","#C0392B"];
+  const base = H - P.b, R = 5;
+  let defs = "";
+  const s = items.map((d,i) => {
+    const h = (d.value / max) * (H - P.t - P.b);
+    const x = P.l + i*bw + bw*0.19, w = bw*0.62, y = base - h, cx = x + w/2;
+    const c = pal[i % pal.length], id = "cg" + i;
+    const t = `${d.name}\nมูลค่านำเข้า ${fmt(d.value)} ล้านบาท`;
+    defs += `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="${c}"/><stop offset="1" stop-color="${c}" stop-opacity=".72"/>
+      </linearGradient>`;
+    // มนเฉพาะมุมบน ฐานแท่งต้องชิดเส้นแกนสนิทเพื่อให้เทียบความสูงได้ตรง
+    const r = Math.min(R, h);
+    const path = `M${x},${base} V${y+r} Q${x},${y} ${x+r},${y} H${x+w-r}`
+               + ` Q${x+w},${y} ${x+w},${y+r} V${base} Z`;
+    return `<path class="hit" d="${path}" fill="url(#${id})" ${tip(t)}/>
+      <text class="barlbl" x="${cx}" y="${y-9}" text-anchor="middle">${fmt(d.value)}</text>
+      <text class="axis" x="${cx}" y="${base+21}" text-anchor="middle"
+       style="fill:#16222E;font-size:24px;font-weight:700">${esc(d.name)}</text>`;
+  }).join("");
+  const axis = `<line x1="${P.l}" y1="${base}" x2="${W-P.r}" y2="${base}"
+                 stroke="#C6D1DE" stroke-width="1.4"/>`;
+  document.getElementById("countryChart").innerHTML =
+    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+       <defs>${defs}</defs>${axis}${s}</svg>`;
+  document.getElementById("countryCap").textContent = isRealDataMode()
+    ? "มูลค่านำเข้าสูงสุด 6 อันดับแรก สะสมทั้งช่วงข้อมูล"
+    : `มูลค่านำเข้าสูงสุด 6 อันดับแรก ปีงบประมาณ ${DATA.meta.fyComplete}`;
+}
+
+/* ── ส่วนที่ 6: สถานะข้อมูล ───────────────────────────────────────── */
+function healthParts(h){
+  const sub = h.detail_th || h.detail || "";
+  if(h.display_text != null && h.display_text !== "")
+    return {main: String(h.display_text), sub};
+  if(h.value != null && h.value !== "" && !isNaN(h.value)){
+    const u = h.unit || "";
+    if(u.startsWith("% (") || u.startsWith("%(")){
+      const inner = u.replace(/^%\s*\(/, "").replace(/\)\s*$/, "");
+      return {main: fmt(h.value, 1) + "%", sub: sub || inner};
+    }
+    if(u === "%") return {main: fmt(h.value, 1) + "%", sub};
+    return {main: fmt(h.value, 1) + u, sub};
+  }
+  let u = h.unit || "—";
+  if(u.startsWith("ข้อมูล ณ ")){
+    const d = u.slice("ข้อมูล ณ ".length).trim();
+    u = d || (DATA.meta && DATA.meta.asOf) || "—";
+  }
+  return {main: u, sub};
+}
+function renderHealth(){
+  document.getElementById("healthBody").innerHTML = DATA.health.map(h => {
+    const ok = h.status === "ปกติ";
+    const col = ok ? GOOD : WARN;
+    const {main, sub} = healthParts(h);
+    const t = `${h.metric_name_th}\n${main}${sub ? "\n" + sub : ""}\nสถานะ: ${h.status}`;
+    const subHtml = sub ? `<div class="hrSub">${esc(sub)}</div>` : "";
+    return `<tr class="healthRow" ${tip(t)}>
+      <td colspan="2">
+        <div class="hrLabel">
+          <span class="st" style="background:${col};box-shadow:0 0 0 3px ${ok?GOOD_TINT:WARN_TINT}"></span>
+          ${esc(h.metric_name_th)}</div>
+        <div class="hrVal" style="color:${col}">${esc(main)}</div>${subHtml}
+      </td></tr>`;
+  }).join("");
+}
+
+/* ── ตัวกรอง ─────────────────────────────────────────────────────── */
+function renderChips(){
+  const mk = (code, name, color) =>
+    `<button class="chip" data-group="${code}" aria-pressed="${selected===code}">
+      ${color ? `<span class="dot" style="background:${color}"></span>` : ""}${esc(name)}</button>`;
+  document.getElementById("chips").innerHTML =
+    mk("ALL", "ทั้งหมด", null) + DATA.groups.map(g => mk(g.code, g.name, g.color)).join("");
+}
+
+function setGroup(g){
+  selected = (g === selected && g !== "ALL") ? "ALL" : g;
+  renderAll();
+}
+
+function renderAll(){
+  renderChips(); renderKpis(); renderTrend();
+  renderTreemap(); renderCagr(); renderCountry(); renderHealth();
+  syncPeriodPickers();
+}
+
+/* ── tooltip + คลิกกรอง ──────────────────────────────────────────── */
+const tipEl = document.getElementById("tip");
+document.addEventListener("mousemove", e => {
+  const el = e.target.closest("[data-tip]");
+  if (!el){ tipEl.style.opacity = 0; return; }
+  tipEl.innerHTML = esc(el.getAttribute("data-tip")).replace(/\n/g, "<br>");
+  tipEl.style.opacity = 1;
+  const r = tipEl.getBoundingClientRect();
+  tipEl.style.left = Math.min(e.clientX + 14, innerWidth - r.width - 10) + "px";
+  tipEl.style.top  = Math.max(e.clientY - r.height - 12, 8) + "px";
+});
+document.addEventListener("click", e => {
+  const el = e.target.closest("[data-group]");
+  if (el) setGroup(el.getAttribute("data-group"));
+});
+
+const TH_MONTH_ABBR_HDR = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+function formatThaiDateToday(){
+  const d = new Date();
+  return d.getDate() + " " + TH_MONTH_ABBR_HDR[d.getMonth()] + " " + (d.getFullYear() + 543);
+}
+function renderHeaderAsOf(){
+  const el = document.getElementById("asOf");
+  if (el) el.textContent = formatThaiDateToday();
+}
+renderHeaderAsOf();
+populateYearMonthFilters();
+renderAll();
+</script>
+
+<script src="shared/dash-layout.js" defer></script>
+</div>
+</body>
+</html>

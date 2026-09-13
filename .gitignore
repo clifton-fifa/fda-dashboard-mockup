@@ -1,0 +1,16 @@
+.DS_Store
+.idea/
+.vscode/
+.cursor/
+*.swp
+~$*
+
+# สำรอง local — ไม่จำเป็นบน GitHub (ลบบรรทัดนี้ถ้าต้องการ commit Backup)
+Web Mockup/Backup/
+
+# Python (KNIME scripts / tooling)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env

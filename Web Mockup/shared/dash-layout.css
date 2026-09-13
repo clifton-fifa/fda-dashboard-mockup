@@ -1,0 +1,507 @@
+/* Responsive + overflow สำหรับทุกแดชบอร์ด mockup */
+
+/* มาตรฐานขนาด UI (zoom เดียวกันทุกหน้า d1–d10) — ค่าคงที่ ไม่ใช้ vw/vh */
+body[data-dash] {
+  --fs-base: 28px;
+  --fs-h2: 33px;
+  --fs-kpi: 54px;
+  --fs-kpi-name: 25px;
+  --fs-kpi-unit: 22px;
+  --fs-ui: 24px;
+  --fs-ui-md: 22px;
+  --fs-ui-sm: 20px;
+  --fs-axis: 22px;
+  --fs-chart-lbl: 18px;
+  --fs-chart-data: 14px;
+  --fs-chrome-h1: 30px;
+  --fs-chrome-sub: 20px;
+  --fs-chrome-meta: 19px;
+  --fs-chrome-org: 17px;
+  --fs-filter: 19px;
+  --fs-filter-chip: 18px;
+  --fs-tip: 26px;
+  --fs-period: 20px;
+  --dash-chart-h: 280px;
+  --dash-chart-h-sm: 220px;
+  --dash-chart-h-lg: 340px;
+  --dash-map-h: 520px;
+}
+
+/* d3 — กราฟแถวคู่สูงกว่ามาตรฐาน (เดิม 400px ใน mockup) */
+body[data-dash="3"] {
+  --dash-chart-h-lg: 400px;
+}
+
+body[data-dash] .dash-page,
+body[data-dash]:not(.dash-with-sidebar) {
+  font-size: var(--fs-base);
+}
+
+/* ไม่แสดงคำอธิบายคลิกกรอง / แคปชันกราฟที่ว่าง */
+body[data-dash] .chart-click-hint,
+body[data-dash] .card > .cap:empty {
+  display: none !important;
+}
+
+/* ใน iframe (CleansingConsole) ไม่มี .dash-page wrapper */
+body[data-dash]:not(.dash-with-sidebar) .chart-box {
+  position: relative;
+  width: 100%;
+  height: var(--dash-chart-h) !important;
+  min-height: var(--dash-chart-h);
+  max-height: var(--dash-chart-h);
+}
+
+body[data-dash]:not(.dash-with-sidebar) .chart-box.sm {
+  height: var(--dash-chart-h-sm) !important;
+  min-height: var(--dash-chart-h-sm);
+  max-height: var(--dash-chart-h-sm);
+}
+
+body[data-dash]:not(.dash-with-sidebar) .chart-box.lg {
+  height: var(--dash-chart-h-lg) !important;
+  min-height: var(--dash-chart-h-lg);
+  max-height: var(--dash-chart-h-lg);
+}
+
+body[data-dash="9"]:not(.dash-with-sidebar) .chart-box.lg {
+  height: var(--dash-map-h) !important;
+  min-height: var(--dash-map-h);
+  max-height: var(--dash-map-h);
+}
+
+body[data-dash]:not(.dash-with-sidebar) #mapEl {
+  height: var(--dash-map-h) !important;
+  min-height: var(--dash-map-h);
+  max-height: var(--dash-map-h);
+}
+
+.dash-page {
+  flex: 1;
+  min-width: 0;
+  max-width: 100%;
+  overflow-x: visible;
+}
+
+.dash-page main,
+.dash-page .kpis {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.dash-page .card {
+  min-width: 0;
+  overflow: hidden;
+  align-self: start;
+}
+
+body[data-dash]:not(.dash-with-sidebar) main .card {
+  align-self: start;
+}
+
+/* การ์ดคู่ในแถวเดียวกัน — สูงเท่ากัน (ตาราง + โดนัท) */
+body[data-dash] main .card.card--row-stretch,
+body[data-dash]:not(.dash-with-sidebar) main .card.card--row-stretch {
+  align-self: stretch;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+body[data-dash] main .card.card--row-stretch > h2,
+body[data-dash] main .card.card--chart-grow > h2,
+body[data-dash] main .card:has(.chart-box--donut-fill) > h2 {
+  flex: 0 0 auto;
+}
+
+body[data-dash] main .card.card--chart-grow > .cap,
+body[data-dash] main .card.card--chart-grow > .trendLegend,
+body[data-dash] main .card.card--chart-grow > .table-scroll:first-of-type {
+  flex: 0 0 auto;
+}
+
+/* การ์ด chart-grow เดี่ยว — คงความสูงมาตรฐาน */
+body[data-dash] main .card.card--chart-grow:not(.card--row-stretch) .chart-box,
+body[data-dash]:not(.dash-with-sidebar) main .card.card--chart-grow:not(.card--row-stretch) .chart-box,
+.dash-page .card.card--chart-grow:not(.card--row-stretch) .chart-box {
+  flex: 0 0 auto;
+}
+
+/* การ์ดคู่แถวเดียวกัน — กราฟ (ไม่ใช่โดนัท) ขยายเต็มใต้หัวข้อ ไม่หดต่ำกว่า lg/มาตรฐาน */
+body[data-dash] main .card.card--row-stretch.card--chart-grow .chart-box:not(.chart-box--donut-fill),
+body[data-dash]:not(.dash-with-sidebar)
+  main
+  .card.card--row-stretch.card--chart-grow
+  .chart-box:not(.chart-box--donut-fill),
+.dash-page .card.card--row-stretch.card--chart-grow .chart-box:not(.chart-box--donut-fill) {
+  flex: 1 1 auto;
+  height: auto !important;
+  min-height: var(--dash-chart-h);
+  max-height: none !important;
+}
+
+body[data-dash] main .card.card--row-stretch.card--chart-grow .chart-box.lg:not(.chart-box--donut-fill),
+body[data-dash]:not(.dash-with-sidebar)
+  main
+  .card.card--row-stretch.card--chart-grow
+  .chart-box.lg:not(.chart-box--donut-fill),
+.dash-page .card.card--row-stretch.card--chart-grow .chart-box.lg:not(.chart-box--donut-fill) {
+  min-height: var(--dash-chart-h-lg);
+}
+
+body[data-dash] main .card.card--chart-grow #mapEl,
+body[data-dash]:not(.dash-with-sidebar) main .card.card--chart-grow #mapEl,
+.dash-page .card.card--chart-grow #mapEl {
+  flex: 0 0 auto;
+  height: var(--dash-map-h) !important;
+  min-height: var(--dash-map-h);
+  max-height: var(--dash-map-h);
+}
+
+/* โดนัทในการ์ดคู่แถวเดียวกัน — ขยายเต็มใต้หัวข้อ (d10, d2 สัดส่วน ฯลฯ) */
+body[data-dash] main .card.card--row-stretch.card--chart-grow .chart-box.chart-box--donut-fill,
+body[data-dash]:not(.dash-with-sidebar)
+  main
+  .card.card--row-stretch.card--chart-grow
+  .chart-box.chart-box--donut-fill,
+.dash-page .card.card--row-stretch.card--chart-grow .chart-box.chart-box--donut-fill {
+  flex: 1 1 auto;
+  min-height: var(--dash-chart-h-lg);
+  height: auto !important;
+  max-height: none !important;
+}
+
+body[data-dash] main .card.card--row-stretch.card--chart-grow:has(#cTier) .chart-box.chart-box--donut-fill {
+  flex: 1 1 auto;
+  min-height: var(--dash-chart-h);
+  height: auto !important;
+  max-height: none !important;
+}
+
+body[data-dash] main .card.card--chart-grow .quadrant-grid {
+  flex: 1 1 0;
+  min-height: 160px;
+  align-content: stretch;
+}
+
+body[data-dash] main .card.card--body-grow > ol,
+body[data-dash] main .card.card--body-grow > .card-body-fill {
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  min-height: 120px;
+  margin-top: 8px;
+  margin-bottom: 4px;
+}
+
+body[data-dash] main .card.card--body-grow .quadrant-grid {
+  flex: 1 1 0;
+  min-height: 160px;
+  align-content: stretch;
+  margin-top: 8px;
+}
+
+body[data-dash="6"] main .card:has(#cTier) {
+  min-height: 340px;
+}
+
+.dash-page .chart-box {
+  position: relative;
+  width: 100%;
+  height: var(--dash-chart-h) !important;
+  min-height: var(--dash-chart-h);
+  max-height: var(--dash-chart-h);
+}
+
+.dash-page .chart-box.sm {
+  height: var(--dash-chart-h-sm) !important;
+  min-height: var(--dash-chart-h-sm);
+  max-height: var(--dash-chart-h-sm);
+}
+
+.dash-page .chart-box.lg {
+  height: var(--dash-chart-h-lg) !important;
+  min-height: var(--dash-chart-h-lg);
+  max-height: var(--dash-chart-h-lg);
+}
+
+/* d9: กราฟจัดอันดับ / แผนที่ สูงกว่ามาตรฐาน */
+.dash-page .chart-box.lg.tall,
+body[data-dash="9"] .dash-page .chart-box.lg {
+  height: var(--dash-map-h) !important;
+  min-height: var(--dash-map-h);
+  max-height: var(--dash-map-h);
+}
+
+.dash-page .chart-box canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100% !important;
+}
+
+body[data-dash]:not(.dash-with-sidebar) .chart-box canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+/* โดนัท/พาย — จำกัดความกว้างในการ์ดกว้าง ให้วงใหญ่พอดีกับความสูง */
+body[data-dash] .chart-box.chart-box--donut {
+  height: var(--dash-chart-h) !important;
+  min-height: var(--dash-chart-h);
+  max-height: var(--dash-chart-h);
+  max-width: min(100%, 420px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+body[data-dash] .chart-box.chart-box--donut.chart-box--compact {
+  height: var(--dash-chart-h-sm) !important;
+  min-height: var(--dash-chart-h-sm);
+  max-height: var(--dash-chart-h-sm);
+  max-width: min(100%, 360px);
+}
+
+body[data-dash] .chart-box.chart-box--donut.lg {
+  height: var(--dash-chart-h-lg) !important;
+  min-height: var(--dash-chart-h-lg);
+  max-height: var(--dash-chart-h-lg);
+  max-width: min(100%, 440px);
+}
+
+/* โดนัทเต็มพื้นที่การ์ด (ไม่ย่อกลางการ์ดกว้าง) — d10 คู่ตาราง, d6 แถวเต็ม */
+body[data-dash] .chart-box.chart-box--donut.chart-box--donut-fill {
+  max-width: 100%;
+  width: 100%;
+  margin-left: 0;
+  margin-right: 0;
+}
+
+body[data-dash="6"] .chart-box.chart-box--donut-fill {
+  max-width: min(100%, 560px);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.dash-page #mapEl {
+  height: var(--dash-map-h) !important;
+  min-height: var(--dash-map-h);
+  max-height: var(--dash-map-h);
+}
+
+/* d1 — SVG ให้สูงเท่ากราฟ Chart.js */
+.dash-page #trendChart svg,
+.dash-page #treemap svg,
+.dash-page #cagrChart svg,
+.dash-page #countryChart svg {
+  height: var(--dash-chart-h) !important;
+  max-height: var(--dash-chart-h) !important;
+  width: 100% !important;
+}
+
+.dash-page .kpis {
+  grid-template-columns: repeat(auto-fit, minmax(228px, 1fr)) !important;
+}
+
+.dash-page main {
+  max-width: 2000px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  box-sizing: border-box;
+  overflow-x: auto;
+}
+
+/* ห้ามตั้ง table.data เป็น display:block — แถวจะกว้างแค่เนื้อหา ไม่เต็มการ์ด
+   ตารางกว้างเกินให้เลื่อนใน wrapper (.table-scroll หรือ div ที่มี overflow) แทน */
+.dash-page .table-scroll,
+.dash-page .table-wrap {
+  overflow-x: auto;
+  max-width: 100%;
+}
+
+/* ── ตารางข้อมูล: หัวคอลัมน์จัดแนวตรงข้อมูล + เส้นคั่นหัวข้อ ── */
+body[data-dash] .card > h2 {
+  padding-bottom: 10px;
+  margin-bottom: 0;
+  border-bottom: 1px solid var(--line, #d8e0ea);
+}
+
+/* d7 — เลือกผลิตภัณฑ์: ไม่ใช้เส้นคั่นใต้หัวข้อ + ให้รายการค้นหาลอยทับได้ */
+body[data-dash] .card:has(.prod-picker),
+.dash-page .card:has(.prod-picker) {
+  overflow: visible;
+}
+
+body[data-dash] .card:has(.prod-picker):focus-within,
+.dash-page .card:has(.prod-picker):focus-within {
+  z-index: 60;
+  position: relative;
+}
+
+body[data-dash] .card:has(.prod-picker) > h2 {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+body[data-dash] .card > .table-scroll,
+body[data-dash] .card > div.table-scroll,
+body[data-dash] .card > .rss-table-wrap,
+body[data-dash] .card > #productTableWrap,
+body[data-dash] .card > #compTableWrap {
+  margin-top: 12px;
+}
+
+body[data-dash] table.data {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: auto;
+}
+
+body[data-dash] table.data thead th {
+  text-align: left;
+  vertical-align: middle;
+  font-weight: 700;
+  background: #f7f9fc;
+  color: var(--muted, #5b6b7e);
+  border-bottom: 2px solid var(--line, #d8e0ea);
+  border-right: 1px solid var(--line2, #eaeff4);
+  padding: 10px 12px;
+}
+
+body[data-dash] table.data thead th:last-child {
+  border-right: none;
+}
+
+body[data-dash] table.data tbody td {
+  vertical-align: middle;
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--line2, #eaeff4);
+  border-right: 1px solid var(--line2, #eaeff4);
+}
+
+body[data-dash] table.data tbody td:last-child {
+  border-right: none;
+}
+
+body[data-dash] table.data th.num,
+body[data-dash] table.data td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+body[data-dash] table.data th.cen,
+body[data-dash] table.data td.cen {
+  text-align: center;
+}
+
+/* ป้าย "ข้อมูลจำลอง" ใต้ชื่อหน่วยงานใน header (ข้อความเต็มอยู่ใน title) */
+header .right .dash-mock-badge {
+  display: inline-block;
+  margin-top: 3px;
+  padding: 0 8px;
+  border: 1px solid var(--gold, #b7922e);
+  border-radius: 4px;
+  background: rgba(183, 146, 46, 0.18);
+  color: #f3dfa6;
+  font-size: var(--fs-chrome-org, 17px);
+  font-weight: 700;
+  line-height: 1.25;
+  white-space: nowrap;
+  cursor: help;
+}
+
+/* แถบตัวกรอง → shared/dash-filters.css (โหลดหลังไฟล์นี้) */
+
+/* ลดทีละขั้นเมื่อจอแคบ — ทุกแดชใช้ชุดเดียวกัน */
+@media (max-width: 1100px) {
+  body[data-dash] {
+    --fs-base: 24px;
+    --fs-h2: 28px;
+    --fs-kpi: 46px;
+    --fs-kpi-name: 22px;
+    --fs-kpi-unit: 20px;
+    --fs-ui: 21px;
+    --fs-ui-md: 20px;
+    --fs-chrome-h1: 26px;
+    --dash-chart-h: 260px;
+    --dash-chart-h-lg: 320px;
+    --dash-map-h: 480px;
+  }
+
+  .dash-page [class*="span"],
+  .dash-page .trend,
+  .dash-page .treemapCard,
+  .dash-page .cagrCard,
+  .dash-page .countryCard,
+  .dash-page .healthCard {
+    grid-column: span 12 !important;
+  }
+
+  .dash-page main {
+    padding-left: 12px;
+    padding-right: 12px;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 720px) {
+  body[data-dash] {
+    --fs-base: 20px;
+    --fs-h2: 24px;
+    --fs-kpi: 40px;
+    --fs-kpi-name: 20px;
+    --fs-chrome-h1: 24px;
+    --dash-chart-h: 240px;
+    --dash-chart-h-sm: 200px;
+    --dash-chart-h-lg: 280px;
+    --dash-map-h: 360px;
+  }
+
+  body[data-dash] .filters {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+
+  body[data-dash] .static-filters {
+    gap: 8px 10px !important;
+  }
+
+  body[data-dash] .static-filters span {
+    padding-left: 8px;
+  }
+}
+
+/* เปลี่ยนหน้า — fade
+   ตอนพักต้องเป็น transform: none — ถ้ามี transform ค้าง position:fixed ข้างใน (tooltip #tip) จะอิงกรอบนี้แทนหน้าจอ
+   isolation รักษา stacking context เดิมที่ transform เคยสร้างไว้ */
+.dash-page {
+  opacity: 1;
+  transform: none;
+  isolation: isolate;
+  transition: opacity 0.26s ease, transform 0.26s ease;
+}
+
+.dash-page.dash-page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: none;
+}
+
+/* ระยะเวลาต้องตรงกับ EXIT_MS ใน dash-sidebar.js */
+.dash-page.dash-page-exiting {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition-duration: 0.12s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dash-page,
+  .dash-page.dash-page-exiting,
+  .dash-page.dash-page-enter {
+    transition: none;
+    transform: none;
+  }
+}

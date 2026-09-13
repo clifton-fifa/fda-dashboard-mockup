@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="th"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>หน้าจอที่ 5 — เมทริกซ์โอกาสเชิงกฎระเบียบ | อย.</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script src="shared/dash-chart-defaults.js"></script>
+<style>
+:root{--navy:#0E2A4F;--gold:#B7922E;--ink:#1A2430;--muted:#5B6B7E;--line:#D8E0EA;--line2:#EAEFF4;
+--canvas:#F2F4F7;--card:#FFF;--good:#1F7A45;--warn:#A66A00;--bad:#B4382A;--sh:0 1px 3px rgba(18,48,91,.08);--r:8px;--fs-kpi:54px;--fs-kpi-name:25px;--fs-kpi-unit:22px;--fs-base:28px;--fs-h2:33px;--fs-chrome-h1:30px;--fs-chrome-sub:20px;--fs-chrome-meta:19px;--fs-chrome-org:17px;--fs-filter:19px;--fs-filter-chip:18px;--fs-ui:24px;--fs-ui-md:22px;--fs-ui-sm:20px;--fs-axis:22px;--fs-chart-lbl:18px;--fs-chart-data:14px;--fs-tip:26px;--fs-period:20px}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{background:var(--canvas);color:var(--ink);font-family:"TH Sarabun New","TH SarabunPSK","Sarabun","Noto Sans Thai","Leelawadee UI",system-ui,-apple-system,sans-serif;font-size:var(--fs-base);line-height:1.5;font-weight:600;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+header{background:var(--navy);color:#fff;padding:11px 22px 10px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:3px solid var(--gold)}
+header .brand{display:flex;align-items:center;gap:11px}
+header .brandLogo{width:46px;height:46px;object-fit:contain;background:#fff;border-radius:6px;padding:4px;box-shadow:0 0 0 1px rgba(255,255,255,.25)}
+header h1{margin:0;font-size:var(--fs-chrome-h1);font-weight:700;line-height:1.22}
+header .sub{color:#B7C7DC;font-size:var(--fs-chrome-sub);margin-top:2px;line-height:1.3}
+header .right{text-align:right;font-size:var(--fs-chrome-meta);line-height:1.35}
+header .org{color:#B7C7DC;font-size:var(--fs-chrome-org);margin-top:2px;line-height:1.3}
+header .right .asof{font-weight:600}
+.filters{background:#fff;border-bottom:1px solid var(--line);padding:6px 16px 6px 22px;display:grid;grid-template-columns:1fr auto;gap:8px 10px;align-items:center;position:sticky;top:0;z-index:20}
+.static-filters{grid-column:1;justify-self:start;min-width:0;display:flex;gap:12px;color:var(--muted);font-size:var(--fs-filter);flex-wrap:wrap;align-items:center}
+.static-filters span{white-space:nowrap;padding-left:12px;border-left:1px solid var(--line)}
+.static-filters span:first-child{padding-left:0;border-left:none}
+.static-filters select{font:inherit;font-size:var(--fs-filter-chip);color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 7px;margin:0 2px}
+.filterGroups{grid-column:2;justify-self:end;display:flex;align-items:center;gap:6px;flex-wrap:nowrap;width:max-content;max-width:100%}
+.filters .lbl{color:var(--muted);font-size:var(--fs-filter);font-weight:600;white-space:nowrap;flex:none}
+#chips,#regionChips{display:flex;flex:0 0 auto;gap:5px;flex-wrap:nowrap;justify-content:flex-end;min-width:0;padding:2px 0}
+.chip{border:1px solid var(--line);background:#fff;border-radius:6px;padding:3px 8px;font:inherit;font-size:var(--fs-filter-chip);cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:.12s;font-weight:600}
+.filters .chip{padding:3px 8px;font-size:var(--fs-filter-chip);gap:4px;border-radius:5px}
+.chip:hover{border-color:#9FB6D0}
+.chip[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.reset-btn{font:inherit;font-size:var(--fs-filter-chip);font-weight:600;color:var(--navy);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 10px;cursor:pointer}
+.reset-btn:hover{background:var(--line2)}
+table.data tr.clickable{cursor:pointer}
+table.data tr.clickable:hover{background:#F0F6FC}
+table.data tr.active-row{background:#EAF4FD;font-weight:600}
+.chart-click-hint{display:flex;align-items:center;gap:7px;font-size:var(--fs-ui-sm);color:var(--muted);margin:0 0 8px 13px}
+.icon-hint{width:14px;height:14px;color:var(--muted);flex-shrink:0}
+main{padding:16px 20px 10px;display:grid;grid-template-columns:repeat(12,1fr);gap:14px;max-width:2000px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px 13px;min-width:0;box-shadow:var(--sh)}
+.card>h2{margin:0;font-size:var(--fs-h2);font-weight:700;display:flex;align-items:center;gap:9px}
+.card>h2::before{content:"";width:4px;height:20px;border-radius:2px;background:var(--navy)}
+.card>.cap{margin:5px 0 12px 13px;color:var(--muted);font-size:var(--fs-ui);line-height:1.5}
+.span12{grid-column:span 12}.span8{grid-column:span 8}.span7{grid-column:span 7}.span6{grid-column:span 6}
+.span5{grid-column:span 5}.span4{grid-column:span 4}.span3{grid-column:span 3}
+.kpis{grid-column:span 12;display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:0 0 12px;box-shadow:var(--sh);overflow:hidden}
+.kpi .bar{height:4px}.kpi .body{padding:11px 15px 0}
+.kpi .name{color:var(--muted);font-size:var(--fs-kpi-name);font-weight:600}
+.kpi .val{font-size:var(--fs-kpi);font-weight:700;line-height:1.08;font-variant-numeric:tabular-nums}
+.kpi .unit{color:var(--muted);font-size:var(--fs-kpi-unit)}
+.kpi .foot{padding:8px 15px 0;margin-top:8px;border-top:1px solid var(--line2);display:flex;justify-content:space-between;font-size:var(--fs-ui-sm)}
+.kpi .yoy{font-weight:700;border-radius:999px;padding:2px 8px}
+.yoy-up{background:#E7F2EB;color:var(--good)}.yoy-down{background:#FAEAE7;color:var(--bad)}.yoy-flat{background:#FBF1DF;color:var(--warn)}
+table.data{width:100%;border-collapse:collapse;font-size:var(--fs-ui-md)}
+table.data th,table.data td{padding:9px 10px;border-bottom:1px solid var(--line2);text-align:left}
+table.data th{background:#F7F9FC;color:var(--muted);font-weight:600;position:sticky;top:0}
+table.data td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:var(--fs-ui-sm);font-weight:700}
+.badge-star{background:#E8F4FD;color:#1F6FB2}.badge-rise{background:#E6F4EC;color:#1F7A45}
+.badge-stable{background:#F0F2F5;color:#5B6B7E}.badge-warn{background:#FFF4E0;color:#A66A00}
+.badge-pass{background:#E6F4EC;color:#1F7A45}
+.chart-box{position:relative;height:280px}.chart-box.sm{height:220px}.chart-box.lg{height:340px}
+.quadrant-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.quadrant{border:1px dashed var(--line);border-radius:8px;padding:12px;font-size:var(--fs-ui-sm);background:#FAFBFC}
+.quadrant h4{margin:0 0 6px;font-size:var(--fs-ui-md);color:var(--navy)}
+.scenario-row{display:flex;align-items:center;gap:12px;margin:10px 0;font-size:var(--fs-ui-md)}
+.scenario-row input[type=range]{flex:1;max-width:320px}
+.prod-select{width:100%;max-width:480px;padding:8px 12px;border:1px solid var(--line);border-radius:6px;font:inherit;font-size:var(--fs-ui-md);margin-bottom:12px}
+footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify-content:space-between;color:var(--muted);font-size:var(--fs-ui-md);gap:16px;flex-wrap:wrap}
+@media(max-width:1100px){.span8,.span7,.span6,.span5,.span4,.span3{grid-column:span 12}}
+@media(max-width:980px){.filters{grid-template-columns:1fr;gap:8px}.static-filters,.filterGroups{grid-column:1;justify-self:stretch}#chips,#regionChips{justify-content:flex-start}}
+@media(max-width:700px){header h1{font-size:26px}header .right{text-align:left}}
+</style>
+  <link rel="stylesheet" href="shared/dash-sidebar.css">
+  <link rel="stylesheet" href="shared/dash-layout.css">
+<link rel="stylesheet" href="shared/dash-filters.css">
+</head><body data-dash="5">
+<div id="dashPage"><script src="shared/dash-sidebar.js"></script>
+<header><div class="brand"><span class="dash-header-logo"><img class="brandLogo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJiIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNDAiIGhlaWdodD0iMjQwIiB2aWV3Qm94PSIwIDAgMjQwIDI0MCI+PGRlZnM+PHN0eWxlPi5ke2ZpbGw6IzAwNGNhZjt9PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImMiPjxwYXRoIGNsYXNzPSJkIiBkPSJtMTE5LjE1LDBjLTIzLjcuMTctNDYuODEsNy4zNS02Ni40MywyMC42NC0xOS42MiwxMy4yOS0zNC44NywzMi4wOS00My44Miw1NC4wM0MtLjA2LDk2LjYxLTIuMzIsMTIwLjcxLDIuNDEsMTQzLjkzYzQuNzMsMjMuMjIsMTYuMjIsNDQuNTIsMzMuMDQsNjEuMjIsMTYuODIsMTYuNywzOC4yLDI4LjA0LDYxLjQ1LDMyLjYsMjMuMjUsNC41Niw0Ny4zNCwyLjEzLDY5LjIyLTYuOTcsMjEuODgtOS4xMSw0MC41Ny0yNC40OSw1My43Mi00NC4yLDEzLjE1LTE5LjcyLDIwLjE2LTQyLjg4LDIwLjE2LTY2LjU4LS4xMS0zMS45NC0xMi45MS02Mi41Mi0zNS41OC04NS4wM0MxODEuNzYsMTIuNDcsMTUxLjA5LS4xMSwxMTkuMTUsMFptMCwyMjQuN2MtMTQuOS4xLTI5LjY0LTIuOTctNDMuMjYtOS4wMi0xMy42MS02LjA1LTI1Ljc4LTE0LjkzLTM1LjY5LTI2LjA2LTkuOTEtMTEuMTItMTcuMzMtMjQuMjMtMjEuNzYtMzguNDUtNC40NC0xNC4yMi01Ljc5LTI5LjIyLTMuOTctNDQuMDFoNzAuNTljMS44LDAsMi4zNS41OCwyLjM1LDIuNDUtLjA1LDIxLjMxLS4wNiw0Mi42MS0uMDQsNjMuOTIsMCwuNTUuMjEsMS4xNi0uMzgsMS43OGwtMjYuNTItMjkuNTNoOC44OHEzLjEsMCwzLjExLTMuMTljMC0zLjEyLS4wNS02LjI0LDAtOS4zNS4wMy0xLjU1LS40OC0yLjI1LTIuMDQtMi4yNS0xMy4wOS4wMy0yNi4xOCwwLTM5LjI2LjAyLS41NCwwLTEuMjktLjE1LTEuNDcuNTEtLjE5LjY2LjQ4LDEuMTQuOSwxLjYsNi45Miw3LjY1LDEzLjg1LDE1LjMsMjAuNzgsMjIuOTUsMTMuNjcsMTUuMTIsMjcuMzQsMzAuMjUsNDEsNDUuMzcsMi43MSwyLjk5LDIuMDQsMi45NCw0LjY2LDAsMTMuNDItMTUuMTgsMjYuODItMzAuMzksNDAuMTktNDUuNjMsOS4xOS0xMC40MiwxOC4zOS0yMC44MywyNy42LTMxLjIzLDguOTUtMTAuMTMsMTcuODktMjAuMjYsMjYuODMtMzAuMzkuMTgtLjE5LjMzLS4zOS40Ny0uNi4yNS0uNDIuODgtLjcyLjY3LTEuMjlzLS44Ny0uMzgtMS4zMy0uMzhjLTQuNDksMC04Ljk3LDAtMTMuNDYtLjAyLS40Ny0uMDEtLjk0LjA4LTEuMzYuMjgtLjQzLjItLjguNDktMS4wOS44Ni04LjI4LDkuMzUtMTYuNTcsMTguNjktMjQuODcsMjguMDQtNS4wNyw1LjcyLTEwLjE0LDExLjQ1LTE1LjIsMTcuMTgtMTAuNTcsMTEuOTItMjEuMTUsMjMuODQtMzEuNzIsMzUuNzUtLjMuNDItLjU3Ljg2LS44LDEuMzMtLjI2LS4zMy0uNDUtLjcxLS41Ni0xLjEyLS4xMS0uNDEtLjEzLS44My0uMDYtMS4yNS0uMDItOC4xOC0uMDItMTYuMzcsMC0yNC41NSwwLTIuNTEuMDgtMi41OSwyLjU2LTIuNiw0LjExLDAsOC4yMy0uMDQsMTIuMzQsMCwxLjUyLjAyLDIuMTEtLjUzLDIuMDgtMi4xNi0uMDktMy41MS0uMDktNy4wMSwwLTEwLjUyLjA0LTEuNjQtLjU5LTIuMTYtMi4wOC0yLjE0LTQuMTcuMDYtOC4zNC0uMDUtMTIuNTMuMDUtMS43Ny4wNC0yLjQyLS41OS0yLjM5LTIuNDYuMDgtNi4zLjA4LTEyLjYsMC0xOC45LS4wMi0xLjgzLjUyLTIuNTQsMi4zNC0yLjUsNC4yNC4xMSw4LjQ4LDAsMTIuNzEuMDYsMS42My4wMywyLjIyLS42NCwyLjE5LTIuMy0uMDYtMy40NCwwLTYuODksMC0xMC4zMywwLTIuNjgtLjAzLTIuNy0yLjYzLTIuN0gxNy41M2M1LjEyLTE4Ljk4LDE1LjQ1LTM2LjE0LDI5LjgyLTQ5LjU2LDE0LjM3LTEzLjQxLDMyLjIxLTIyLjU0LDUxLjQ5LTI2LjM0LDE5LjI4LTMuOCwzOS4yNS0yLjE0LDU3LjY0LDQuODEsMTguMzksNi45NSwzNC40NiwxOC45MSw0Ni40MSwzNC41MiwxMS45NSwxNS42MSwxOS4yOSwzNC4yNSwyMS4xOSw1My44MiwxLjksMTkuNTYtMS43MSwzOS4yNy0xMC40Miw1Ni44OS04LjcxLDE3LjYyLTIyLjE4LDMyLjQ1LTM4Ljg4LDQyLjgyLTE2LjcsMTAuMzYtMzUuOTcsMTUuODUtNTUuNjMsMTUuODNaIi8+PC9nPjwvc3ZnPg==" alt="อย."></span><div>
+<h1>ระบบวิเคราะห์ข้อมูลเศรษฐกิจผลิตภัณฑ์สุขภาพ</h1>
+<div class="sub">หน้าจอที่ 5 · เมทริกซ์โอกาสเชิงกฎระเบียบ (Regulatory Opportunity Matrix)</div></div></div>
+<div class="right"><div class="asof">อัปเดตล่าสุด <span id="asOf"></span></div><div class="org">สำนักงานคณะกรรมการอาหารและยา</div><div class="dash-mock-badge" title="ตัวเลขในหน้านี้จัดทำขึ้นเพื่อสาธิตรูปแบบการแสดงผลเท่านั้น ไม่ใช่ข้อมูลจริงของสำนักงานคณะกรรมการอาหารและยา โปรดอย่านำไปอ้างอิง">ข้อมูลจำลอง</div></div></header>
+<div class="filters">
+  <div class="static-filters">
+    <button type="button" class="dash-menu-btn" aria-label="แสดงเมนู" title="แสดงเมนู" aria-expanded="false"><i class="dash-menu-icon" aria-hidden="true"></i></button>
+    <span>ปี: <select id="fySel"><option value="2562">2562</option><option value="2563">2563</option><option value="2564">2564</option><option value="2565">2565</option><option value="2566">2566</option><option value="2567">2567</option><option value="2568" selected>2568</option><option value="2569">2569</option></select></span>
+    <span>เดือน: <select id="filterMonth"><option value="ALL" selected>ทั้งหมด</option></select></span><span>ธุรกรรม <select id="txnSel"><option value="all">ทั้งหมด</option><option value="import">นำเข้า</option><option value="export">ส่งออก</option></select></span>
+    <span>จังหวัด <select id="provSel"><option value="ทั่วประเทศ">ทั่วประเทศ</option><option value="กรุงเทพฯ">กรุงเทพฯ</option><option value="นนทบุรี">นนทบุรี</option><option value="สมุทรปราการ">สมุทรปราการ</option><option value="เชียงใหม่">เชียงใหม่</option><option value="ชลบุรี">ชลบุรี</option><option value="ขอนแก่น">ขอนแก่น</option></select></span>
+    <span><button type="button" class="reset-btn" id="resetFiltersBtn">คืนค่า</button></span>
+    
+  </div>
+  <div class="filterGroups">
+    <span class="lbl">กลุ่มผลิตภัณฑ์:</span>
+    <span id="chips"><button type="button" class="chip" aria-pressed="true" data-g="ALL"><span class="dot" style="background:#12305B"></span>ทั้งหมด</button>
+<button type="button" class="chip" aria-pressed="false" data-g="DRUG"><span class="dot" style="background:#1F6FB2"></span>ยา</button>
+<button type="button" class="chip" aria-pressed="false" data-g="MDC"><span class="dot" style="background:#12A594"></span>เครื่องมือแพทย์</button>
+<button type="button" class="chip" aria-pressed="false" data-g="FOOD"><span class="dot" style="background:#3E9F55"></span>อาหาร</button>
+<button type="button" class="chip" aria-pressed="false" data-g="CMT"><span class="dot" style="background:#E8A317"></span>เครื่องสำอาง</button>
+<button type="button" class="chip" aria-pressed="false" data-g="HERB"><span class="dot" style="background:#7E57C2"></span>สมุนไพร</button>
+<button type="button" class="chip" aria-pressed="false" data-g="TXC"><span class="dot" style="background:#C0392B"></span>วัตถุอันตราย</button>
+<button type="button" class="chip" aria-pressed="false" data-g="NCT"><span class="dot" style="background:#7F8C8D"></span>วัตถุเสพติด</button></span>
+  </div>
+</div>
+
+<main>
+<section class="kpis" id="qKpi"></section>
+<section class="card span8 card--row-stretch card--chart-grow"><h2>เมทริกซ์คะแนนดาวรุ่ง × ดัชนีคอขวด</h2>
+<div class="chart-box lg"><canvas id="cMatrix"></canvas></div></section>
+<section class="card span4 card--row-stretch card--body-grow"><h2>ข้อเสนอตามกลุ่มเชิงกลยุทธ์</h2>
+<div class="quadrant-grid">
+<div class="quadrant"><h4>Q1 ด่วน</h4>เร่ง e-Submission · pre-screen · ลด rework</div>
+<div class="quadrant"><h4>Q2 ลงทุน</h4>ส่งเสริม export · fast-track</div>
+<div class="quadrant"><h4>Q3 ปรับกระบวนการ</h4>ลดขั้นตอนซ้ำซ้อน</div>
+<div class="quadrant"><h4>Q4 ติดตาม</h4>monitor รายไตรมาส</div>
+</div></section>
+<section class="card span12"><h2>รายละเอียดกลุ่มบนเมทริกซ์</h2>
+<div class="table-scroll"><table class="data"><thead><tr><th>กลุ่ม</th><th class="num">คะแนนดาวรุ่ง</th><th class="num">ดัชนีคอขวด</th><th class="cen">กลุ่มเชิงกลยุทธ์</th><th>ข้อเสนอหลัก</th></tr></thead><tbody id="mxBody"></tbody></table></div></section></main>
+<script>
+const GROUPS = [{"code": "DRUG", "name": "ยา", "color": "#1F6FB2"}, {"code": "MDC", "name": "เครื่องมือแพทย์", "color": "#12A594"}, {"code": "FOOD", "name": "อาหาร", "color": "#3E9F55"}, {"code": "CMT", "name": "เครื่องสำอาง", "color": "#E8A317"}, {"code": "HERB", "name": "สมุนไพร", "color": "#7E57C2"}, {"code": "TXC", "name": "วัตถุอันตราย", "color": "#C0392B"}, {"code": "NCT", "name": "วัตถุเสพติด", "color": "#7F8C8D"}];
+document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => clickGroup(c.dataset.g)));
+
+const FILTER = { group: 'ALL', fy: 2568, txn: 'all', prov: 'ทั่วประเทศ' };
+const charts = {};
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+function setChart(id, cfg) {
+  const el = document.getElementById(id);
+  if (!el || typeof Chart === 'undefined') return null;
+  destroyChart(id);
+  charts[id] = new Chart(el, window.dashPrepareChart ? dashPrepareChart(cfg) : cfg);
+  return charts[id];
+}
+function gName(code) { return code === 'ALL' ? 'ทั้งหมด' : (GROUPS.find(g => g.code === code)?.name || code); }
+function gColor(code) { return GROUPS.find(g => g.code === code)?.color || '#1F6FB2'; }
+
+function syncChips(code) {
+  document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x.dataset.g === code ? 'true' : 'false'));
+}
+function clickGroup(code) { FILTER.group = code; syncChips(code); applyFilters(); }
+/* ── แถบตัวกรองแบบ d1 ── */
+const TH_MONTH_NAME = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+function initD1FilterBar(){
+  const selM = document.getElementById("filterMonth");
+  if (selM && selM.options.length <= 1)
+    selM.innerHTML = '<option value="ALL" selected>ทั้งหมด</option>' +
+      TH_MONTH_NAME.map((n,i) => '<option value="'+String(i+1).padStart(2,"0")+'">'+n+'</option>').join("");
+}
+function resetDashFilters(){
+  if (typeof FILTER !== "undefined") {
+    if ("group" in FILTER) FILTER.group = "ALL";
+    if ("fy" in FILTER) FILTER.fy = 2568;
+    if ("txn" in FILTER) FILTER.txn = "all";
+    if ("prov" in FILTER) FILTER.prov = "ทั่วประเทศ";
+    if ("region" in FILTER) FILTER.region = "ALL";
+  }
+  if (typeof syncChips === "function") syncChips("ALL");
+  document.querySelectorAll(".chip[data-g]").forEach(c =>
+    c.setAttribute("aria-pressed", c.dataset.g === "ALL" ? "true" : "false"));
+  document.querySelectorAll("#regionChips .chip").forEach(c =>
+    c.setAttribute("aria-pressed", c.dataset.r === "ALL" ? "true" : "false"));
+  const fy = document.getElementById("fySel"); if (fy) fy.value = "2568";
+  const txn = document.getElementById("txnSel"); if (txn) txn.value = "all";
+  const prov = document.getElementById("provSel"); if (prov) {
+    prov.value = prov.querySelector('option[value="ทั่วประเทศ"]') ? "ทั่วประเทศ" :
+      (prov.querySelector('option[value="ALL"]') ? "ALL" : prov.options[0]?.value);
+  }
+  const zone = document.getElementById("zoneSel"); if (zone) zone.value = "ALL";
+  const selM = document.getElementById("filterMonth"); if (selM) selM.value = "ALL";  if (typeof applyFilters === "function") applyFilters();
+  else if (typeof renderAll === "function") renderAll();
+}
+document.getElementById("resetFiltersBtn")?.addEventListener("click", resetDashFilters);
+initD1FilterBar();
+window.onGroupFilter = clickGroup;
+document.getElementById('fySel')?.addEventListener('change', e => { FILTER.fy = e.target.value === "ALL" ? 2568 : +e.target.value; applyFilters(); });
+document.getElementById('txnSel')?.addEventListener('change', e => { FILTER.txn = e.target.value; applyFilters(); });
+document.getElementById('provSel')?.addEventListener('change', e => { FILTER.prov = e.target.value; applyFilters(); });
+function bindRowFilter(tbodyId) {
+  const tb = document.getElementById(tbodyId);
+  if (!tb || tb.dataset.bound) return;
+  tb.dataset.bound = '1';
+  tb.addEventListener('click', e => {
+    const tr = e.target.closest('tr.clickable');
+    if (tr && tr.dataset.code) clickGroup(tr.dataset.code);
+  });
+}
+function chartClickGroup(chart, labels, codes) {
+  if (!chart) return;
+  chart.options.onClick = (_, els) => {
+    if (!els.length) return;
+    const code = codes ? codes[els[0].index] : (GROUPS[els[0].index]?.code);
+    if (code) clickGroup(code);
+  };
+  chart.update();
+}
+
+
+const PTS = [{"code": "DRUG", "name": "ยา", "rss": 72.3, "rbi": 42, "color": "#1F6FB2"}, {"code": "MDC", "name": "เครื่องมือแพทย์", "rss": 86.3, "rbi": 49, "color": "#12A594"}, {"code": "FOOD", "name": "อาหาร", "rss": 69.6, "rbi": 52, "color": "#3E9F55"}, {"code": "CMT", "name": "เครื่องสำอาง", "rss": 72.6, "rbi": 57, "color": "#E8A317"}, {"code": "HERB", "name": "สมุนไพร", "rss": 89.4, "rbi": 64, "color": "#7E57C2"}, {"code": "TXC", "name": "วัตถุอันตราย", "rss": 63.7, "rbi": 67, "color": "#C0392B"}, {"code": "NCT", "name": "วัตถุเสพติด", "rss": 58.9, "rbi": 72, "color": "#7F8C8D"}];
+function quadrant(rss, rbi) {
+  if (rss >= 70 && rbi >= 60) return ['Q1 ด่วน', 'เร่งลด RBI รักษาโอกาส'];
+  if (rss >= 70) return ['Q2 ลงทุน', 'ส่งเสริมเติบโต'];
+  if (rbi >= 60) return ['Q3 ปรับกระบวนการ', 'ลดคอขวด'];
+  return ['Q4 ติดตาม', 'monitor'];
+}
+function countQ(list) {
+  const c=[0,0,0,0]; list.forEach(p=>{const q=quadrant(p.rss,p.rbi)[0]; if(q.startsWith('Q1'))c[0]++; else if(q.startsWith('Q2'))c[1]++; else if(q.startsWith('Q3'))c[2]++; else c[3]++;}); return c;
+}
+function applyFilters() {
+  const g = FILTER.group;
+  const list = g==='ALL' ? PTS : PTS.filter(p=>p.code===g);
+  const qc = countQ(PTS);
+  document.getElementById('qKpi').innerHTML = [['Q1','#1F7A45',qc[0]],['Q2','#1F6FB2',qc[1]],['Q3','#A66A00',qc[2]],['Q4','#7F8C8D',qc[3]]]
+    .map(([n,c,v])=>`<div class="kpi"><div class="bar" style="background:${c}"></div><div class="body"><div class="name">${n}</div><div class="val">${v}</div><div class="unit">กลุ่ม</div></div></div>`).join('');
+  document.getElementById('mxBody').innerHTML = list.map(p=>{const [q,a]=quadrant(p.rss,p.rbi);
+    return `<tr class="clickable ${p.code===g?'active-row':''}" data-code="${p.code}"><td>${p.name}</td><td class="num">${p.rss}</td><td class="num">${p.rbi}</td><td class="cen">${q}</td><td>${a}</td></tr>`;}).join('');
+  bindRowFilter('mxBody');
+  const show = g==='ALL'?PTS:list;
+  const cM = setChart('cMatrix', {type:'scatter', data:{datasets:[{label:'กลุ่ม', data:show.map(p=>({x:p.rss,y:p.rbi,label:p.name,code:p.code})), backgroundColor:show.map(p=>p.color), pointRadius:show.map(p=>p.code===g&&g!=='ALL'?18:12)}]}, options:{responsive:true,maintainAspectRatio:false, scales:{x:{title:{display:true,text:'คะแนนดาวรุ่ง →'},min:50,max:100},y:{title:{display:true,text:'ดัชนีคอขวด →'},min:35,max:90}}, plugins:{tooltip:{callbacks:{label:c=>c.raw.label+' (คะแนนดาวรุ่ง: '+c.raw.x+', ดัชนีคอขวด: '+c.raw.y+')'}}}}});
+  if(cM){ cM.options.onClick=(_,els)=>{if(els.length)clickGroup(show[els[0].index].code);}; cM.update(); }
+}
+applyFilters();
+
+/* วันที่หัวข้อ — วันเปิดดู (พ.ศ.) */
+const TH_MONTH_ABBR = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+function formatThaiDateToday(){
+  const d = new Date();
+  return d.getDate() + " " + TH_MONTH_ABBR[d.getMonth()] + " " + (d.getFullYear() + 543);
+}
+function renderHeaderAsOf(){
+  const el = document.getElementById("asOf");
+  if (el) el.textContent = formatThaiDateToday();
+}
+renderHeaderAsOf();
+</script>
+<script src="shared/dash-layout.js" defer></script>
+</div>
+</body></html>

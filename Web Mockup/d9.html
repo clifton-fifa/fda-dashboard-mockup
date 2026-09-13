@@ -1,0 +1,817 @@
+<!doctype html>
+<html lang="th"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>หน้าจอที่ 9 — แผนที่วิเคราะห์เชิงพื้นที่ | อย.</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+<script src="shared/dash-chart-defaults.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
+<style>
+:root{--navy:#0E2A4F;--gold:#B7922E;--ink:#1A2430;--muted:#5B6B7E;--line:#D8E0EA;--line2:#EAEFF4;
+--canvas:#F2F4F7;--card:#FFF;--good:#1F7A45;--warn:#A66A00;--bad:#B4382A;--sh:0 1px 3px rgba(18,48,91,.08);--r:8px;--fs-kpi:54px;--fs-kpi-name:25px;--fs-kpi-unit:22px;--fs-base:28px;--fs-h2:33px;--fs-chrome-h1:30px;--fs-chrome-sub:20px;--fs-chrome-meta:19px;--fs-chrome-org:17px;--fs-filter:19px;--fs-filter-chip:18px;--fs-ui:24px;--fs-ui-md:22px;--fs-ui-sm:20px;--fs-axis:22px;--fs-chart-lbl:18px;--fs-chart-data:14px;--fs-tip:26px;--fs-period:20px}
+*{box-sizing:border-box}html,body{margin:0;padding:0}
+body{background:var(--canvas);color:var(--ink);font-family:"TH Sarabun New","TH SarabunPSK","Sarabun","Noto Sans Thai","Leelawadee UI",system-ui,-apple-system,sans-serif;font-size:var(--fs-base);line-height:1.5;font-weight:600;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+header{background:var(--navy);color:#fff;padding:11px 22px 10px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:3px solid var(--gold);position:relative;z-index:1200}
+header .brand{display:flex;align-items:center;gap:11px}
+header .brandLogo{width:46px;height:46px;object-fit:contain;background:#fff;border-radius:6px;padding:4px;box-shadow:0 0 0 1px rgba(255,255,255,.25)}
+header h1{margin:0;font-size:var(--fs-chrome-h1);font-weight:700;line-height:1.22}
+header .sub{color:#B7C7DC;font-size:var(--fs-chrome-sub);margin-top:2px;line-height:1.3}
+header .right{text-align:right;font-size:var(--fs-chrome-meta);line-height:1.35}
+header .org{color:#B7C7DC;font-size:var(--fs-chrome-org);margin-top:2px;line-height:1.3}
+header .right .asof{font-weight:600}
+.filters{background:#fff;border-bottom:1px solid var(--line);padding:6px 16px 6px 22px;display:grid;grid-template-columns:1fr auto;gap:8px 10px;align-items:center;position:sticky;top:0;z-index:1200;box-shadow:0 1px 0 var(--line)}
+.static-filters{grid-column:1;justify-self:start;min-width:0;display:flex;gap:12px;color:var(--muted);font-size:var(--fs-filter);flex-wrap:wrap;align-items:center}
+.static-filters span{white-space:nowrap;padding-left:12px;border-left:1px solid var(--line)}
+.static-filters span:first-child{padding-left:0;border-left:none}
+.static-filters select{font:inherit;font-size:var(--fs-filter-chip);color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 7px;margin:0 2px}
+.filterGroups{grid-column:2;justify-self:end;display:flex;align-items:center;gap:6px;flex-wrap:nowrap;width:max-content;max-width:100%}
+.filters .lbl{color:var(--muted);font-size:var(--fs-filter);font-weight:600;white-space:nowrap;flex:none}
+#chips,#regionChips{display:flex;flex:0 0 auto;gap:5px;flex-wrap:nowrap;justify-content:flex-end;min-width:0;padding:2px 0}
+.chip{border:1px solid var(--line);background:#fff;border-radius:6px;padding:3px 8px;font:inherit;font-size:var(--fs-filter-chip);cursor:pointer;display:inline-flex;align-items:center;gap:4px;transition:.12s;font-weight:600}
+.filters .chip{padding:3px 8px;font-size:var(--fs-filter-chip);gap:4px;border-radius:5px}
+.chip:hover{border-color:#9FB6D0}
+.chip[aria-pressed="true"]{background:var(--navy);color:#fff;border-color:var(--navy)}
+.chip .dot{width:8px;height:8px;border-radius:50%;flex:none}
+.reset-btn{font:inherit;font-size:var(--fs-filter-chip);font-weight:600;color:var(--navy);background:#fff;border:1px solid var(--line);border-radius:5px;padding:2px 10px;cursor:pointer}
+.reset-btn:hover{background:var(--line2)}
+main{padding:16px 20px 10px;display:grid;grid-template-columns:repeat(12,1fr);gap:14px;max-width:2000px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px 13px;min-width:0;box-shadow:var(--sh)}
+.card>h2{margin:0;font-size:var(--fs-h2);font-weight:700;display:flex;align-items:center;gap:9px}
+.card>h2::before{content:"";width:4px;height:20px;border-radius:2px;background:var(--navy)}
+.card>.cap{margin:5px 0 12px 13px;color:var(--muted);font-size:var(--fs-ui);line-height:1.5}
+.span12{grid-column:span 12}.span8{grid-column:span 8}.span7{grid-column:span 7}.span6{grid-column:span 6}
+.span5{grid-column:span 5}.span4{grid-column:span 4}.span3{grid-column:span 3}
+.kpis{grid-column:span 12;display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:16px}
+.kpi{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:0 0 12px;box-shadow:var(--sh);overflow:hidden}
+.kpi .bar{height:4px}.kpi .body{padding:11px 15px 0}
+.kpi .name{color:var(--muted);font-size:var(--fs-kpi-name);font-weight:600}
+.kpi .val{font-size:var(--fs-kpi);font-weight:700;line-height:1.08;font-variant-numeric:tabular-nums}
+.kpi .unit{color:var(--muted);font-size:var(--fs-kpi-unit)}
+table.data{width:100%;border-collapse:collapse;font-size:var(--fs-ui-md)}
+table.data th,table.data td{padding:9px 10px;border-bottom:1px solid var(--line2);text-align:left}
+table.data th{background:#F7F9FC;color:var(--muted);font-weight:600;position:sticky;top:0}
+table.data th.sortable{cursor:pointer;user-select:none}
+table.data th.sortable:hover{color:var(--navy)}
+table.data tr.clickable{cursor:pointer}
+table.data tr.clickable:hover{background:#F0F6FC}
+table.data tr.active-row{background:#EAF4FD;font-weight:600}
+table.data td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
+.sort-arrow{font-size:var(--fs-ui-sm);color:var(--navy)}
+.chart-box{position:relative;height:280px}.chart-box.lg{height:520px}
+#mapEl{width:100%;height:520px;border-radius:8px;background:#E8EDF3;overflow:hidden;position:relative;z-index:1;isolation:isolate}
+.leaflet-container{background:#E8EDF3;font-family:"TH Sarabun New","TH SarabunPSK","Sarabun","Noto Sans Thai","Leelawadee UI",system-ui,-apple-system,sans-serif;outline:none!important}
+.leaflet-container:focus,.leaflet-container:focus-visible{outline:none!important}
+.leaflet-interactive:focus,.leaflet-interactive:focus-visible{outline:none!important}
+.leaflet-zoom-box{border:none!important;opacity:0!important;display:none!important}
+.leaflet-tooltip{font-family:"TH Sarabun New","TH SarabunPSK","Sarabun","Noto Sans Thai","Leelawadee UI",system-ui,-apple-system,sans-serif;font-size:var(--fs-ui-sm)}
+.card.mapCard{overflow:hidden}
+.legend-swatch{display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:var(--fs-ui-sm);color:var(--muted);margin-top:8px}
+.legend-swatch span.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-2px;box-shadow:0 0 0 1px rgba(255,255,255,.8)}
+footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify-content:space-between;color:var(--muted);font-size:var(--fs-ui-md);gap:16px;flex-wrap:wrap}
+@media(max-width:1100px){.span8,.span7,.span6,.span5,.span4,.span3{grid-column:span 12}}
+@media(max-width:980px){.filters{grid-template-columns:1fr;gap:8px}.static-filters,.filterGroups{grid-column:1;justify-self:stretch}#chips,#regionChips{justify-content:flex-start}}
+@media(max-width:700px){header h1{font-size:26px}header .right{text-align:left}}
+</style>
+  <link rel="stylesheet" href="shared/dash-sidebar.css">
+  <link rel="stylesheet" href="shared/dash-layout.css">
+<link rel="stylesheet" href="shared/dash-filters.css">
+</head><body data-dash="9">
+<div id="dashPage"><script src="shared/dash-sidebar.js"></script>
+<header><div class="brand"><span class="dash-header-logo"><img class="brandLogo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJiIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNDAiIGhlaWdodD0iMjQwIiB2aWV3Qm94PSIwIDAgMjQwIDI0MCI+PGRlZnM+PHN0eWxlPi5ke2ZpbGw6IzAwNGNhZjt9PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImMiPjxwYXRoIGNsYXNzPSJkIiBkPSJtMTE5LjE1LDBjLTIzLjcuMTctNDYuODEsNy4zNS02Ni40MywyMC42NC0xOS42MiwxMy4yOS0zNC44NywzMi4wOS00My44Miw1NC4wM0MtLjA2LDk2LjYxLTIuMzIsMTIwLjcxLDIuNDEsMTQzLjkzYzQuNzMsMjMuMjIsMTYuMjIsNDQuNTIsMzMuMDQsNjEuMjIsMTYuODIsMTYuNywzOC4yLDI4LjA0LDYxLjQ1LDMyLjYsMjMuMjUsNC41Niw0Ny4zNCwyLjEzLDY5LjIyLTYuOTcsMjEuODgtOS4xMSw0MC41Ny0yNC40OSw1My43Mi00NC4yLDEzLjE1LTE5LjcyLDIwLjE2LTQyLjg4LDIwLjE2LTY2LjU4LS4xMS0zMS45NC0xMi45MS02Mi41Mi0zNS41OC04NS4wM0MxODEuNzYsMTIuNDcsMTUxLjA5LS4xMSwxMTkuMTUsMFptMCwyMjQuN2MtMTQuOS4xLTI5LjY0LTIuOTctNDMuMjYtOS4wMi0xMy42MS02LjA1LTI1Ljc4LTE0LjkzLTM1LjY5LTI2LjA2LTkuOTEtMTEuMTItMTcuMzMtMjQuMjMtMjEuNzYtMzguNDUtNC40NC0xNC4yMi01Ljc5LTI5LjIyLTMuOTctNDQuMDFoNzAuNTljMS44LDAsMi4zNS41OCwyLjM1LDIuNDUtLjA1LDIxLjMxLS4wNiw0Mi42MS0uMDQsNjMuOTIsMCwuNTUuMjEsMS4xNi0uMzgsMS43OGwtMjYuNTItMjkuNTNoOC44OHEzLjEsMCwzLjExLTMuMTljMC0zLjEyLS4wNS02LjI0LDAtOS4zNS4wMy0xLjU1LS40OC0yLjI1LTIuMDQtMi4yNS0xMy4wOS4wMy0yNi4xOCwwLTM5LjI2LjAyLS41NCwwLTEuMjktLjE1LTEuNDcuNTEtLjE5LjY2LjQ4LDEuMTQuOSwxLjYsNi45Miw3LjY1LDEzLjg1LDE1LjMsMjAuNzgsMjIuOTUsMTMuNjcsMTUuMTIsMjcuMzQsMzAuMjUsNDEsNDUuMzcsMi43MSwyLjk5LDIuMDQsMi45NCw0LjY2LDAsMTMuNDItMTUuMTgsMjYuODItMzAuMzksNDAuMTktNDUuNjMsOS4xOS0xMC40MiwxOC4zOS0yMC44MywyNy42LTMxLjIzLDguOTUtMTAuMTMsMTcuODktMjAuMjYsMjYuODMtMzAuMzkuMTgtLjE5LjMzLS4zOS40Ny0uNi4yNS0uNDIuODgtLjcyLjY3LTEuMjlzLS44Ny0uMzgtMS4zMy0uMzhjLTQuNDksMC04Ljk3LDAtMTMuNDYtLjAyLS40Ny0uMDEtLjk0LjA4LTEuMzYuMjgtLjQzLjItLjguNDktMS4wOS44Ni04LjI4LDkuMzUtMTYuNTcsMTguNjktMjQuODcsMjguMDQtNS4wNyw1LjcyLTEwLjE0LDExLjQ1LTE1LjIsMTcuMTgtMTAuNTcsMTEuOTItMjEuMTUsMjMuODQtMzEuNzIsMzUuNzUtLjMuNDItLjU3Ljg2LS44LDEuMzMtLjI2LS4zMy0uNDUtLjcxLS41Ni0xLjEyLS4xMS0uNDEtLjEzLS44My0uMDYtMS4yNS0uMDItOC4xOC0uMDItMTYuMzcsMC0yNC41NSwwLTIuNTEuMDgtMi41OSwyLjU2LTIuNiw0LjExLDAsOC4yMy0uMDQsMTIuMzQsMCwxLjUyLjAyLDIuMTEtLjUzLDIuMDgtMi4xNi0uMDktMy41MS0uMDktNy4wMSwwLTEwLjUyLjA0LTEuNjQtLjU5LTIuMTYtMi4wOC0yLjE0LTQuMTcuMDYtOC4zNC0uMDUtMTIuNTMuMDUtMS43Ny4wNC0yLjQyLS41OS0yLjM5LTIuNDYuMDgtNi4zLjA4LTEyLjYsMC0xOC45LS4wMi0xLjgzLjUyLTIuNTQsMi4zNC0yLjUsNC4yNC4xMSw4LjQ4LDAsMTIuNzEuMDYsMS42My4wMywyLjIyLS42NCwyLjE5LTIuMy0uMDYtMy40NCwwLTYuODksMC0xMC4zMywwLTIuNjgtLjAzLTIuNy0yLjYzLTIuN0gxNy41M2M1LjEyLTE4Ljk4LDE1LjQ1LTM2LjE0LDI5LjgyLTQ5LjU2LDE0LjM3LTEzLjQxLDMyLjIxLTIyLjU0LDUxLjQ5LTI2LjM0LDE5LjI4LTMuOCwzOS4yNS0yLjE0LDU3LjY0LDQuODEsMTguMzksNi45NSwzNC40NiwxOC45MSw0Ni40MSwzNC41MiwxMS45NSwxNS42MSwxOS4yOSwzNC4yNSwyMS4xOSw1My44MiwxLjksMTkuNTYtMS43MSwzOS4yNy0xMC40Miw1Ni44OS04LjcxLDE3LjYyLTIyLjE4LDMyLjQ1LTM4Ljg4LDQyLjgyLTE2LjcsMTAuMzYtMzUuOTcsMTUuODUtNTUuNjMsMTUuODNaIi8+PC9nPjwvc3ZnPg==" alt="อย."></span><div>
+<h1>ระบบวิเคราะห์ข้อมูลเศรษฐกิจผลิตภัณฑ์สุขภาพ</h1>
+<div class="sub">หน้าจอที่ 9 · แผนที่วิเคราะห์เชิงพื้นที่ (Geographic Analysis)</div></div></div>
+<div class="right"><div class="asof">อัปเดตล่าสุด <span id="asOf"></span></div><div class="org">สำนักงานคณะกรรมการอาหารและยา</div><div class="dash-mock-badge" title="ตัวเลขในหน้านี้จัดทำขึ้นเพื่อสาธิตรูปแบบการแสดงผลเท่านั้น ไม่ใช่ข้อมูลจริงของสำนักงานคณะกรรมการอาหารและยา โปรดอย่านำไปอ้างอิง">ข้อมูลจำลอง</div></div></header>
+<div class="filters">
+  <div class="static-filters">
+    <button type="button" class="dash-menu-btn" aria-label="แสดงเมนู" title="แสดงเมนู" aria-expanded="false"><i class="dash-menu-icon" aria-hidden="true"></i></button>
+    <span>ปี: <select id="fySel"><option value="ALL">ทั้งหมด</option><option value="2568" selected>2568</option></select></span>
+    <span>เดือน: <select id="filterMonth"><option value="ALL" selected>ทั้งหมด</option></select></span>
+    <span>เขตสุขภาพ <select id="zoneSel"><option value="ALL">ทั้งหมด</option></select></span>
+    <span>จังหวัด <select id="provSel"><option value="ALL">ทั้งหมด</option></select></span>
+    <span><button type="button" class="reset-btn" id="resetFiltersBtn">คืนค่า</button></span>
+  </div>
+  <div class="filterGroups">
+    <span class="lbl">ภาค:</span>
+    <span id="regionChips"><button type="button" class="chip" aria-pressed="true" data-r="ALL">ทั้งหมด</button>
+<button type="button" class="chip" aria-pressed="false" data-r="N">เหนือ</button>
+<button type="button" class="chip" aria-pressed="false" data-r="NE">ตะวันออกเฉียงเหนือ</button>
+<button type="button" class="chip" aria-pressed="false" data-r="C">กลาง</button>
+<button type="button" class="chip" aria-pressed="false" data-r="E">ตะวันออก</button>
+<button type="button" class="chip" aria-pressed="false" data-r="W">ตะวันตก</button>
+<button type="button" class="chip" aria-pressed="false" data-r="S">ใต้</button></span>
+  </div>
+</div>
+
+<main>
+<section class="kpis" id="kpiRow"></section>
+<section class="card mapCard span8 card--row-stretch card--chart-grow"><h2>แผนที่มูลค่าผลิตภัณฑ์รายจังหวัด</h2>
+<div id="mapEl"></div>
+<div class="legend-swatch" id="mapLegend"></div>
+</section>
+<section class="card span4 card--row-stretch card--chart-grow"><h2>อันดับจังหวัด Top 10
+<span class="card-filter-pick">
+  <select id="rankMetric" class="card-filter-select" aria-label="เลือกมิติจัดอันดับ">
+    <option value="total" selected>มูลค่ารวม</option>
+    <option value="imp">มูลค่านำเข้า</option>
+    <option value="exp">มูลค่าส่งออก</option>
+    <option value="prod">มูลค่าการผลิต</option>
+    <option value="sale">มูลค่าการขาย</option>
+  </select>
+</span></h2>
+<div class="cap" id="rankCap">เรียงตามมูลค่าผลิตภัณฑ์ในพื้นที่ (ล้านบาท)</div>
+<div class="chart-box lg"><canvas id="cRank"></canvas></div></section>
+<section class="card span12" id="companyCard">
+<h2>รายชื่อบริษัท/ผู้ประกอบการในจังหวัด
+<span class="card-filter-pick">
+  <select id="compTopN" class="card-filter-select" aria-label="เลือกจำนวนอันดับ">
+    <option value="10">Top 10 อันดับ</option>
+    <option value="20">Top 20 อันดับ</option>
+    <option value="100" selected>Top 100 อันดับ</option>
+  </select>
+</span></h2>
+<div class="cap" id="compCap">100 รายการแรก · เรียงตามมูลค่ารวม</div>
+<div id="compTableWrap" style="max-height:400px;overflow:auto"><table class="data"><thead><tr>
+<th class="num">อันดับ</th><th>ชื่อบริษัท/ผู้ประกอบการ</th><th>จังหวัด</th><th class="sortable" data-key="district">อำเภอ <span class="sort-arrow" id="carrow-district"></span></th>
+<th class="sortable num" data-key="imp">มูลค่านำเข้า (ล้านบาท) <span class="sort-arrow" id="carrow-imp"></span></th>
+<th class="sortable num" data-key="exp">มูลค่าส่งออก (ล้านบาท) <span class="sort-arrow" id="carrow-exp"></span></th>
+<th class="sortable num" data-key="prod">มูลค่าการผลิต (ล้านบาท) <span class="sort-arrow" id="carrow-prod"></span></th>
+<th class="sortable num" data-key="sale">มูลค่าการขาย (ล้านบาท) <span class="sort-arrow" id="carrow-sale"></span></th>
+</tr></thead><tbody id="compBody"></tbody></table></div></section>
+</main>
+<script>
+const REGION_NAME = {"N": "เหนือ", "NE": "ตะวันออกเฉียงเหนือ", "C": "กลาง", "E": "ตะวันออก", "W": "ตะวันตก", "S": "ใต้"};
+const PROVINCES = {
+  "10": {th:"กรุงเทพมหานคร", region:"C", zone:13, p:4029},
+  "11": {th:"สมุทรปราการ", region:"C", zone:6, p:1010},
+  "12": {th:"นนทบุรี", region:"C", zone:4, p:1302},
+  "13": {th:"ปทุมธานี", region:"C", zone:4, p:438.5},
+  "14": {th:"พระนครศรีอยุธยา", region:"C", zone:4, p:282.3},
+  "15": {th:"อ่างทอง", region:"C", zone:4, p:277.6},
+  "16": {th:"ลพบุรี", region:"C", zone:4, p:119.8},
+  "17": {th:"สิงห์บุรี", region:"C", zone:4, p:282.9},
+  "18": {th:"ชัยนาท", region:"C", zone:3, p:145.3},
+  "19": {th:"สระบุรี", region:"C", zone:4, p:158.9},
+  "20": {th:"ชลบุรี", region:"E", zone:6, p:233.5},
+  "21": {th:"ระยอง", region:"E", zone:6, p:146.4},
+  "22": {th:"จันทบุรี", region:"E", zone:6, p:74.8},
+  "23": {th:"ตราด", region:"E", zone:6, p:77.3},
+  "24": {th:"ฉะเชิงเทรา", region:"E", zone:6, p:118.2},
+  "25": {th:"ปราจีนบุรี", region:"E", zone:6, p:85.1},
+  "26": {th:"นครนายก", region:"C", zone:4, p:113.5},
+  "27": {th:"สระแก้ว", region:"E", zone:6, p:67.2},
+  "30": {th:"นครราชสีมา", region:"NE", zone:9, p:124.4},
+  "31": {th:"บุรีรัมย์", region:"NE", zone:9, p:144.2},
+  "32": {th:"สุรินทร์", region:"NE", zone:9, p:163.2},
+  "33": {th:"ศรีสะเกษ", region:"NE", zone:10, p:158.7},
+  "34": {th:"อุบลราชธานี", region:"NE", zone:10, p:107.1},
+  "35": {th:"ยโสธร", region:"NE", zone:10, p:134.2},
+  "36": {th:"ชัยภูมิ", region:"NE", zone:9, p:85.6},
+  "37": {th:"อำนาจเจริญ", region:"NE", zone:10, p:112.9},
+  "38": {th:"บึงกาฬ", region:"NE", zone:8, p:90.0},
+  "39": {th:"หนองบัวลำภู", region:"NE", zone:8, p:124.8},
+  "40": {th:"ขอนแก่น", region:"NE", zone:7, p:158.7},
+  "41": {th:"อุดรธานี", region:"NE", zone:8, p:124.4},
+  "42": {th:"เลย", region:"NE", zone:8, p:52.9},
+  "43": {th:"หนองคาย", region:"NE", zone:8, p:120.3},
+  "44": {th:"มหาสารคาม", region:"NE", zone:7, p:178},
+  "45": {th:"ร้อยเอ็ด", region:"NE", zone:7, p:150.9},
+  "46": {th:"กาฬสินธุ์", region:"NE", zone:7, p:132.3},
+  "47": {th:"สกลนคร", region:"NE", zone:8, p:107.9},
+  "48": {th:"นครพนม", region:"NE", zone:8, p:124},
+  "49": {th:"มุกดาหาร", region:"NE", zone:10, p:71.4},
+  "50": {th:"เชียงใหม่", region:"N", zone:1, p:73.2},
+  "51": {th:"ลำพูน", region:"N", zone:1, p:91.3},
+  "52": {th:"ลำปาง", region:"N", zone:1, p:62.2},
+  "53": {th:"อุตรดิตถ์", region:"N", zone:2, p:59.1},
+  "54": {th:"แพร่", region:"N", zone:1, p:75.2},
+  "55": {th:"น่าน", region:"N", zone:1, p:39.6},
+  "56": {th:"พะเยา", region:"N", zone:1, p:79.2},
+  "57": {th:"เชียงราย", region:"N", zone:1, p:96.3},
+  "58": {th:"แม่ฮ่องสอน", region:"N", zone:1, p:16.5},
+  "60": {th:"นครสวรรค์", region:"C", zone:3, p:113.4},
+  "61": {th:"อุทัยธานี", region:"C", zone:3, p:45.1},
+  "62": {th:"กำแพงเพชร", region:"C", zone:3, p:77.9},
+  "63": {th:"ตาก", region:"W", zone:2, p:29.5},
+  "64": {th:"สุโขทัย", region:"C", zone:2, p:89.7},
+  "65": {th:"พิษณุโลก", region:"C", zone:2, p:73.2},
+  "66": {th:"พิจิตร", region:"C", zone:3, p:126.2},
+  "67": {th:"เพชรบูรณ์", region:"C", zone:2, p:75.6},
+  "70": {th:"ราชบุรี", region:"W", zone:5, p:151.7},
+  "71": {th:"กาญจนบุรี", region:"W", zone:5, p:37.6},
+  "72": {th:"สุพรรณบุรี", region:"C", zone:5, p:159.5},
+  "73": {th:"นครปฐม", region:"C", zone:5, p:373.1},
+  "74": {th:"สมุทรสาคร", region:"C", zone:5, p:524},
+  "75": {th:"สมุทรสงคราม", region:"C", zone:5, p:489.6},
+  "76": {th:"เพชรบุรี", region:"W", zone:5, p:69.3},
+  "77": {th:"ประจวบคีรีขันธ์", region:"W", zone:5, p:69.6},
+  "80": {th:"นครศรีธรรมราช", region:"S", zone:11, p:152.8},
+  "81": {th:"กระบี่", region:"S", zone:11, p:71},
+  "82": {th:"พังงา", region:"S", zone:11, p:56.1},
+  "83": {th:"ภูเก็ต", region:"S", zone:11, p:440.1},
+  "84": {th:"สุราษฎร์ธานี", region:"S", zone:11, p:67.3},
+  "85": {th:"ระนอง", region:"S", zone:11, p:48.8},
+  "86": {th:"ชุมพร", region:"S", zone:11, p:74.1},
+  "90": {th:"สงขลา", region:"S", zone:12, p:169.2},
+  "91": {th:"สตูล", region:"S", zone:12, p:99.8},
+  "92": {th:"ตรัง", region:"S", zone:12, p:120.7},
+  "93": {th:"พัทลุง", region:"S", zone:12, p:144.9},
+  "94": {th:"ปัตตานี", region:"S", zone:12, p:306.3},
+  "95": {th:"ยะลา", region:"S", zone:12, p:91.8},
+  "96": {th:"นราธิวาส", region:"S", zone:12, p:147.7},
+};
+const DISTRICTS = {};
+
+
+const REGIONS = ["N","NE","C","E","W","S"];
+const GEOJSON_URL = "https://cdn.jsdelivr.net/gh/chingchai/OpenGISData-Thailand@master/provinces.geojson";
+const DISTRICTS_URL = "https://cdn.jsdelivr.net/gh/thailand-geography-data/thailand-geography-json@main/src/districts.json";
+const FILTER = { region: "ALL", zone: "ALL", province: "ALL" };
+const charts = {};
+function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
+function setChart(id, cfg) {
+  const el = document.getElementById(id);
+  if (!el || typeof Chart === 'undefined') return null;
+  destroyChart(id);
+  charts[id] = new Chart(el, window.dashPrepareChart ? dashPrepareChart(cfg) : cfg);
+  return charts[id];
+}
+function strHash(s){let h=2166136261;for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function seededVal(seedStr,min,max){const frac=(strHash(seedStr)%10000)/10000;return +(min+frac*(max-min)).toFixed(1);}
+function fmtTHB(n) { return n.toLocaleString('th-TH', { maximumFractionDigits: 1 }); }
+
+const provinceKeys = Object.keys(PROVINCES);
+function provinceMetrics(key) {
+  const p = PROVINCES[key].p;
+  const imp = Math.round(p * (0.6 + seededVal(key + '|imp', 0, 0.9)));
+  const exp = Math.round(p * (0.4 + seededVal(key + '|exp', 0, 0.7)));
+  const prod = Math.round(p * (0.8 + seededVal(key + '|prod', 0, 1.1)));
+  const sale = Math.round(p * (0.7 + seededVal(key + '|sale', 0, 1.0)));
+  return { imp, exp, prod, sale, total: imp + exp + prod + sale };
+}
+const PROVINCE_METRICS = {}; provinceKeys.forEach(k => PROVINCE_METRICS[k] = provinceMetrics(k));
+const PROVINCE_VALUES = {}; provinceKeys.forEach(k => PROVINCE_VALUES[k] = PROVINCE_METRICS[k].total);
+function regionTotals(keys) {
+  return keys.reduce((acc,k) => {
+    const m = PROVINCE_METRICS[k];
+    acc.imp += m.imp; acc.exp += m.exp; acc.prod += m.prod; acc.sale += m.sale;
+    return acc;
+  }, { imp: 0, exp: 0, prod: 0, sale: 0 });
+}
+
+function matchesFilter(key) {
+  const pv = PROVINCES[key];
+  if (!pv) return false;
+  if (FILTER.region !== 'ALL' && pv.region !== FILTER.region) return false;
+  if (FILTER.zone !== 'ALL' && pv.zone !== +FILTER.zone) return false;
+  return true;
+}
+function visibleKeys() { return provinceKeys.filter(matchesFilter); }
+function selectedProvinceKey() {
+  return FILTER.province === 'ALL' || FILTER.province == null ? null : String(FILTER.province);
+}
+function isSelectedProvince(key) {
+  const sel = selectedProvinceKey();
+  return sel != null && sel === String(key);
+}
+/** แผนที่: เลือกจังหวัดแล้วเน้นเฉพาะจังหวัดนั้น (ไม่ไฮไลต์ทั้งเขตสุขภาพ) */
+function isMapActive(key) {
+  const k = String(key);
+  if (FILTER.province !== 'ALL') return k === String(FILTER.province);
+  return matchesFilter(k);
+}
+
+const MAP_STOPS = ['#FFE0B2', '#FFB74D', '#FF7043', '#D32F2F'];
+function hexToRgb(hex) {
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+function mixHex(hexA, hexB, t) {
+  const a = hexToRgb(hexA), b = hexToRgb(hexB);
+  const rgb = a.map((v, i) => Math.round(v + (b[i] - v) * t));
+  return '#' + rgb.map(v => v.toString(16).padStart(2, '0')).join('');
+}
+function mixStops(stops, t) {
+  const n = stops.length - 1;
+  const seg = Math.min(n - 1, Math.floor(t * n));
+  const localT = t * n - seg;
+  return mixHex(stops[seg], stops[seg + 1], localT);
+}
+function colorScale(value, allValues) {
+  const sorted = [...allValues].sort((a,b)=>a-b);
+  let idx = sorted.findIndex(v => v >= value);
+  if (idx < 0) idx = sorted.length - 1;
+  const pct = sorted.length > 1 ? idx / (sorted.length - 1) : 1;
+  return mixStops(MAP_STOPS, pct);
+}
+
+let geoLayer = null, mapObj = null;
+const provinceLayers = {};
+const provinceBoundsByKey = {};
+const provinceViewByKey = {};
+let provinceHighlightLayer = null;
+let lastZoomedProvince = null;
+let mapResizeObserver = null;
+let pendingProvinceZoomKey = null;
+function latLngBoundsFromGeoFeature(f) {
+  if (typeof turf !== 'undefined' && f) {
+    const bb = turf.bbox(f);
+    return L.latLngBounds([bb[1], bb[0]], [bb[3], bb[2]]);
+  }
+  return L.geoJSON(f).getBounds();
+}
+function viewHintFromBounds(bounds) {
+  const center = bounds.getCenter();
+  const latSpan = Math.abs(bounds.getNorth() - bounds.getSouth());
+  const lngSpan = Math.abs(bounds.getEast() - bounds.getWest());
+  const span = Math.max(latSpan, lngSpan, 0.05);
+  let zoom = span > 3.5 ? 7 : span > 2 ? 8 : span > 1.2 ? 9 : span > 0.65 ? 10 : 11;
+  return { center, zoom: Math.min(zoom, 12) };
+}
+function cacheProvinceBounds(key, f) {
+  const bounds = latLngBoundsFromGeoFeature(f);
+  provinceBoundsByKey[key] = bounds;
+  provinceViewByKey[key] = viewHintFromBounds(bounds);
+}
+function fitMapToLatLngBounds(bounds, opts) {
+  if (!mapObj || !bounds) return false;
+  const maxZoom = (opts && opts.maxZoom != null) ? opts.maxZoom : 12;
+  const pad = (opts && opts.padding != null) ? opts.padding : 48;
+  mapObj.invalidateSize(true);
+  try {
+    mapObj.fitBounds(bounds, { padding: [pad, pad], maxZoom, animate: !(opts && opts.animate === false) });
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+function zoomToSelectedProvince(key, layerOpt) {
+  if (!key || key === 'ALL') return false;
+  key = String(key);
+  if (!mapObj) {
+    pendingProvinceZoomKey = key;
+    return false;
+  }
+  let bounds = provinceBoundsByKey[key];
+  if (!bounds && layerOpt && layerOpt.feature) bounds = latLngBoundsFromGeoFeature(layerOpt.feature);
+  if (!bounds) {
+    const pl = provinceLayer(key);
+    if (pl && pl.getBounds) bounds = pl.getBounds();
+  }
+  const view = provinceViewByKey[key] || (bounds ? viewHintFromBounds(bounds) : null);
+  mapObj.invalidateSize(true);
+  if (bounds && fitMapToLatLngBounds(bounds, { maxZoom: 12, padding: 44 })) {
+    lastZoomedProvince = `P:${key}`;
+    pendingProvinceZoomKey = null;
+    return true;
+  }
+  if (view) {
+    mapObj.flyTo(view.center, view.zoom, { duration: 0.55 });
+    lastZoomedProvince = `P:${key}`;
+    pendingProvinceZoomKey = null;
+    return true;
+  }
+  return false;
+}
+function scheduleProvinceZoom(key, layerOpt) {
+  if (!key || key === 'ALL') return;
+  const run = () => zoomToSelectedProvince(key, layerOpt);
+  run();
+  requestAnimationFrame(run);
+  setTimeout(run, 60);
+  setTimeout(run, 220);
+  setTimeout(run, 550);
+}
+function boundsForProvinceKey(key) {
+  if (!key || key === 'ALL') return null;
+  key = String(key);
+  if (provinceBoundsByKey[key]) return provinceBoundsByKey[key];
+  const pl = provinceLayer(key);
+  return pl && pl.getBounds ? pl.getBounds() : null;
+}
+function boundsForRegionKeys(keys) {
+  if (!keys.length) return null;
+  if (typeof turf !== 'undefined') {
+    const feats = keys.map(k => provinceLayers[k] && provinceLayers[k].feature).filter(Boolean);
+    if (feats.length) return latLngBoundsFromGeoFeature(turf.featureCollection(feats));
+  }
+  const latlngs = keys.flatMap(k => {
+    const b = boundsForProvinceKey(k);
+    return b ? [b.getSouthWest(), b.getNorthEast()] : [];
+  });
+  return latlngs.length ? L.latLngBounds(latlngs) : null;
+}
+function initMap() {
+  mapObj = L.map('mapEl', {
+    attributionControl: false, zoomControl: true, scrollWheelZoom: false, boxZoom: false, keyboard: false,
+    zoomSnap: 0.25, zoomDelta: 0.5
+  }).setView([13.6, 101.2], 5.4);
+  mapObj.createPane('provinceHighlightPane');
+  mapObj.getPane('provinceHighlightPane').style.zIndex = 645;
+  const mapRoot = mapObj.getContainer();
+  mapRoot.setAttribute('tabindex', '-1');
+  mapRoot.style.outline = 'none';
+  mapObj.boxZoom.disable();
+  const mapEl = document.getElementById('mapEl');
+  if (mapEl && typeof ResizeObserver !== 'undefined') {
+    mapResizeObserver = new ResizeObserver(() => {
+      if (!mapObj) return;
+      mapObj.invalidateSize(true);
+      const pk = selectedProvinceKey();
+      if (pk) scheduleProvinceZoom(pk);
+    });
+    mapResizeObserver.observe(mapEl);
+  }
+  fetch(GEOJSON_URL).then(r => r.json()).then(data => {
+    (data.features || []).forEach(f => {
+      const k = keyFromFeature(f);
+      if (PROVINCES[k]) cacheProvinceBounds(k, f);
+    });
+    geoLayer = L.geoJSON(data, { style: styleFeature, onEachFeature: bindFeature }).addTo(mapObj);
+    mapObj.invalidateSize(true);
+    renderLegend();
+    const pk = selectedProvinceKey() || pendingProvinceZoomKey;
+    if (pk) scheduleProvinceZoom(pk);
+    else updateMapZoom(true);
+  });
+}
+function provinceLayer(key) {
+  if (!key || key === 'ALL') return null;
+  return provinceLayers[key] || provinceLayers[String(key)] || null;
+}
+function updateMapZoom(force) {
+  if (!mapObj || !geoLayer) return;
+  const pk = selectedProvinceKey();
+  if (pk) {
+    if (force || lastZoomedProvince !== `P:${pk}`) scheduleProvinceZoom(pk);
+    return;
+  }
+  const target = `${FILTER.region}|${FILTER.zone}`;
+  if (!force && target === lastZoomedProvince) return;
+  if (FILTER.region !== 'ALL' || FILTER.zone !== 'ALL') {
+    const keys = visibleKeys().filter(k => provinceBoundsByKey[k] || provinceLayers[k]);
+    const bounds = boundsForRegionKeys(keys);
+    if (bounds && fitMapToLatLngBounds(bounds, { maxZoom: 9 })) {
+      lastZoomedProvince = target;
+      return;
+    }
+  }
+  if (fitMapToLatLngBounds(geoLayer.getBounds(), { maxZoom: 7, padding: 24 })) {
+    lastZoomedProvince = target;
+  }
+}
+function keyFromFeature(f) { return String(f.properties.pro_code).trim(); }
+function styleFeature(f) {
+  const key = keyFromFeature(f);
+  const known = PROVINCES[key];
+  if (!known) return { color: '#fff', weight: 1, fillColor: '#EEE', fillOpacity: .5 };
+  const active = isMapActive(key);
+  const val = PROVINCE_VALUES[key];
+  const provinceOnly = FILTER.province !== 'ALL';
+  return {
+    color: '#fff',
+    weight: 1,
+    fillColor: active ? colorScale(val, provinceKeys.map(k=>PROVINCE_VALUES[k])) : '#D8DEE6',
+    fillOpacity: active ? 0.92 : (provinceOnly ? 0.2 : 0.35)
+  };
+}
+function updateProvinceHighlight() {
+  if (provinceHighlightLayer) {
+    mapObj.removeLayer(provinceHighlightLayer);
+    provinceHighlightLayer = null;
+  }
+  const key = FILTER.province;
+  const pl = provinceLayer(key);
+  if (!mapObj || key === 'ALL' || !pl) return;
+  const feat = pl.feature;
+  if (!feat) return;
+  const pane = 'provinceHighlightPane';
+  const ring = L.featureGroup();
+  ring.addLayer(L.geoJSON(feat, {
+    pane, interactive: false,
+    style: { fill: false, fillOpacity: 0, color: '#0E2A4F', weight: 3, opacity: 0.85, lineJoin: 'round', lineCap: 'round' }
+  }));
+  ring.addLayer(L.geoJSON(feat, {
+    pane, interactive: false,
+    style: { fill: false, fillOpacity: 0, color: '#B7922E', weight: 2, opacity: 1, lineJoin: 'round', lineCap: 'round' }
+  }));
+  provinceHighlightLayer = ring.addTo(mapObj);
+  provinceHighlightLayer.bringToFront();
+}
+function bindFeature(f, layer) {
+  const key = String(keyFromFeature(f));
+  const known = PROVINCES[key];
+  if (!known) return;
+  provinceLayers[key] = layer;
+  layer.feature = f;
+  if (!provinceBoundsByKey[key]) cacheProvinceBounds(key, f);
+  layer.bindTooltip(`<b>${known.th}</b><br>มูลค่า: ${fmtTHB(PROVINCE_VALUES[key])} ล้านบาท`, { sticky: true });
+  layer.on('click', (e) => {
+    L.DomEvent.stopPropagation(e);
+    L.DomEvent.preventDefault(e);
+    const t = e.originalEvent && e.originalEvent.target;
+    if (t && t.blur) t.blur();
+    if (mapObj && mapObj.getContainer()) mapObj.getContainer().blur();
+    selectProvince(key, { fromUi: 'map', layer });
+  });
+}
+function restyleMap() {
+  if (!geoLayer) return;
+  geoLayer.setStyle(styleFeature);
+  const pl = provinceLayer(FILTER.province);
+  if (pl) pl.bringToFront();
+  updateProvinceHighlight();
+}
+function renderLegend() {
+  document.getElementById('mapLegend').innerHTML =
+    `<span>ต่ำ</span><span style="display:inline-block;width:220px;height:14px;border-radius:7px;background:linear-gradient(90deg, ${MAP_STOPS.join(', ')});border:1px solid var(--line)"></span><span>สูง</span>`;
+}
+
+function zoneOptionsFor(region) {
+  const zones = new Set();
+  provinceKeys.forEach(k => { if (region === 'ALL' || PROVINCES[k].region === region) zones.add(PROVINCES[k].zone); });
+  return [...zones].sort((a,b)=>a-b);
+}
+function rebuildZoneSelect() {
+  const sel = document.getElementById('zoneSel');
+  const current = FILTER.zone;
+  const zones = zoneOptionsFor(FILTER.region);
+  sel.innerHTML = '<option value="ALL">ทั้งหมด</option>' + zones.map(z => `<option value="${z}">เขตสุขภาพที่ ${z}</option>`).join('');
+  if (current !== 'ALL' && zones.includes(+current)) sel.value = current; else { sel.value = 'ALL'; FILTER.zone = 'ALL'; }
+}
+function rebuildProvinceSelect() {
+  const sel = document.getElementById('provSel');
+  const keys = provinceKeys.filter(k => (FILTER.region==='ALL'||PROVINCES[k].region===FILTER.region) && (FILTER.zone==='ALL'||PROVINCES[k].zone===+FILTER.zone))
+    .sort((a,b)=>PROVINCES[a].th.localeCompare(PROVINCES[b].th,'th'));
+  const current = FILTER.province;
+  sel.innerHTML = '<option value="ALL">ทั้งหมด</option>' + keys.map(k => `<option value="${k}">${PROVINCES[k].th}</option>`).join('');
+  if (keys.includes(current)) sel.value = current; else { sel.value = 'ALL'; FILTER.province = 'ALL'; }
+}
+function syncFilterUi() {
+  const prov = document.getElementById('provSel');
+  if (prov) prov.value = FILTER.province;
+  const zone = document.getElementById('zoneSel');
+  if (zone) zone.value = FILTER.zone === 'ALL' ? 'ALL' : String(FILTER.zone);
+  document.querySelectorAll('#regionChips .chip').forEach(x => {
+    const r = x.dataset.r;
+    const on = FILTER.region === 'ALL' ? r === 'ALL' : r === FILTER.region;
+    x.setAttribute('aria-pressed', on ? 'true' : 'false');
+  });
+}
+
+document.querySelectorAll('#regionChips .chip').forEach(c => c.addEventListener('click', () => {
+  FILTER.region = c.dataset.r;
+  FILTER.province = 'ALL';
+  if (c.dataset.r === 'ALL') FILTER.zone = 'ALL';
+  lastZoomedProvince = null;
+  rebuildZoneSelect(); rebuildProvinceSelect(); syncFilterUi(); render(); updateMapZoom(true);
+}));
+document.getElementById('zoneSel').addEventListener('change', e => {
+  FILTER.zone = e.target.value;
+  FILTER.province = 'ALL';
+  lastZoomedProvince = null;
+  rebuildProvinceSelect(); syncFilterUi(); render(); updateMapZoom(true);
+});
+document.getElementById('provSel').addEventListener('change', e => {
+  selectProvince(e.target.value === 'ALL' ? null : e.target.value, { fromUi: 'provSel' });
+});
+
+function selectProvince(key, opts) {
+  opts = opts || {};
+  if (key != null && key !== '') key = String(key);
+  else key = null;
+
+  if (!key) {
+    FILTER.province = 'ALL';
+    rebuildProvinceSelect();
+  } else if (!PROVINCES[key]) {
+    return;
+  } else {
+    FILTER.province = key;
+    const pv = PROVINCES[key];
+    FILTER.region = pv.region;
+    FILTER.zone = pv.zone;
+    rebuildZoneSelect();
+    document.getElementById('zoneSel').value = String(pv.zone);
+    rebuildProvinceSelect();
+  }
+
+  syncFilterUi();
+  lastZoomedProvince = null;
+  if (key) pendingProvinceZoomKey = key;
+  render();
+  if (key) scheduleProvinceZoom(key, opts.layer);
+  else {
+    pendingProvinceZoomKey = null;
+    updateMapZoom(true);
+  }
+}
+
+
+
+function renderKpis() {
+  const sel = selectedProvinceKey();
+  const vk = sel ? [sel] : visibleKeys();
+  const t = regionTotals(vk);
+  document.getElementById('kpiRow').innerHTML =
+    `<div class="kpi"><div class="bar" style="background:#1F6FB2"></div><div class="body"><div class="name">มูลค่านำเข้า</div><div class="val">${fmtTHB(t.imp)}</div><div class="unit">ล้านบาท</div></div></div>`+
+    `<div class="kpi"><div class="bar" style="background:#3E9F55"></div><div class="body"><div class="name">มูลค่าส่งออก</div><div class="val">${fmtTHB(t.exp)}</div><div class="unit">ล้านบาท</div></div></div>`+
+    `<div class="kpi"><div class="bar" style="background:#B7922E"></div><div class="body"><div class="name">มูลค่าการผลิต</div><div class="val">${fmtTHB(t.prod)}</div><div class="unit">ล้านบาท</div></div></div>`+
+    `<div class="kpi"><div class="bar" style="background:#7E57C2"></div><div class="body"><div class="name">มูลค่าการขาย</div><div class="val">${fmtTHB(t.sale)}</div><div class="unit">ล้านบาท</div></div></div>`;
+}
+
+let RANK_METRIC = 'total';
+const RANK_METRIC_LABEL = { total: 'มูลค่ารวมผลิตภัณฑ์ในพื้นที่', imp: 'มูลค่านำเข้า', exp: 'มูลค่าส่งออก', prod: 'มูลค่าการผลิต', sale: 'มูลค่าการขาย' };
+document.getElementById('rankMetric').addEventListener('change', e => { RANK_METRIC = e.target.value; render(); });
+function rankValue(k) { return PROVINCE_METRICS[k][RANK_METRIC]; }
+function rankingScopeKeys() {
+  const scope = visibleKeys();
+  const sorted = scope.slice().sort((a, b) => rankValue(b) - rankValue(a));
+  let top = sorted.slice(0, 10);
+  const sel = selectedProvinceKey();
+  if (sel && PROVINCES[sel] && !top.includes(sel)) {
+    top = scope.includes(sel)
+      ? [sel, ...sorted.filter(k => k !== sel).slice(0, 9)]
+      : [sel, ...top.slice(0, 9)];
+  }
+  return top.sort((a, b) => rankValue(b) - rankValue(a));
+}
+function renderRanking() {
+  const vk = rankingScopeKeys();
+  const labels = vk.map(k => PROVINCES[k].th);
+  const data = vk.map(k => rankValue(k));
+  const colors = vk.map(k => isSelectedProvince(k) ? '#B7922E' : '#1F6FB2');
+  document.getElementById('rankCap').textContent = `เรียงตาม${RANK_METRIC_LABEL[RANK_METRIC]} (ล้านบาท)`;
+  setChart('cRank', {
+    type: 'bar',
+    data: { labels, datasets: [{ label: 'มูลค่า', data, backgroundColor: colors }] },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: { x: { ticks: { font: { size: 22 } } }, y: { ticks: { font: { size: 22 } } } },
+      onClick: (_, els) => {
+        if (els.length) selectProvince(String(vk[els[0].index]), { fromUi: 'rankChart' });
+      }
+    }
+  });
+}
+
+
+const COMPANY_PREFIX_WORDS = ["คาริการ์ท","เอ็ม.ดี. อินเตอร์เนชั่นแนล คอสเมติกส์","เอเชีย อีโค คอร์ป","เอสเซ่นเชียล คอสเมซูติคอล แอนด์ เซฟตี้","ยูเนี่ยน คอสเมด กรุ๊ป","ไทย เฮลท์ตี้ โปรดักส์","สยาม เมดิคอล ซัพพลาย","แพน แปซิฟิก ฟาร์มา","โกลบอล เวลเนส อินดัสตรี","นอร์ทเทิร์น เฮิร์บ เทรดดิ้ง","เคมีคอล อินโนเวชั่น","ไบโอ ฟาร์มา แล็บ","กรีน เนเจอรัล โปรดักส์","ยูไนเต็ด ฟู้ด แฟคตอรี่","เมดิพลัส แมนูแฟคเจอริ่ง","ออร่า บิวตี้ อินเตอร์เนชั่นแนล","ไทย อโกร โฮลดิ้ง","เวลธ์ ไลฟ์ ไซแอนซ์","ภัทรา คอสเมติกส์","รุ่งเรือง เคมีภัณฑ์","แอดวานซ์ นิวทริชั่น","สุขสวัสดิ์ ฟาร์มาซูติคอล","บางกอก เฮลท์แคร์","อินโนเวทีฟ ไบโอเทค","เอเวอร์กรีน ออร์แกนิค"];
+const COMPANY_SUFFIX = ["จำกัด", "จำกัด (มหาชน)"];
+const PERSON_SURNAMES = ["รักเขียว","ใจดี","ศรีสุข","พงษ์ไพบูลย์","วัฒนกุล","แสงทอง","ธนโชติ","บุญมา","จันทร์เพ็ญ","สินทวี"];
+const PERSON_FIRST_F = ["ขนิษฐา","สุพรรณี","วิภาวรรณ","อรุณี","ปิยะดา"];
+const PERSON_FIRST_M = ["ประยุทธ","สมชาย","วีระ","ธนากร","อนุชา"];
+function companyName(provKey, i) {
+  const seed = provKey + '|comp|' + i;
+  const isPerson = seededVal(seed + '|type', 0, 100) < 8;
+  if (isPerson) {
+    const isFemale = seededVal(seed + '|gender', 0, 1) < 0.5;
+    const firstList = isFemale ? PERSON_FIRST_F : PERSON_FIRST_M;
+    const first = firstList[Math.floor(seededVal(seed + '|first', 0, firstList.length))];
+    const last = PERSON_SURNAMES[Math.floor(seededVal(seed + '|last', 0, PERSON_SURNAMES.length))];
+    return (isFemale ? 'นาง ' : 'นาย ') + first + ' ' + last;
+  }
+  const word = COMPANY_PREFIX_WORDS[Math.floor(seededVal(seed + '|word', 0, COMPANY_PREFIX_WORDS.length))];
+  const suffix = COMPANY_SUFFIX[Math.floor(seededVal(seed + '|suf', 0, COMPANY_SUFFIX.length))];
+  return `บริษัท ${word} ${suffix}`;
+}
+function companiesForProvince(provKey) {
+  const dists = DISTRICTS[provKey] || [];
+  if (!dists.length) return [];
+  const count = 30;
+  const out = [];
+  for (let i = 0; i < count; i++) {
+    const seed = provKey + '|comp|' + i;
+    const dIdx = Math.floor(seededVal(seed + '|dist', 0, dists.length));
+    const base = PROVINCE_VALUES[provKey] / 8 / 6;
+    const imp = seededVal(seed + '|imp', base*0.2, base*1.0);
+    const exp = seededVal(seed + '|exp', base*0.15, base*0.8);
+    const prod = seededVal(seed + '|prod', base*0.3, base*1.2);
+    const sale = seededVal(seed + '|sale', base*0.25, base*1.1);
+    out.push({ name: companyName(provKey, i), district: dists[dIdx], imp, exp, prod, sale, total: +(imp+exp+prod+sale).toFixed(1) });
+  }
+  return out;
+}
+
+let COMP_TOPN = 100;
+const COMP_SORT = { key: 'total', dir: 'desc' };
+document.getElementById('compTopN').addEventListener('change', e => { COMP_TOPN = +e.target.value; renderCompanies(); });
+document.querySelectorAll('#compTableWrap th.sortable').forEach(th => th.addEventListener('click', () => {
+  if (COMP_SORT.key === th.dataset.key) COMP_SORT.dir = COMP_SORT.dir === 'desc' ? 'asc' : 'desc';
+  else { COMP_SORT.key = th.dataset.key; COMP_SORT.dir = 'desc'; }
+  renderCompanies();
+}));
+const COMP_METRIC_LABEL = { imp: 'มูลค่านำเข้า', exp: 'มูลค่าส่งออก', prod: 'มูลค่าการผลิต', sale: 'มูลค่าการขาย', district: 'อำเภอ' };
+function renderCompanies() {
+  const sel = selectedProvinceKey();
+  const cap = document.getElementById('compCap');
+  let scopeLabel = 'ทั้งหมด';
+  if (sel) {
+    scopeLabel = PROVINCES[sel].th;
+  } else if (FILTER.region !== 'ALL' || FILTER.zone !== 'ALL') {
+    const parts = [];
+    if (FILTER.region !== 'ALL') parts.push('ภาค' + REGION_NAME[FILTER.region]);
+    if (FILTER.zone !== 'ALL') parts.push('เขตสุขภาพที่ ' + FILTER.zone);
+    scopeLabel = `ทั้งหมด (${parts.join(' · ')})`;
+  }
+  const scopeKeys = sel ? [sel] : visibleKeys();
+  let items = scopeKeys.flatMap(code => companiesForProvince(code).map(c => ({ ...c, province: PROVINCES[code].th })));
+  const dirMul = COMP_SORT.dir === 'asc' ? 1 : -1;
+  items = items.slice().sort((a,b) => {
+    if (COMP_SORT.key === 'district') return a.district.localeCompare(b.district, 'th') * dirMul;
+    return (a[COMP_SORT.key]-b[COMP_SORT.key]) * dirMul;
+  }).slice(0, COMP_TOPN);
+  document.querySelectorAll('#compTableWrap .sort-arrow').forEach(s => s.textContent = '');
+  const activeArrow = document.getElementById(`carrow-${COMP_SORT.key}`);
+  if (activeArrow) activeArrow.textContent = COMP_SORT.dir === 'asc' ? '▲' : '▼';
+  const sortPart = COMP_SORT.key === 'total'
+    ? `Top ${items.length} รายการ · เรียงตามมูลค่ารวม (นำเข้า+ส่งออก+ผลิต+ขาย)`
+    : `Top ${items.length} รายการ · เรียงตาม${COMP_METRIC_LABEL[COMP_SORT.key]} (${COMP_SORT.dir==='desc'?'มากไปน้อย':'น้อยไปมาก'})`;
+  cap.textContent = `${scopeLabel} · ${sortPart}`;
+  document.getElementById('compBody').innerHTML = items.map((c,i)=>`<tr>
+    <td class="num">${i+1}</td><td>${c.name}</td><td>${c.province}</td><td>${c.district}</td>
+    <td class="num">${fmtTHB(c.imp)}</td><td class="num">${fmtTHB(c.exp)}</td>
+    <td class="num">${fmtTHB(c.prod)}</td><td class="num">${fmtTHB(c.sale)}</td></tr>`).join('');
+}
+
+function render() {
+  renderKpis();
+  renderRanking();
+  restyleMap();
+  renderCompanies();
+}
+
+fetch(DISTRICTS_URL).then(r => r.json()).then(list => {
+  list.forEach(d => {
+    const code = String(d.provinceCode);
+    const prefix = code === '10' ? 'เขต' : 'อำเภอ';
+    (DISTRICTS[code] = DISTRICTS[code] || []).push(prefix + d.districtNameTh);
+  });
+  rebuildZoneSelect();
+  rebuildProvinceSelect();
+  syncFilterUi();
+  initMap();
+  render();
+});
+window.addEventListener('load', () => { if (mapObj) mapObj.invalidateSize(true); });
+window.addEventListener('pageshow', () => { if (mapObj) mapObj.invalidateSize(true); });
+
+/* ── แถบตัวกรองแบบ d1 ── */
+const TH_MONTH_NAME = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+function initD1FilterBar(){
+  const selM = document.getElementById("filterMonth");
+  if (selM && selM.options.length <= 1)
+    selM.innerHTML = '<option value="ALL" selected>ทั้งหมด</option>' +
+      TH_MONTH_NAME.map((n,i) => '<option value="'+String(i+1).padStart(2,"0")+'">'+n+'</option>').join("");
+  const fy = document.getElementById("fySel");
+  if (fy && !fy.querySelector('option[value="ALL"]')) {
+    const o = document.createElement("option");
+    o.value = "ALL"; o.textContent = "ทั้งหมด";
+    fy.insertBefore(o, fy.firstChild);
+  }
+}
+function resetDashFilters(){
+  if (typeof FILTER !== "undefined") {
+    if ("region" in FILTER) FILTER.region = "ALL";
+    if ("zone" in FILTER) FILTER.zone = "ALL";
+    if ("province" in FILTER) FILTER.province = "ALL";
+  }
+  document.querySelectorAll("#regionChips .chip").forEach(c =>
+    c.setAttribute("aria-pressed", c.dataset.r === "ALL" ? "true" : "false"));
+  const zone = document.getElementById("zoneSel"); if (zone) zone.value = "ALL";
+  const prov = document.getElementById("provSel"); if (prov) prov.value = "ALL";
+  const fy = document.getElementById("fySel"); if (fy) fy.value = fy.options[fy.options.length - 1].value;
+  const selM = document.getElementById("filterMonth"); if (selM) selM.value = "ALL";
+  lastZoomedProvince = null;
+  rebuildZoneSelect();
+  rebuildProvinceSelect();
+  syncFilterUi();
+  if (typeof render === "function") render();
+  updateMapZoom(true);
+}
+document.getElementById("resetFiltersBtn")?.addEventListener("click", resetDashFilters);
+document.getElementById("fySel")?.addEventListener("change", () => render());
+document.getElementById("filterMonth")?.addEventListener("change", () => render());
+initD1FilterBar();
+
+/* วันที่หัวข้อ — วันเปิดดู (พ.ศ.) */
+const TH_MONTH_ABBR = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
+function formatThaiDateToday(){
+  const d = new Date();
+  return d.getDate() + " " + TH_MONTH_ABBR[d.getMonth()] + " " + (d.getFullYear() + 543);
+}
+function renderHeaderAsOf(){
+  const el = document.getElementById("asOf");
+  if (el) el.textContent = formatThaiDateToday();
+}
+renderHeaderAsOf();
+</script>
+
+<script src="shared/dash-card-filter.js" defer></script>
+<script src="shared/dash-layout.js" defer></script>
+</div>
+</body></html>

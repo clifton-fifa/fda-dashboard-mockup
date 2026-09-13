@@ -117,19 +117,68 @@
     return true;
   }
 
+  function lineLabelAnchor(ctx) {
+    var labels = ctx.chart.data.labels || [];
+    var i = ctx.dataIndex;
+    if (i === labels.length - 1) return "end";
+    if (i === 0) return "start";
+    return "center";
+  }
+
   function lineLabelAlign(ctx) {
-    var n = numericValue(ctx.dataset.data[ctx.dataIndex]);
-    if (isFinite(n) && n < 0) return "bottom";
+    var labels = ctx.chart.data.labels || [];
+    var i = ctx.dataIndex;
     var di = ctx.datasetIndex;
+    var n = numericValue(ctx.dataset.data[ctx.dataIndex]);
+    if (i === labels.length - 1) {
+      if (isFinite(n) && n < 0) return "top";
+      if (di === 0) return "bottom";
+      if (di === 1) return "top";
+      return "bottom";
+    }
+    if (isFinite(n) && n < 0) return "bottom";
     return di % 2 === 0 ? "top" : "bottom";
   }
 
   function lineLabelOffset(ctx) {
+    var labels = ctx.chart.data.labels || [];
+    var i = ctx.dataIndex;
     var di = ctx.datasetIndex;
-    var base = 2 + (di >= 2 ? 10 : 0);
     var n = numericValue(ctx.dataset.data[ctx.dataIndex]);
+    if (i === labels.length - 1) {
+      if (isFinite(n) && n < 0) return 18;
+      if (di === 0) return 4;
+      if (di === 1) return 6;
+      return 20;
+    }
+    if (i === 0 && di === 2) return 14;
+    var base = 2 + (di >= 2 ? 10 : 0);
     if (isFinite(n) && n < 0) return base + 2;
     return base;
+  }
+
+  function barValueNearMax(ctx, threshold) {
+    var data = ctx.dataset.data || [];
+    var nums = data.map(numericValue).filter(function (x) {
+      return isFinite(x);
+    });
+    var max = nums.length ? Math.max.apply(null, nums) : 0;
+    var v = numericValue(data[ctx.dataIndex]);
+    return max > 0 && v >= max * (threshold == null ? 0.82 : threshold);
+  }
+
+  function barLabelAlign(ctx) {
+    var indexAxis = ctx.chart.options.indexAxis;
+    var horizontal = ctx.chart.config.type === "bar" && indexAxis === "y";
+    if (horizontal) return "end";
+    return barValueNearMax(ctx) ? "start" : "top";
+  }
+
+  function barLabelOffset(ctx) {
+    var indexAxis = ctx.chart.options.indexAxis;
+    var horizontal = ctx.chart.config.type === "bar" && indexAxis === "y";
+    if (horizontal) return 3;
+    return barValueNearMax(ctx) ? 8 : 5;
   }
 
   function defaultDataLabelsFor(cfg) {
@@ -145,6 +194,7 @@
       clip: false,
       color: function (ctx) {
         if (line) return ctx.dataset.borderColor || "#3D4F63";
+        if (type === "bar" && !horizontal && barValueNearMax(ctx)) return "#FFFFFF";
         return "#3D4F63";
       },
       font: chartLabelFont(),
@@ -154,19 +204,19 @@
     if (line) {
       return Object.assign(base, {
         display: lineLabelDisplay,
-        anchor: "center",
+        anchor: lineLabelAnchor,
         align: lineLabelAlign,
         offset: lineLabelOffset,
-        clip: true,
+        clip: false,
       });
     }
 
     return Object.assign(base, {
       display: true,
-      anchor: horizontal ? "end" : "end",
-      align: horizontal ? "end" : "top",
-      offset: horizontal ? 3 : 4,
-      clip: true,
+      anchor: "end",
+      align: horizontal ? "end" : barLabelAlign,
+      offset: horizontal ? 3 : barLabelOffset,
+      clip: false,
     });
   }
 
@@ -361,13 +411,13 @@
     }
     if (cfg.type === "line") {
       cfg.options.layout = Object.assign(
-        { padding: { top: 24, bottom: 8, left: 6, right: 32 } },
+        { padding: { top: 28, bottom: 8, left: 8, right: 52 } },
         cfg.options.layout || {}
       );
     }
     if (cfg.type === "bar" && cfg.options.indexAxis !== "y") {
       cfg.options.layout = Object.assign(
-        { padding: { top: 22, bottom: 6, left: 4, right: 10 } },
+        { padding: { top: 36, bottom: 6, left: 4, right: 12 } },
         cfg.options.layout || {}
       );
       cfg.options.scales = cfg.options.scales || {};

@@ -167,10 +167,13 @@
   #treemap svg{
     display:block; width:100% !important; height:100% !important; max-height:100% !important}
   #cagrChart,#countryChart{
-    flex:0 0 auto; min-height:var(--dash-chart-h-lg); height:var(--dash-chart-h-lg)}
+    flex:0 0 auto; min-height:0; height:var(--dash-chart-h-lg); max-height:var(--dash-chart-h-lg);
+    width:100%; overflow:hidden; box-sizing:border-box}
+  .card.cagrCard.card--row-stretch #cagrChart,
+  .card.countryCard.card--row-stretch #countryChart{margin-top:auto}
   #cagrChart svg,#countryChart svg{
-    display:block; width:100% !important; height:var(--dash-chart-h-lg) !important;
-    max-height:var(--dash-chart-h-lg) !important}
+    display:block; width:100% !important; height:100% !important;
+    max-height:100% !important; overflow:hidden}
   .treemapCard{grid-column:span 4}
   #treemap svg{overflow:visible}
   .cagrCard{grid-column:span 4}
@@ -193,7 +196,8 @@
           color:var(--muted); overflow-wrap:break-word}
 
 
-  svg{display:block; width:100%; height:auto; overflow:visible}
+  svg{display:block; width:100%; height:auto; overflow:hidden}
+  #treemap svg,#trendChart svg{overflow:visible}
   .gridline{stroke:var(--line2); stroke-width:1}
   .axis{fill:var(--muted); font-size:var(--fs-axis); font-weight:700}
   .barlbl{fill:var(--ink); font-size:var(--fs-chart-data); font-weight:600}
@@ -1152,7 +1156,8 @@ function renderCagr(){
   const real = isRealDataMode();
   const growth = real ? growthForPeriod(periodCagr) : null;
   const titleEl = document.getElementById("cagrTitle");
-  const W = 420, rowH = 34, L = 182, R = 44, barH = rowH - 12;
+  const W = 420, rowH = 34, L = 182, R = 52, barH = rowH - 12;
+  const cagrTop = 12;
   const cagrLabelFs = Math.min(15, trendChartDataFontPx() + 2);
 
   if (real && !growth){
@@ -1161,10 +1166,10 @@ function renderCagr(){
     // ณ ปัจจุบัน ไม่ต้องเทียบย้อนหลังเลย จึงมีให้ดูได้เสมอ ***
     if (titleEl) titleEl.textContent = "อันดับกลุ่มผลิตภัณฑ์ตามจำนวนผู้ประกอบการที่ยังดำเนินการ";
     const items = DATA.cagr.slice().sort((a,b) => b.active_entity_count - a.active_entity_count);
-    const H = items.length * rowH + 8;
+    const H = items.length * rowH + 8 + cagrTop;
     const max = Math.max(...items.map(d => d.active_entity_count)) || 1;
     const s = items.map((d,i) => {
-      const y = i * rowH + 6, bw = Math.max((d.active_entity_count / max) * (W - L - R), 3);
+      const y = i * rowH + 6 + cagrTop, bw = Math.max((d.active_entity_count / max) * (W - L - R), 3);
       const col = (DATA.groups.find(g => g.code === d.product_group) || {}).color || NAVY;
       const dim = selected !== "ALL" && selected !== d.product_group ? " dim" : "";
       const t = `${d.name_th} (${d.product_group})\nผู้ประกอบการที่ยังดำเนินการ ${fmt(d.active_entity_count)} ราย`;
@@ -1176,7 +1181,7 @@ function renderCagr(){
         <text class="barlbl" x="${L+bw+6}" y="${y+barH/2+4}">${fmt(d.active_entity_count)}</text>`;
     }).join("");
     document.getElementById("cagrChart").innerHTML =
-      `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMin meet">${s}</svg>`;
+      `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" overflow="hidden">${s}</svg>`;
     document.getElementById("cagrCap").textContent = !periodCagr
       ? `จำนวนผู้ประกอบการที่ยังดำเนินการ ณ ${DATA.meta.asOf} — เลือกช่วงเวลา (ปุ่มกรวย) เพื่อดูอัตราการเติบโตแทน`
       : `ข้อมูลย้อนหลังก่อนช่วงที่เลือกยังไม่พอเทียบ — โชว์จำนวนผู้ประกอบการแทนไปก่อน`;
@@ -1188,7 +1193,7 @@ function renderCagr(){
     ? DATA.cagr.map(d => ({...d, cagr_3y_pct: growth[d.product_group] || 0}))
     : DATA.cagr.slice()
   ).sort((a,b) => b.cagr_3y_pct - a.cagr_3y_pct);
-  const H = items.length * rowH + 8;
+  const H = items.length * rowH + 8 + cagrTop;
   // แท่งแบบ diverging จากเส้นศูนย์ — บวกยื่นขวา ลบยื่นซ้าย แทนที่จะยื่นทิศเดียวกันแล้ว
   // เปลี่ยนแค่สี (ของเดิมทำให้ดูไม่ออกว่าอันไหนโต/หดจริง ต้องอ่านเครื่องหมาย +/- เอา)
   // ข้อมูลมอคเป็นบวกเสมอ (maxNeg=0) → zeroX ตกที่ L พอดี หน้าตาจะเหมือนแท่งทางเดียวเดิม
@@ -1201,7 +1206,7 @@ function renderCagr(){
   const totalRange = (maxPos + maxNeg) || 1;
   const zeroX = L + LBL_PAD / 2 + drawW * (maxNeg / totalRange);
   const s = items.map((d,i) => {
-    const y = i * rowH + 6;
+    const y = i * rowH + 6 + cagrTop;
     const neg = d.cagr_3y_pct < 0;
     const bw = d.cagr_3y_pct === 0 ? 0
              : Math.max((Math.abs(d.cagr_3y_pct) / totalRange) * drawW, 3);
@@ -1211,8 +1216,11 @@ function renderCagr(){
     const sign = d.cagr_3y_pct > 0 ? "+" : "";
     const growthLabel = real ? `เติบโต ${periodCagr.from} ถึง ${periodCagr.to}` : "อัตราเติบโตเฉลี่ย 3 ปี";
     const t = `${d.name_th} (${d.product_group})\n${growthLabel} ${sign}${fmt(d.cagr_3y_pct,1)}%`;
-    const lblX = neg ? barX - 8 : barX + bw + 8;
-    const anchor = neg ? "end" : "start";
+    let lblX = neg ? barX - 8 : barX + bw + 8;
+    let anchor = neg ? "end" : "start";
+    const lblMax = W - 6;
+    if (!neg && lblX > lblMax) { lblX = lblMax; anchor = "end"; }
+    if (neg && lblX < L + 4) { lblX = L + 4; anchor = "start"; }
     // รางสีอ่อนเต็มความกว้าง ช่วยให้เทียบสัดส่วนแท่งกับค่าสูงสุดได้ด้วยตา
     return `<text class="axis" x="${L-8}" y="${y+barH/2+4}" text-anchor="end"
              style="fill:#16222E;font-size:${cagrLabelFs}px;font-weight:600">${esc(d.name_th)} (${d.product_group})</text>
@@ -1223,10 +1231,10 @@ function renderCagr(){
   }).join("");
   // เส้นศูนย์ — ต้องมีให้เห็นชัดว่า 0% อยู่ตรงไหน (โชว์เฉพาะตอนมีทั้งบวกและลบปนกัน)
   const zeroLine = maxNeg > 0
-    ? `<line x1="${zeroX}" y1="2" x2="${zeroX}" y2="${H-2}" stroke="#B7C2CE" stroke-width="1.2"/>`
+    ? `<line x1="${zeroX}" y1="${cagrTop}" x2="${zeroX}" y2="${H-2}" stroke="#B7C2CE" stroke-width="1.2"/>`
     : "";
   document.getElementById("cagrChart").innerHTML =
-    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${s}${zeroLine}</svg>`;
+    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" overflow="hidden">${s}${zeroLine}</svg>`;
   document.getElementById("cagrCap").textContent = real
     ? `% เติบโตของมูลค่าการค้า ${periodCagr.from} ถึง ${periodCagr.to}`
     : `อัตราเติบโตเฉลี่ย 3 ปี (${DATA.meta.fyComplete-3}–${DATA.meta.fyComplete})`;
@@ -1245,8 +1253,9 @@ function countryData(){
 function countryChartViewport(){
   const el = document.getElementById("countryChart");
   const W = Math.max(300, Math.round((el && el.clientWidth) || 620));
-  const H = Math.max(240, Math.round(W * 300 / 620));
-  return { W, H };
+  const plotH = Math.max(240, Math.round(W * 300 / 620));
+  const topInset = 14;
+  return { W, H: plotH + topInset, topInset };
 }
 const COUNTRY_LABEL_SHORT = {
   "สหรัฐอเมริกา": "สหรัฐฯ",
@@ -1270,8 +1279,8 @@ function countryNameLines(name, bw, fs){
 }
 function renderCountry(){
   const items = countryData();
-  const { W, H } = countryChartViewport();
-  const P = { t: 38, b: 58, l: 14, r: 18 };
+  const { W, H, topInset } = countryChartViewport();
+  const P = { t: 36 + topInset, b: 56, l: 14, r: 22 };
   const countryLblFs = Math.min(13, trendChartDataFontPx());
   const bw = (W - P.l - P.r) / Math.max(items.length, 1);
   const max = Math.max(...items.map(d => d.value), 1);
@@ -1304,7 +1313,7 @@ function renderCountry(){
   const axis = `<line x1="${P.l}" y1="${base}" x2="${W-P.r}" y2="${base}"
                  stroke="#C6D1DE" stroke-width="1.4"/>`;
   document.getElementById("countryChart").innerHTML =
-    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">
+    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet" overflow="hidden">
        <defs>${defs}</defs>${axis}${s}</svg>`;
   document.getElementById("countryCap").textContent = isRealDataMode()
     ? "มูลค่านำเข้าสูงสุด 6 อันดับแรก สะสมทั้งช่วงข้อมูล"

@@ -154,16 +154,35 @@ body[data-dash="1"] .kpi .val {
 }
 
 body[data-dash="1"] #trendChart svg,
-body[data-dash="1"] #cagrChart svg,
-body[data-dash="1"] #countryChart svg,
 body[data-dash="1"] #treemap svg {
   overflow: visible;
 }
 
-body[data-dash="1"] #countryChart svg,
-body[data-dash="1"] #treemap svg {
+body[data-dash="1"] #cagrChart,
+body[data-dash="1"] #countryChart {
+  flex: 0 0 auto;
+  min-height: 0;
+  max-height: var(--dash-chart-h-lg);
+  height: var(--dash-chart-h-lg);
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+body[data-dash="1"] main .card.cagrCard.card--row-stretch #cagrChart,
+body[data-dash="1"] main .card.countryCard.card--row-stretch #countryChart {
+  margin-top: auto;
+}
+
+body[data-dash="1"] #cagrChart svg,
+body[data-dash="1"] #countryChart svg {
+  overflow: hidden;
   width: 100% !important;
   height: 100% !important;
+  max-height: 100% !important;
+}
+
+body[data-dash="1"] #countryChart svg,
+body[data-dash="1"] #treemap svg {
   max-width: 100%;
 }
 
@@ -479,12 +498,25 @@ body[data-dash="10"] main .card.card--donut-paired .chart-box.chart-box--donut {
 }
 
 /* d1 — SVG ให้สูงเท่ากราฟ Chart.js (ยกเว้น trend ใช้ aspect-ratio) */
-.dash-page #treemap svg,
-.dash-page #cagrChart svg,
-.dash-page #countryChart svg {
+.dash-page #treemap svg {
   height: var(--dash-chart-h) !important;
   max-height: var(--dash-chart-h) !important;
   width: 100% !important;
+}
+
+.dash-page #cagrChart,
+.dash-page #countryChart {
+  height: var(--dash-chart-h-lg) !important;
+  max-height: var(--dash-chart-h-lg) !important;
+  overflow: hidden;
+}
+
+.dash-page #cagrChart svg,
+.dash-page #countryChart svg {
+  height: 100% !important;
+  max-height: 100% !important;
+  width: 100% !important;
+  overflow: hidden;
 }
 
 .dash-page .kpis {

@@ -75,6 +75,10 @@
     document.head.appendChild(link);
   }
 
+  function isNarrowViewport() {
+    return !!(window.matchMedia && window.matchMedia("(max-width: 900px)").matches);
+  }
+
   function storedCollapsed(fallback) {
     try {
       var v = localStorage.getItem(STORAGE_KEY);
@@ -82,6 +86,16 @@
       if (v === "0") return false;
     } catch (e) {}
     return fallback;
+  }
+
+  function initialSidebarCollapsed(shellMode) {
+    try {
+      var v = localStorage.getItem(STORAGE_KEY);
+      if (v === "1") return true;
+      if (v === "0") return false;
+    } catch (e) {}
+    if (shellMode) return isNarrowViewport();
+    return true;
   }
 
   function sharedAssetHref(fileName) {
@@ -255,7 +269,7 @@
     var aside = buildSidebar(current);
     body.insertBefore(aside, frame);
     body.classList.add("dash-with-sidebar");
-    body.classList.toggle("dash-sidebar-collapsed", storedCollapsed(false));
+    body.classList.toggle("dash-sidebar-collapsed", initialSidebarCollapsed(true));
     mountBackdrop();
     applySidebarLogo();
     syncToggleUi();
@@ -325,7 +339,7 @@
     var aside = buildSidebar(detectDashNum());
     body.insertBefore(aside, page);
     body.classList.add("dash-with-sidebar");
-    body.classList.toggle("dash-sidebar-collapsed", storedCollapsed(true));
+    body.classList.toggle("dash-sidebar-collapsed", initialSidebarCollapsed(false));
     mountBackdrop();
     syncToggleUi();
 

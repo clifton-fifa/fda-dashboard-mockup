@@ -266,6 +266,10 @@ body.dash-with-sidebar:not(.dash-sidebar-collapsed) .dash-sidebar-backdrop {
 }
 
 @media (max-width: 900px) {
+  body.dash-with-sidebar {
+    --dash-sidebar-w: min(280px, 88vw);
+  }
+
   body.dash-with-sidebar .dash-sidebar {
     position: fixed;
     left: 0;
@@ -274,6 +278,8 @@ body.dash-with-sidebar:not(.dash-sidebar-collapsed) .dash-sidebar-backdrop {
     min-width: var(--dash-sidebar-w);
     max-width: var(--dash-sidebar-w);
     height: 100%;
+    height: 100dvh;
+    z-index: 2000;
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.15);
   }
 

@@ -324,11 +324,12 @@ body[data-dash] .periodBtn.card-filter-trigger[aria-expanded="true"] {
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 900px) {
   body[data-dash] .filters {
     grid-template-columns: 1fr !important;
     grid-template-rows: auto auto !important;
     min-height: 0 !important;
+    gap: 8px !important;
   }
 
   body[data-dash] .static-filters {
@@ -336,11 +337,44 @@ body[data-dash] .periodBtn.card-filter-trigger[aria-expanded="true"] {
     grid-row: 1 !important;
     flex-wrap: wrap !important;
     overflow-x: visible !important;
+    width: 100% !important;
+    max-width: 100% !important;
   }
 
   body[data-dash] .filterGroups {
     grid-column: 1 !important;
     grid-row: 2 !important;
     justify-content: flex-start !important;
+    flex-wrap: wrap !important;
+    overflow: visible !important;
+  }
+
+  body[data-dash] #chips,
+  body[data-dash] #regionChips {
+    flex: 1 1 100% !important;
+    max-width: 100% !important;
+    padding-bottom: 2px;
+  }
+}
+
+@media (max-width: 720px) {
+  body[data-dash] .static-filters span {
+    padding-left: 8px !important;
+  }
+
+  body[data-dash] .static-filters span:nth-child(2) {
+    padding-left: 0 !important;
+    border-left: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  body[data-dash] .static-filters {
+    gap: 5px 6px !important;
+  }
+
+  body[data-dash] .static-filters span {
+    border-left: none !important;
+    padding-left: 0 !important;
   }
 }

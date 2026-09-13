@@ -76,6 +76,12 @@
       }, 200);
     });
     window.addEventListener("resize", debounce(resizeCharts, 120));
+    window.addEventListener(
+      "orientationchange",
+      function () {
+        setTimeout(resizeCharts, 200);
+      }
+    );
   }
 
   window.dashLayoutResize = resizeCharts;

@@ -569,25 +569,33 @@ header .right .dash-mock-badge {
 
 /* แถบตัวกรอง → shared/dash-filters.css (โหลดหลังไฟล์นี้) */
 
-/* ลดทีละขั้นเมื่อจอแคบ — ทุกแดชใช้ชุดเดียวกัน */
+/* ── Responsive: tablet / mobile (iframe + standalone .dash-page) ── */
 @media (max-width: 1100px) {
   body[data-dash] {
-    --fs-base: 24px;
+    --fs-base: 22px;
     --fs-h2: 19px;
     --fs-cap: 14px;
     --fs-trend-legend: 13px;
-    --fs-kpi: 46px;
-    --fs-kpi-name: 22px;
-    --fs-kpi-unit: 20px;
-    --fs-ui: 16px;
-    --fs-ui-md: 15px;
-    --fs-table: 17px;
-    --fs-chrome-h1: 26px;
+    --fs-kpi: 34px;
+    --fs-kpi-name: 16px;
+    --fs-kpi-unit: 15px;
+    --fs-ui: 15px;
+    --fs-ui-md: 14px;
+    --fs-table: 15px;
+    --fs-chrome-h1: 22px;
+    --fs-chrome-sub: 16px;
+    --fs-chrome-meta: 15px;
     --dash-chart-h: 260px;
-    --dash-chart-h-lg: 320px;
-    --dash-map-h: 480px;
+    --dash-chart-h-lg: 300px;
+    --dash-map-h: 420px;
   }
 
+  body[data-dash] main [class*="span"],
+  body[data-dash] main .trend,
+  body[data-dash] main .treemapCard,
+  body[data-dash] main .cagrCard,
+  body[data-dash] main .countryCard,
+  body[data-dash] main .healthCard,
   .dash-page [class*="span"],
   .dash-page .trend,
   .dash-page .treemapCard,
@@ -597,39 +605,148 @@ header .right .dash-mock-badge {
     grid-column: span 12 !important;
   }
 
+  body[data-dash] main,
   .dash-page main {
-    padding-left: 12px;
-    padding-right: 12px;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
     gap: 12px;
+  }
+
+  body[data-dash] .kpis,
+  .dash-page .kpis {
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)) !important;
+  }
+}
+
+@media (max-width: 900px) {
+  body[data-dash] {
+    --dash-sidebar-w: 260px;
+    --dash-chart-h-lg: 280px;
+    --dash-map-h: 380px;
+  }
+
+  body[data-dash] header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 10px 14px 9px !important;
+  }
+
+  body[data-dash] header .brand {
+    width: 100%;
+    min-width: 0;
+  }
+
+  body[data-dash] header h1 {
+    font-size: var(--fs-chrome-h1) !important;
+    line-height: 1.22;
+  }
+
+  body[data-dash] header .sub {
+    font-size: var(--fs-chrome-sub) !important;
+    line-height: 1.35;
+  }
+
+  body[data-dash] header .right {
+    text-align: left;
+    width: 100%;
+  }
+
+  body[data-dash] header .brandLogo {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  body[data-dash] main,
+  .dash-page main {
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+  }
+
+  body[data-dash] .card,
+  .dash-page .card {
+    padding: 12px 13px 11px !important;
+  }
+
+  body[data-dash] .rss-table-wrap,
+  body[data-dash] .table-scroll,
+  body[data-dash] .table-scroll--hs,
+  .dash-page .table-scroll,
+  .dash-page .table-wrap {
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch;
+    max-width: 100%;
   }
 }
 
 @media (max-width: 720px) {
   body[data-dash] {
     --fs-base: 20px;
-    --fs-h2: 18px;
+    --fs-h2: 17px;
     --fs-cap: 13px;
     --fs-trend-legend: 12px;
-    --fs-kpi: 40px;
-    --fs-kpi-name: 20px;
-    --fs-chrome-h1: 24px;
+    --fs-kpi: 30px;
+    --fs-kpi-name: 15px;
+    --fs-kpi-unit: 14px;
+    --fs-chrome-h1: 19px;
+    --fs-chrome-sub: 14px;
+    --fs-chrome-meta: 13px;
+    --fs-chrome-org: 12px;
     --dash-chart-h: 240px;
     --dash-chart-h-sm: 200px;
-    --dash-chart-h-lg: 280px;
-    --dash-map-h: 360px;
+    --dash-chart-h-lg: 260px;
+    --dash-map-h: 320px;
+    --dash-filter-fs: 14px;
+    --dash-filter-chip-fs: 13px;
+  }
+
+  body[data-dash] .kpis,
+  .dash-page .kpis {
+    grid-template-columns: 1fr !important;
+  }
+
+  body[data-dash] header h1 {
+    font-size: 19px !important;
+  }
+
+  body[data-dash] .card > h2 {
+    flex-wrap: wrap;
+    gap: 6px;
   }
 
   body[data-dash] .filters {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
   }
 
   body[data-dash] .static-filters {
-    gap: 8px 10px !important;
+    gap: 6px 8px !important;
   }
 
   body[data-dash] .static-filters span {
-    padding-left: 8px;
+    padding-left: 8px !important;
+  }
+
+  body[data-dash] #trendChart svg {
+    max-height: 240px;
+  }
+}
+
+@media (max-width: 480px) {
+  body[data-dash] {
+    --fs-kpi: 28px;
+    --dash-chart-h: 220px;
+    --dash-chart-h-lg: 240px;
+  }
+
+  body[data-dash] .filters .lbl {
+    display: none !important;
+  }
+
+  body[data-dash] #chips,
+  body[data-dash] #regionChips {
+    justify-content: flex-start !important;
+    width: 100%;
   }
 }
 

@@ -1,3 +1,5 @@
+@import url("dash-fonts.css");
+
 /* แถบเมนู — ฐานขนาดจาก d1_NEW (ใช้ร่วม d1–d10 + dashboard.html) */
 body.dash-with-sidebar,
 body[data-dash-shell] {
@@ -42,8 +44,7 @@ body.dash-with-sidebar .dash-sidebar {
   max-height: 100vh;
   z-index: 2000;
   overflow: hidden;
-  font-family: "TH Sarabun New", "TH SarabunPSK", "Sarabun", "Noto Sans Thai", "Leelawadee UI", system-ui,
-    sans-serif;
+  font-family: var(--dash-font, "Sarabun", "Noto Sans Thai", "Leelawadee UI", system-ui, sans-serif);
   font-size: var(--dash-sidebar-font);
   line-height: 1.32;
   font-weight: 600;
@@ -76,8 +77,7 @@ body.dash-with-sidebar .dash-page {
 /* ไม่ให้ฟอนต์ 28px ของ body[data-dash] ไหลเข้า sidebar */
 body[data-dash] .dash-sidebar,
 body[data-dash] .dash-sidebar * {
-  font-family: "TH Sarabun New", "TH SarabunPSK", "Sarabun", "Noto Sans Thai", "Leelawadee UI", system-ui,
-    sans-serif;
+  font-family: var(--dash-font, "Sarabun", "Noto Sans Thai", "Leelawadee UI", system-ui, sans-serif);
 }
 
 .dash-sidebar-head {

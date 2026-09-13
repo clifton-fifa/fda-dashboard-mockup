@@ -1,0 +1,14 @@
+/* ฟอนต์ Sarabun จาก Google Fonts — ให้ทุกเครื่องแสดงผลใกล้เคียงกัน (ไม่พึ่ง TH Sarabun ใน Windows) */
+@import url("https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
+
+:root {
+  --dash-font: "Sarabun", "Noto Sans Thai", "Leelawadee UI", system-ui, -apple-system, sans-serif;
+}
+
+body[data-dash],
+body[data-dash-shell],
+body.dash-with-sidebar,
+body.dash-with-sidebar .dash-sidebar,
+body.dash-with-sidebar .dash-sidebar * {
+  font-family: var(--dash-font);
+}

@@ -223,18 +223,20 @@ function applyFilters() {
     borderWidth: 2,
     radius:'88%',
     hoverRadius:'90%'
-  }]}, options:{responsive:true, maintainAspectRatio:false, layout:{padding:{top:6,bottom:2,left:4,right:4}}, plugins:{
-    legend:{position:'bottom', labels:{padding:10, generateLabels: chart => cleanLabels.map((text, i) => ({
-      text,
-      fillStyle: cleanColors[i],
-      strokeStyle: cleanColors[i],
-      lineWidth: 0,
-      hidden: !chart.getDataVisibility(i),
-      index: i
-    }))}},
-  }}}});
+  }]}, options:{responsive:true, maintainAspectRatio:false, layout:{padding:{top:6,bottom:2,left:4,right:4}}, plugins:{legend:{position:'bottom', labels:{padding:10}}}}});
 }
-applyFilters();
+function bootDashData() {
+  try {
+    if (typeof applyFilters === "function") applyFilters();
+  } catch (err) {
+    console.error("[d10] applyFilters failed", err);
+  }
+}
+if (typeof Chart === "undefined") {
+  window.addEventListener("load", bootDashData, { once: true });
+} else {
+  bootDashData();
+}
 
 /* วันที่หัวข้อ — วันเปิดดู (พ.ศ.) */
 const TH_MONTH_ABBR = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];

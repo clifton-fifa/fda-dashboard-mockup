@@ -84,12 +84,42 @@
     return fallback;
   }
 
+  function sharedAssetHref(fileName) {
+    var scripts = document.getElementsByTagName("script");
+    for (var i = 0; i < scripts.length; i++) {
+      var src = scripts[i].getAttribute("src") || "";
+      if (src.indexOf("dash-sidebar.js") !== -1) {
+        return src.replace(/dash-sidebar\.js.*$/, fileName);
+      }
+    }
+    return "shared/" + fileName;
+  }
+
   function applySidebarLogo() {
     var img = document.querySelector(".dash-sidebar-logo-img");
     if (!img) return;
-    var header = document.querySelector("header .brandLogo");
-    var src = header && header.getAttribute("src");
-    if (!src) src = inDashboardsFolder() ? "../assets/fda-logo.png" : "assets/fda-logo.png";
+    var src = null;
+    var frame = document.getElementById("dashContentFrame");
+    if (frame) {
+      try {
+        var doc = frame.contentDocument;
+        var hLogo = doc && doc.querySelector("header .brandLogo");
+        if (hLogo && hLogo.getAttribute("src")) src = hLogo.getAttribute("src");
+      } catch (e) {}
+    }
+    if (!src) {
+      var header = document.querySelector("header .brandLogo");
+      if (header && header.getAttribute("src")) src = header.getAttribute("src");
+    }
+    if (!src && window.FDA_LOGO_DATA_URI) src = window.FDA_LOGO_DATA_URI;
+    if (!src) src = sharedAssetHref("fda-logo.svg");
+    img.onerror = function () {
+      if (window.FDA_LOGO_DATA_URI && img.getAttribute("src") !== window.FDA_LOGO_DATA_URI) {
+        img.onerror = null;
+        img.setAttribute("src", window.FDA_LOGO_DATA_URI);
+      }
+    };
+    img.style.display = "";
     img.setAttribute("src", src);
     img.setAttribute("alt", "อย.");
   }
@@ -150,7 +180,7 @@
     var head = document.createElement("div");
     head.className = "dash-sidebar-head";
     head.innerHTML =
-      '<img class="dash-sidebar-logo-img" alt="" onerror="this.style.display=\'none\'">' +
+      '<img class="dash-sidebar-logo-img" alt="">' +
       '<div class="dash-sidebar-org">สำนักงานคณะกรรมการอาหารและยา<br>กระทรวงสาธารณสุข</div>';
     aside.appendChild(head);
 
@@ -231,6 +261,7 @@
     frame.addEventListener("load", function () {
       if (navTimer) return;
       frame.classList.remove("dash-frame-loading");
+      applySidebarLogo();
       afterSidebarToggle();
     });
 
@@ -311,7 +342,15 @@
     });
 
     onReady(function () {
-      applySidebarLogo();
+      if (!document.querySelector("script[src*='fda-logo-data.js']")) {
+        var logoJs = document.createElement("script");
+        logoJs.src = sharedAssetHref("fda-logo-data.js");
+        logoJs.onload = applySidebarLogo;
+        logoJs.onerror = applySidebarLogo;
+        document.head.appendChild(logoJs);
+      } else {
+        applySidebarLogo();
+      }
       wireMenuButton();
       if (page.classList.contains("dash-page-enter")) {
         void page.offsetWidth; /* บังคับคำนวณ style ตอน opacity 0 ก่อน ไม่งั้น transition ไม่เกิด */

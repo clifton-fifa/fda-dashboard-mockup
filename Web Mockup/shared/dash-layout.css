@@ -284,6 +284,26 @@ body[data-dash="6"] .chart-box.chart-box--donut-fill {
   margin-right: auto;
 }
 
+/* d10 — โดนัทคู่ตาราง: ไม่ยืดเต็มความสูงการ์ด */
+body[data-dash="10"] main .card.card--donut-paired {
+  display: flex;
+  flex-direction: column;
+}
+
+body[data-dash="10"] main .card.card--donut-paired > h2 {
+  flex: 0 0 auto;
+}
+
+body[data-dash="10"] main .card.card--donut-paired .chart-box.chart-box--donut {
+  flex: 0 0 auto;
+  height: var(--dash-chart-h-lg) !important;
+  min-height: var(--dash-chart-h-lg);
+  max-height: var(--dash-chart-h-lg) !important;
+  max-width: min(100%, 380px);
+  margin: auto;
+  align-self: center;
+}
+
 .dash-page #mapEl {
   height: var(--dash-map-h) !important;
   min-height: var(--dash-map-h);

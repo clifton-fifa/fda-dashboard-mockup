@@ -109,8 +109,8 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 <section class="kpis" id="healthKpi"></section>
 <section class="card span6 card--row-stretch"><h2>คุณภาพข้อมูลรายเมตริก</h2>
 <div class="table-scroll"><table class="data"><thead><tr><th>เมตริก</th><th class="num">ค่า</th><th class="cen">สถานะ</th></tr></thead><tbody id="healthBody"></tbody></table></div></section>
-<section class="card span6 card--row-stretch card--chart-grow"><h2>สถิติขั้นตอนทำความสะอาดข้อมูล</h2>
-<div class="chart-box chart-box--donut chart-box--donut-fill"><canvas id="cClean"></canvas></div></section>
+<section class="card span6 card--row-stretch card--donut-paired"><h2>สถิติขั้นตอนทำความสะอาดข้อมูล</h2>
+<div class="chart-box chart-box--donut lg"><canvas id="cClean"></canvas></div></section>
 <section class="card span12"><h2>ที่มาข้อมูลและธรรมาภิบาล</h2>
 <div class="table-scroll"><table class="data"><thead><tr><th>แหล่งข้อมูล</th><th>ตาราง/ไฟล์</th><th class="num">ความครบถ้วน</th><th>ปรับปรุงล่าสุด</th><th>ผู้รับผิดชอบ</th></tr></thead>
 <tbody>
@@ -213,7 +213,7 @@ function applyFilters() {
   document.getElementById('healthBody').innerHTML = HEALTH.map(h=>`<tr><td>${h.metric_name_th}</td><td class="num">${healthMetricDisplay(h, factor)}</td>
     <td class="cen">${h.status==='ปกติ'?'<span class="badge badge-pass">'+h.status+'</span>':'<span class="badge badge-warn">'+h.status+'</span>'}</td></tr>`).join('');
   const pass=Math.round(4100*factor), fail=Math.round(900/factor), qa=Math.round(48*factor);
-  setChart('cClean', {type:'doughnut', data:{labels:['ผ่าน','ไม่ผ่าน','ตรวจสอบ','ไม่เปลี่ยน'], datasets:[{data:[pass,fail,qa,952], backgroundColor:['#1F7A45','#C0392B','#A66A00','#95A5A6'], radius:'96%', hoverRadius:'98%'}]}, options:{responsive:true,maintainAspectRatio:false, layout:{padding:{top:6,bottom:2,left:4,right:4}}, plugins:{legend:{position:'bottom',labels:{padding:10}}}}});
+  setChart('cClean', {type:'doughnut', data:{labels:['ผ่าน','ไม่ผ่าน','ตรวจสอบ','ไม่เปลี่ยน'], datasets:[{data:[pass,fail,qa,952], backgroundColor:['#1F7A45','#C0392B','#A66A00','#95A5A6'], radius:'88%', hoverRadius:'90%'}]}, options:{responsive:true,maintainAspectRatio:false, layout:{padding:{top:6,bottom:2,left:4,right:4}}, plugins:{legend:{position:'bottom',labels:{padding:10}}}}});
 }
 applyFilters();
 

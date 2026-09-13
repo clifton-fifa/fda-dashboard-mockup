@@ -213,7 +213,26 @@ function applyFilters() {
   document.getElementById('healthBody').innerHTML = HEALTH.map(h=>`<tr><td>${h.metric_name_th}</td><td class="num">${healthMetricDisplay(h, factor)}</td>
     <td class="cen">${h.status==='ปกติ'?'<span class="badge badge-pass">'+h.status+'</span>':'<span class="badge badge-warn">'+h.status+'</span>'}</td></tr>`).join('');
   const pass=Math.round(4100*factor), fail=Math.round(900/factor), qa=Math.round(48*factor);
-  setChart('cClean', {type:'doughnut', data:{labels:['ผ่าน','ไม่ผ่าน','ตรวจสอบ','ไม่เปลี่ยน'], datasets:[{data:[pass,fail,qa,952], backgroundColor:['#1F7A45','#C0392B','#A66A00','#95A5A6'], radius:'88%', hoverRadius:'90%'}]}, options:{responsive:true,maintainAspectRatio:false, layout:{padding:{top:6,bottom:2,left:4,right:4}}, plugins:{legend:{position:'bottom',labels:{padding:10}}}}});
+  const cleanLabels = ['ผ่าน', 'ไม่ผ่าน', 'ตรวจสอบ', 'ไม่เปลี่ยน'];
+  const cleanColors = ['#1F7A45', '#C0392B', '#D68910', '#9AA5B1'];
+  setChart('cClean', {type:'doughnut', data:{labels: cleanLabels, datasets:[{
+    data:[pass, fail, qa, 952],
+    backgroundColor: cleanColors,
+    hoverBackgroundColor: cleanColors,
+    borderColor: '#fff',
+    borderWidth: 2,
+    radius:'88%',
+    hoverRadius:'90%'
+  }]}, options:{responsive:true, maintainAspectRatio:false, layout:{padding:{top:6,bottom:2,left:4,right:4}}, plugins:{
+    legend:{position:'bottom', labels:{padding:10, generateLabels: chart => cleanLabels.map((text, i) => ({
+      text,
+      fillStyle: cleanColors[i],
+      strokeStyle: cleanColors[i],
+      lineWidth: 0,
+      hidden: !chart.getDataVisibility(i),
+      index: i
+    }))}},
+  }}}});
 }
 applyFilters();
 

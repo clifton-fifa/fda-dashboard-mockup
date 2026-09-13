@@ -142,8 +142,28 @@ function setChart(id, cfg) {
   const el = document.getElementById(id);
   if (!el || typeof Chart === 'undefined') return null;
   destroyChart(id);
-  charts[id] = new Chart(el, window.dashPrepareChart ? dashPrepareChart(cfg) : cfg);
+  try {
+    const prep = window.dashPrepareChart ? dashPrepareChart(cfg) : cfg;
+    charts[id] = new Chart(el, prep);
+    requestAnimationFrame(function () {
+      if (charts[id]) charts[id].resize();
+    });
+  } catch (e) {
+    console.error('[dash] chart failed:', id, e);
+    return null;
+  }
   return charts[id];
+}
+function bootDash() {
+  applyFilters();
+  function resizeLater() {
+    if (typeof window.dashLayoutResize === 'function') window.dashLayoutResize();
+  }
+  resizeLater();
+  window.addEventListener('load', function () {
+    resizeLater();
+    setTimeout(resizeLater, 300);
+  });
 }
 function gName(code) { return code === 'ALL' ? 'ทั้งหมด' : (GROUPS.find(g => g.code === code)?.name || code); }
 function gColor(code) { return GROUPS.find(g => g.code === code)?.color || '#1F6FB2'; }
@@ -324,7 +344,7 @@ document.getElementById("hsTopN")?.addEventListener("change", (e) => {
   HS_TOPN = Math.max(1, +e.target.value || 10);
   renderHsTable();
 });
-applyFilters();
+bootDash();
 
 /* วันที่หัวข้อ — วันเปิดดู (พ.ศ.) */
 const TH_MONTH_ABBR = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];

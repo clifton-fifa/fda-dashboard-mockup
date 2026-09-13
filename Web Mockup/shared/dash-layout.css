@@ -189,9 +189,9 @@ body[data-dash]:not(.dash-with-sidebar)
   .card.card--row-stretch.card--chart-grow
   .chart-box:not(.chart-box--donut-fill),
 .dash-page .card.card--row-stretch.card--chart-grow .chart-box:not(.chart-box--donut-fill) {
-  flex: 1 1 0;
+  flex: 0 0 auto !important;
   height: var(--dash-chart-h) !important;
-  min-height: var(--dash-chart-h);
+  min-height: var(--dash-chart-h) !important;
   max-height: none !important;
 }
 
@@ -221,8 +221,8 @@ body[data-dash]:not(.dash-with-sidebar)
   .card.card--row-stretch.card--chart-grow
   .chart-box.chart-box--donut-fill,
 .dash-page .card.card--row-stretch.card--chart-grow .chart-box.chart-box--donut-fill {
-  flex: 1 1 0;
-  min-height: var(--dash-chart-h-lg);
+  flex: 0 0 auto !important;
+  min-height: var(--dash-chart-h-lg) !important;
   height: var(--dash-chart-h-lg) !important;
   max-height: none !important;
 }

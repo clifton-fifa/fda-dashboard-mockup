@@ -62,7 +62,9 @@
       var sc = scales[key];
       if (!sc || sc === false) return;
       var tickFs = horizBar && key === "y" ? Math.min(13, axisFs) : axisFs;
-      sc.ticks = sc.ticks || {};
+      if (typeof sc.ticks !== "object" || sc.ticks === null || Array.isArray(sc.ticks)) {
+        sc.ticks = {};
+      }
       var userFont = (sc.ticks.font && typeof sc.ticks.font === "object") ? sc.ticks.font : {};
       sc.ticks.font = Object.assign({ size: tickFs, family: family }, userFont);
       if (sc.ticks.font.size > axisFs + 1) sc.ticks.font.size = tickFs;

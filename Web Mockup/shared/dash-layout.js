@@ -11,6 +11,12 @@
     };
   }
 
+  function reflowSvgCharts() {
+    try {
+      window.dispatchEvent(new CustomEvent("fda-dash-reflow"));
+    } catch (e) {}
+  }
+
   function resizeCharts() {
     try {
       if (typeof Chart !== "undefined") {
@@ -26,6 +32,7 @@
         }
       }
     } catch (e) {}
+    reflowSvgCharts();
   }
 
   /* ใน iframe ของ dashboard.html — ปุ่ม ☰ สั่ง shell ให้เปิด/ปิดเมนู (ไม่รู้สถานะเมนู จึงไม่ใส่ aria-expanded) */

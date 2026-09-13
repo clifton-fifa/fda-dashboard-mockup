@@ -172,7 +172,7 @@
     display:block; width:100% !important; height:var(--dash-chart-h-lg) !important;
     max-height:var(--dash-chart-h-lg) !important}
   .treemapCard{grid-column:span 4}
-  #treemap svg{overflow:hidden}
+  #treemap svg{overflow:visible}
   .cagrCard{grid-column:span 4}
   .countryCard{grid-column:span 5}
   .healthCard{grid-column:span 3}
@@ -207,12 +207,14 @@
        box-shadow:0 10px 26px rgba(8,24,46,.34)}
   #tip b{font-weight:700}
 
+  @media (max-width:1280px){
+    .trend,.treemapCard,.cagrCard,.countryCard,.healthCard{grid-column:span 12}
+    .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  }
   @media (max-width:980px){
     .filters{grid-template-columns:1fr; gap:8px}
     .static-filters,.filterGroups{grid-column:1; justify-self:stretch}
     #chips{justify-content:flex-start}
-    .kpis{grid-template-columns:repeat(2,1fr)}
-    .treemapCard,.cagrCard,.countryCard,.healthCard{grid-column:span 12}
   }
   @media (max-width:700px){
     header .brandLogo{width:42px; height:42px}
@@ -1059,8 +1061,16 @@ function treemapCellText(x, y, w, h, d, dim, t, SH, W, H){
   return s;
 }
 
+function treemapViewport(){
+  const el = document.getElementById("treemap");
+  const W = Math.max(320, Math.round((el && el.clientWidth) || 420));
+  const H = Math.max(220, Math.round((el && el.clientHeight) || 300));
+  return { W, H };
+}
+
 function renderTreemap(){
-  const W = 420, H = 300, items = shareForPeriod(periodTreemap);
+  const { W, H } = treemapViewport();
+  const items = shareForPeriod(periodTreemap);
   const rects = squarify(items.map(d => d.trade_value_mb), 0, 0, W, H);
   const SH = 'style="text-shadow:0 1px 3px rgba(0,0,0,.35)"';
   const clips = rects.map(([x,y,w,h], i) =>
@@ -1329,6 +1339,21 @@ function renderHeaderAsOf(){
 renderHeaderAsOf();
 populateYearMonthFilters();
 renderAll();
+
+(function(){
+  var reflowT;
+  function reflowSvgCharts(){
+    clearTimeout(reflowT);
+    reflowT = setTimeout(function(){
+      renderTrend();
+      renderTreemap();
+      renderCagr();
+      renderCountry();
+    }, 120);
+  }
+  window.addEventListener("resize", reflowSvgCharts);
+  window.addEventListener("fda-dash-reflow", reflowSvgCharts);
+})();
 </script>
 
 <script src="shared/dash-layout.js" defer></script>

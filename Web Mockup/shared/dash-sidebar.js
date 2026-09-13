@@ -143,6 +143,35 @@
     img.setAttribute("alt", "อย.");
   }
 
+  function sidebarPinnedOpen() {
+    try {
+      return localStorage.getItem(STORAGE_KEY) === "0";
+    } catch (e) {
+      return false;
+    }
+  }
+
+  /** จอไม่กว้างพอ + sidebar เปิด = iframe แคบ layout พัง — ยุบเมนูถ้าผู้ใช้ไม่ได้ pin เปิดไว้ */
+  function syncSidebarToViewport() {
+    if (!isShell()) return;
+    if (isNarrowViewport()) return;
+    if (sidebarPinnedOpen()) return;
+    if (window.innerWidth >= 1380) return;
+    if (!document.body.classList.contains("dash-sidebar-collapsed")) {
+      document.body.classList.add("dash-sidebar-collapsed");
+      syncToggleUi();
+      afterSidebarToggle();
+    }
+  }
+
+  var syncSidebarDebounced = (function () {
+    var t;
+    return function () {
+      clearTimeout(t);
+      t = setTimeout(syncSidebarToViewport, 120);
+    };
+  })();
+
   function afterSidebarToggle() {
     window.dispatchEvent(new Event("resize"));
     var frame = document.getElementById("dashContentFrame");
@@ -318,6 +347,9 @@
       if (e.data === "fda-dash-toggle-sidebar") toggleSidebar();
       if (e.data === "fda-dash-iframe-ready") applySidebarLogo();
     });
+
+    syncSidebarToViewport();
+    window.addEventListener("resize", syncSidebarDebounced);
   }
 
   /* ── standalone: d1_NEW.html … d10.html ─────────────────────────────

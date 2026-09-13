@@ -112,7 +112,7 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 <tbody id="coBody"></tbody></table></div></section>
 <section class="card span4 card--row-stretch card--chart-grow"><h2>การกระจายตัวรายจังหวัด</h2>
 <div class="chart-box lg"><canvas id="cProv"></canvas></div></section>
-<section class="card span12 card--row-stretch card--chart-grow"><h2>การกระจาย Tier ผู้ประกอบการ</h2><div class="chart-box chart-box--donut chart-box--donut-fill"><canvas id="cTier"></canvas></div></section></main>
+<section class="card span12 card--donut-tier"><h2>การกระจาย Tier ผู้ประกอบการ</h2><div class="chart-box chart-box--donut lg"><canvas id="cTier"></canvas></div></section></main>
 <script>
 const GROUPS = [{"code": "DRUG", "name": "ยา", "color": "#1F6FB2"}, {"code": "MDC", "name": "เครื่องมือแพทย์", "color": "#12A594"}, {"code": "FOOD", "name": "อาหาร", "color": "#3E9F55"}, {"code": "CMT", "name": "เครื่องสำอาง", "color": "#E8A317"}, {"code": "HERB", "name": "สมุนไพร", "color": "#7E57C2"}, {"code": "TXC", "name": "วัตถุอันตราย", "color": "#C0392B"}, {"code": "NCT", "name": "วัตถุเสพติด", "color": "#7F8C8D"}];
 document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => clickGroup(c.dataset.g)));

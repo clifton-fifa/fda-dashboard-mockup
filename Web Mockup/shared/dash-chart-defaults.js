@@ -150,6 +150,77 @@
     });
   }
 
+  function donutSliceTotal(ctx) {
+    var data = (ctx.dataset && ctx.dataset.data) || [];
+    return data.reduce(function (s, x) {
+      return s + (Number(x) || 0);
+    }, 0);
+  }
+
+  function applyDonutDataLabels(cfg) {
+    if (!ChartDataLabels) return;
+    cfg.options = cfg.options || {};
+    cfg.options.plugins = cfg.options.plugins || {};
+    if (cfg.options.plugins.datalabels === false) return;
+    var user = cfg.options.plugins.datalabels || {};
+    cfg.options.plugins.datalabels = Object.assign(
+      {
+        display: function (ctx) {
+          var v = Number(ctx.dataset.data[ctx.dataIndex]);
+          if (!isFinite(v) || v <= 0) return false;
+          var total = donutSliceTotal(ctx);
+          if (total <= 0) return false;
+          return v / total >= 0.015;
+        },
+        formatter: function (value, ctx) {
+          var total = donutSliceTotal(ctx);
+          if (total <= 0) return "";
+          var pct = (Number(value) / total) * 100;
+          if (pct < 1.5) return "";
+          return (
+            pct.toLocaleString("th-TH", { maximumFractionDigits: 1 }) +
+            "%"
+          );
+        },
+        color: "#ffffff",
+        textStrokeColor: "rgba(26, 36, 48, 0.45)",
+        textStrokeWidth: 2,
+        font: chartLabelFont(),
+        anchor: "center",
+        align: "center",
+        clamp: true,
+        clip: false,
+      },
+      user
+    );
+  }
+
+  function applyScatterDataLabels(cfg) {
+    if (!ChartDataLabels) return;
+    cfg.options = cfg.options || {};
+    cfg.options.plugins = cfg.options.plugins || {};
+    if (cfg.options.plugins.datalabels === false) return;
+    var user = cfg.options.plugins.datalabels || {};
+    cfg.options.plugins.datalabels = Object.assign(
+      {
+        display: true,
+        formatter: function (val, ctx) {
+          var pt = ctx.dataset.data[ctx.dataIndex];
+          if (pt && pt.label) return String(pt.label);
+          return "";
+        },
+        color: "#3D4F63",
+        font: chartLabelFont(),
+        anchor: "end",
+        align: "top",
+        offset: 8,
+        clamp: true,
+        clip: false,
+      },
+      user
+    );
+  }
+
   function applyDonutLayout(cfg) {
     if (!cfg || (cfg.type !== "doughnut" && cfg.type !== "pie")) return;
     cfg.options = cfg.options || {};
@@ -157,7 +228,7 @@
     var userLayout = cfg.options.layout || {};
     var userPad = userLayout.padding || {};
     cfg.options.layout = Object.assign({}, userLayout, {
-      padding: Object.assign({ top: 4, bottom: 0, left: 4, right: 4 }, userPad),
+      padding: Object.assign({ top: 8, bottom: 4, left: 8, right: 8 }, userPad),
     });
     if (cfg.type === "doughnut" && cfg.options.cutout == null) {
       cfg.options.cutout = "46%";
@@ -179,6 +250,7 @@
         if (ds.hoverRadius == null) ds.hoverRadius = "96%";
       });
     }
+    applyDonutDataLabels(cfg);
   }
 
   window.dashPrepareChart = function (cfg) {
@@ -194,8 +266,9 @@
       var scLayout = cfg.options.layout || {};
       var scPad = scLayout.padding || {};
       cfg.options.layout = Object.assign({}, scLayout, {
-        padding: Object.assign({ top: 8, bottom: 4, left: 4, right: 8 }, scPad),
+        padding: Object.assign({ top: 14, bottom: 8, left: 8, right: 12 }, scPad),
       });
+      applyScatterDataLabels(cfg);
       return cfg;
     }
     if (cfg.type !== "bar" && cfg.type !== "line") return cfg;

@@ -171,12 +171,6 @@ body[data-dash]:not(.dash-with-sidebar)
   max-height: none !important;
 }
 
-body[data-dash] main .card.card--row-stretch.card--chart-grow:has(#cTier) .chart-box.chart-box--donut-fill {
-  flex: 1 1 auto;
-  min-height: var(--dash-chart-h);
-  height: auto !important;
-  max-height: none !important;
-}
 
 body[data-dash] main .card.card--chart-grow .quadrant-grid {
   flex: 1 1 0;
@@ -202,9 +196,6 @@ body[data-dash] main .card.card--body-grow .quadrant-grid {
   margin-top: 8px;
 }
 
-body[data-dash="6"] main .card:has(#cTier) {
-  min-height: 340px;
-}
 
 .dash-page .chart-box {
   position: relative;
@@ -278,10 +269,21 @@ body[data-dash] .chart-box.chart-box--donut.chart-box--donut-fill {
   margin-right: 0;
 }
 
-body[data-dash="6"] .chart-box.chart-box--donut-fill {
-  max-width: min(100%, 560px);
-  margin-left: auto;
-  margin-right: auto;
+/* d6 — โดนัท Tier กลางการ์ด ไม่เต็มความกว้างแถว */
+body[data-dash="6"] main .card.card--donut-tier {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+body[data-dash="6"] main .card.card--donut-tier .chart-box.chart-box--donut {
+  flex: 0 0 auto;
+  height: var(--dash-chart-h-lg) !important;
+  min-height: var(--dash-chart-h-lg);
+  max-height: var(--dash-chart-h-lg) !important;
+  max-width: min(100%, 420px);
+  margin: 8px auto 4px;
+  align-self: center;
 }
 
 /* d10 — โดนัทคู่ตาราง: ไม่ยืดเต็มความสูงการ์ด */

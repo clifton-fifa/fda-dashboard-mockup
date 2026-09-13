@@ -41,6 +41,11 @@ body.dash-with-sidebar .dash-sidebar * {
   font-weight: var(--dash-fw-body);
 }
 
+body[data-dash-shell] .dash-sidebar .dash-sidebar-link,
+body.dash-with-sidebar .dash-sidebar .dash-sidebar-link {
+  font-weight: var(--dash-fw-ui);
+}
+
 body.dash-with-sidebar .dash-sidebar-link.active,
 body.dash-with-sidebar .dash-sidebar-org {
   font-weight: var(--dash-fw-ui);

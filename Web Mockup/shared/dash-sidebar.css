@@ -8,15 +8,15 @@ body[data-dash-shell] {
   --dash-sidebar-active-bar: #4da3ff;
   --dash-sidebar-blue: #3a8fe8;
   --dash-sidebar-muted: #5b6b7e;
-  /* ตัวเลขฐาน d1 */
-  --dash-sidebar-font: 16px;
-  --dash-sidebar-label-font: 13px;
-  --dash-sidebar-num-font: 12px;
-  --dash-sidebar-org-font: 13px;
-  --dash-sidebar-logo-h: 72px;
-  --dash-sidebar-head-pad: 14px 16px 12px;
-  --dash-sidebar-link-pad: 8px 12px 8px 14px;
-  --dash-sidebar-link-gap: 10px;
+  /* แยกจาก --fs-base ของหน้า iframe (24px) — เมนูอ่านง่ายแต่ไม่ใหญ่เกิน */
+  --dash-sidebar-font: 14px;
+  --dash-sidebar-label-font: 12px;
+  --dash-sidebar-num-font: 11px;
+  --dash-sidebar-org-font: 12px;
+  --dash-sidebar-logo-h: 64px;
+  --dash-sidebar-head-pad: 12px 14px 10px;
+  --dash-sidebar-link-pad: 7px 10px 7px 12px;
+  --dash-sidebar-link-gap: 8px;
 }
 
 body.dash-with-sidebar {
@@ -43,7 +43,7 @@ body.dash-with-sidebar .dash-sidebar {
   z-index: 2000;
   overflow: hidden;
   font-size: var(--dash-sidebar-font);
-  line-height: 1.32;
+  line-height: 1.28;
   transition: flex-basis 0.24s ease, width 0.24s ease, min-width 0.24s ease, max-width 0.24s ease, opacity 0.2s ease,
     border-color 0.2s ease;
 }
@@ -70,9 +70,10 @@ body.dash-with-sidebar .dash-page {
   box-sizing: border-box;
 }
 
-/* ไม่ให้ฟอนต์ 28px ของ body[data-dash] ไหลเข้า sidebar */
-body[data-dash] .dash-sidebar,
-body[data-dash] .dash-sidebar * {
+/* ไม่ให้ฟอนต์ body[data-dash] / iframe ไหลเข้า sidebar (shell มี data-dash="1") */
+body[data-dash] .dash-sidebar {
+  font-size: var(--dash-sidebar-font) !important;
+  line-height: 1.28;
 }
 
 .dash-sidebar-head {
@@ -125,7 +126,7 @@ body[data-dash] .dash-sidebar * {
   padding: var(--dash-sidebar-link-pad);
   color: var(--dash-sidebar-muted);
   font-size: var(--dash-sidebar-font) !important;
-  line-height: 1.32;
+  line-height: 1.28;
   text-decoration: none;
   border-left: 3px solid transparent;
   font-weight: 600;
@@ -136,7 +137,7 @@ body[data-dash] .dash-sidebar * {
 .dash-sidebar-link > span:last-child {
   flex: 1;
   min-width: 0;
-  line-height: 1.32;
+  line-height: 1.28;
 }
 
 .dash-sidebar-link:hover {
@@ -153,16 +154,16 @@ body[data-dash] .dash-sidebar * {
 .dash-sidebar-link .num {
   display: inline-grid;
   place-items: center;
-  min-width: 24px;
-  width: 24px;
-  height: 24px;
-  border-radius: 6px;
+  min-width: 22px;
+  width: 22px;
+  height: 22px;
+  border-radius: 5px;
   background: #e2e8f0;
   color: var(--dash-sidebar-muted);
   font-size: var(--dash-sidebar-num-font) !important;
   font-weight: 700;
   flex: none;
-  margin-top: 2px;
+  margin-top: 1px;
 }
 
 .dash-sidebar-link.active .num {

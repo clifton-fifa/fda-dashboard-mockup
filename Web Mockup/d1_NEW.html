@@ -18,7 +18,8 @@
     --r:8px;
     /* สเกล KPI (คงที่) vs UI รอง (ปรับได้) — โหมดอ่านง่าย */
     --fs-kpi:40px; --fs-kpi-name:17px; --fs-kpi-unit:16px;
-    --fs-base:24px; --fs-h2:22px;
+    --fs-base:24px; --fs-h2:19px;
+    --fs-cap:14px; --fs-trend-legend:13px;
     --fs-chrome-h1:26px; --fs-chrome-sub:18px; --fs-chrome-meta:17px; --fs-chrome-org:15px;
     --fs-filter:17px; --fs-filter-chip:16px;
     --fs-ui:16px; --fs-ui-md:15px; --fs-ui-sm:16px;
@@ -92,10 +93,10 @@
   /* ขีดสีสั้น ๆ หน้าหัวข้อ — แยกลำดับชั้นหัวข้อกับคำอธิบายให้ชัดโดยไม่เพิ่มเส้นกรอบ */
   .card > h2{margin:0; font-size:var(--fs-h2); font-weight:700; letter-spacing:.1px;
              line-height:1.28; display:flex; align-items:center; gap:10px}
-  .card > h2::before{content:""; width:4px; height:16px; border-radius:2px;
+  .card > h2::before{content:""; width:3px; height:14px; border-radius:2px;
                      background:var(--navy); flex:none}
-  .card > .cap{margin:5px 0 12px 13px; color:var(--muted); font-size:var(--fs-ui);
-               line-height:1.5}
+  .card > .cap{margin:4px 0 8px 13px; color:var(--muted); font-size:var(--fs-cap);
+               line-height:1.4}
 
   /* ── ตัวเลือกช่วงเวลารายการ์ด ─────────────────────────────── */
   /* ปุ่มไอคอน + เมนู dropdown เลือกช่วงเวลาต่อการ์ด อิสระจากตัวกรอง Year/Month
@@ -143,8 +144,8 @@
 
   .trend{grid-column:span 8}
   /* คำอธิบายสีอยู่นอก SVG — ไม่แย่งพื้นที่ plot กับตัวอักษรที่ scale ตามความกว้างการ์ด */
-  .trendLegend{display:flex; flex-wrap:wrap; gap:4px 14px; margin:0 0 4px 13px;
-               font-size:var(--fs-ui-md); font-weight:600; color:var(--muted)}
+  .trendLegend{display:flex; flex-wrap:wrap; gap:4px 12px; margin:0 0 4px 13px;
+               font-size:var(--fs-trend-legend); font-weight:600; color:var(--muted)}
   .trendLegend .lg{display:inline-flex; align-items:center; gap:6px}
   .trendLegend .lg i{display:inline-block; width:10px; height:10px; border-radius:50%;
                      flex:none; box-shadow:0 0 0 1.5px #fff}

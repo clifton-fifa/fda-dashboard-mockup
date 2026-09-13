@@ -12,7 +12,7 @@
 <script src="shared/dash-chart-defaults.js"></script>
 <style>
 :root{--navy:#0E2A4F;--gold:#B7922E;--ink:#1A2430;--muted:#5B6B7E;--line:#D8E0EA;--line2:#EAEFF4;
---canvas:#F2F4F7;--card:#FFF;--good:#1F7A45;--warn:#A66A00;--bad:#B4382A;--sh:0 1px 3px rgba(18,48,91,.08);--r:8px;--fs-kpi:40px;--fs-kpi-name:17px;--fs-kpi-unit:16px;--fs-base:24px;--fs-h2:28px;--fs-chrome-h1:26px;--fs-chrome-sub:20px;--fs-chrome-meta:19px;--fs-chrome-org:17px;--fs-filter:19px;--fs-filter-chip:18px;--fs-ui:20px;--fs-ui-md:18px;--fs-ui-sm:16px;--fs-axis:16px;--fs-chart-lbl:18px;--fs-chart-data:12px;--fs-tip:26px;--fs-period:20px}
+--canvas:#F2F4F7;--card:#FFF;--good:#1F7A45;--warn:#A66A00;--bad:#B4382A;--sh:0 1px 3px rgba(18,48,91,.08);--r:8px;--fs-kpi:40px;--fs-kpi-name:17px;--fs-kpi-unit:16px;--fs-base:24px;--fs-h2:19px;--fs-chrome-h1:26px;--fs-chrome-sub:20px;--fs-chrome-meta:19px;--fs-chrome-org:17px;--fs-filter:19px;--fs-filter-chip:18px;--fs-ui:16px;--fs-ui-md:15px;--fs-ui-sm:16px;--fs-axis:16px;--fs-chart-lbl:18px;--fs-chart-data:12px;--fs-tip:26px;--fs-period:20px}
 *{box-sizing:border-box}html,body{margin:0;padding:0}
 body{background:var(--canvas);color:var(--ink);font-size:var(--fs-base);line-height:1.45;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 header{background:var(--navy);color:#fff;padding:11px 22px 10px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:3px solid var(--gold)}
@@ -47,7 +47,7 @@ main{padding:16px 20px 10px;display:grid;grid-template-columns:repeat(12,1fr);ga
 .card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:15px 17px 13px;min-width:0;box-shadow:var(--sh)}
 .card>h2{margin:0;font-size:var(--fs-h2);font-weight:700;display:flex;align-items:center;gap:9px}
 .card>h2::before{content:"";width:4px;height:20px;border-radius:2px;background:var(--navy)}
-.card>.cap{margin:5px 0 12px 13px;color:var(--muted);font-size:var(--fs-ui);line-height:1.5}
+.card>.cap{margin:5px 0 12px 13px;color:var(--muted);font-size:var(--fs-cap, var(--fs-ui-md));line-height:1.4}
 .span12{grid-column:span 12}.span8{grid-column:span 8}.span7{grid-column:span 7}.span6{grid-column:span 6}
 .span5{grid-column:span 5}.span4{grid-column:span 4}.span3{grid-column:span 3}
 .kpis{grid-column:span 12;display:grid;grid-template-columns:repeat(auto-fit,minmax(228px,1fr));gap:16px}

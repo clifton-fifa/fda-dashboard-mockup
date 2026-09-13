@@ -3,14 +3,14 @@
 /* มาตรฐานขนาด UI (zoom เดียวกันทุกหน้า d1–d10) — ค่าคงที่ ไม่ใช้ vw/vh */
 body[data-dash] {
   --fs-base: 24px;
-  --fs-h2: 22px;
+  --fs-h2: 19px;
   --fs-kpi: 40px;
   --fs-kpi-name: 17px;
   --fs-kpi-unit: 16px;
   --fs-ui: 16px;
   --fs-ui-md: 15px;
-  --fs-cap: 15px;
-  --fs-trend-legend: 14px;
+  --fs-cap: 14px;
+  --fs-trend-legend: 13px;
   --fs-table: 16px;
   --fs-ui-sm: 16px;
   --fs-axis: 16px;
@@ -412,7 +412,8 @@ body[data-dash] .card > h2 {
 }
 
 body[data-dash] .card > h2::before {
-  height: 16px;
+  height: 14px;
+  width: 3px;
 }
 
 body[data-dash] .card > .cap {
@@ -570,12 +571,14 @@ header .right .dash-mock-badge {
 @media (max-width: 1100px) {
   body[data-dash] {
     --fs-base: 24px;
-    --fs-h2: 22px;
+    --fs-h2: 19px;
+    --fs-cap: 14px;
+    --fs-trend-legend: 13px;
     --fs-kpi: 46px;
     --fs-kpi-name: 22px;
     --fs-kpi-unit: 20px;
-    --fs-ui: 21px;
-    --fs-ui-md: 20px;
+    --fs-ui: 16px;
+    --fs-ui-md: 15px;
     --fs-table: 17px;
     --fs-chrome-h1: 26px;
     --dash-chart-h: 260px;
@@ -602,7 +605,9 @@ header .right .dash-mock-badge {
 @media (max-width: 720px) {
   body[data-dash] {
     --fs-base: 20px;
-    --fs-h2: 24px;
+    --fs-h2: 18px;
+    --fs-cap: 13px;
+    --fs-trend-legend: 12px;
     --fs-kpi: 40px;
     --fs-kpi-name: 20px;
     --fs-chrome-h1: 24px;

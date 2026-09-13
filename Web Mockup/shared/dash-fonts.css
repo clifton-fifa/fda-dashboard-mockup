@@ -1,14 +1,52 @@
-/* ฟอนต์ Sarabun จาก Google Fonts — ให้ทุกเครื่องแสดงผลใกล้เคียงกัน (ไม่พึ่ง TH Sarabun ใน Windows) */
-@import url("https://fonts.googleapis.com/css2?family=Sarabun:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap");
-
+/* Typography — ใช้ร่วมกับ <link> Google Fonts Sarabun ใน <head> ของทุกหน้า */
 :root {
   --dash-font: "Sarabun", "Noto Sans Thai", "Leelawadee UI", system-ui, -apple-system, sans-serif;
+  --dash-fw-body: 500;
+  --dash-fw-ui: 600;
+  --dash-fw-heading: 700;
+}
+
+html {
+  font-family: var(--dash-font);
 }
 
 body[data-dash],
 body[data-dash-shell],
-body.dash-with-sidebar,
+body.dash-with-sidebar {
+  font-family: var(--dash-font) !important;
+  font-weight: var(--dash-fw-body);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+body[data-dash] header h1,
+body[data-dash] .card > h2,
+body[data-dash] .kpi .val,
+body[data-dash] table.data td.num {
+  font-weight: var(--dash-fw-heading);
+}
+
+body[data-dash] .chip,
+body[data-dash] .filters .lbl,
+body[data-dash] table.data th,
+body[data-dash] .kpi .name,
+body[data-dash] header .right .asof {
+  font-weight: var(--dash-fw-ui);
+}
+
 body.dash-with-sidebar .dash-sidebar,
 body.dash-with-sidebar .dash-sidebar * {
-  font-family: var(--dash-font);
+  font-family: var(--dash-font) !important;
+  font-weight: var(--dash-fw-body);
+}
+
+body.dash-with-sidebar .dash-sidebar-link.active,
+body.dash-with-sidebar .dash-sidebar-org {
+  font-weight: var(--dash-fw-ui);
+}
+
+.leaflet-container,
+.leaflet-tooltip {
+  font-family: var(--dash-font) !important;
 }

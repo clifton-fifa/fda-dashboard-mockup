@@ -3,6 +3,8 @@
   if (!window.Chart) return;
 
   Chart.defaults.animation.duration = 300;
+  Chart.defaults.font.family = '"Sarabun", "Noto Sans Thai", sans-serif';
+  Chart.defaults.font.weight = "500";
 
   var ChartDataLabels = window.ChartDataLabels;
   if (ChartDataLabels) {
@@ -27,11 +29,8 @@
   }
 
   function chartLabelFont() {
-    var family =
-      getComputedStyle(document.body).fontFamily ||
-      getComputedStyle(document.documentElement).fontFamily;
     return {
-      family: family,
+      family: '"Sarabun", "Noto Sans Thai", sans-serif',
       size: dataLabelFontSize(),
       weight: "600",
     };

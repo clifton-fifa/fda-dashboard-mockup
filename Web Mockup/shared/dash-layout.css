@@ -1,10 +1,7 @@
-@import url("dash-fonts.css");
-
 /* Responsive + overflow สำหรับทุกแดชบอร์ด mockup */
 
 /* มาตรฐานขนาด UI (zoom เดียวกันทุกหน้า d1–d10) — ค่าคงที่ ไม่ใช้ vw/vh */
 body[data-dash] {
-  font-family: var(--dash-font, "Sarabun", "Noto Sans Thai", "Leelawadee UI", system-ui, sans-serif);
   --fs-base: 28px;
   --fs-h2: 33px;
   --fs-kpi: 54px;

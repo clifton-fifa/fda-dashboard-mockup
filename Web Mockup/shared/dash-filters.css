@@ -305,58 +305,80 @@ body[data-dash] .periodBtn.card-filter-trigger[aria-expanded="true"] {
   border-color: #7a94b0 !important;
 }
 
-/* แคบลงจากเต็มจอ — ชิปขึ้นบรรทัดใหม่ (ไม่ตัดด้วย overflow) ก่อนถึงมือถือ */
+/* จอแคบลง (เช่น เปิด sidebar) — คง 1 แถว ให้เลื่อนแนวนอน ไม่ตัดเป็นบรรทัด 2 */
 @media (max-width: 1200px) {
-  body[data-dash] .filters {
-    grid-template-columns: 1fr !important;
-    grid-template-rows: auto auto !important;
-    min-height: 0 !important;
-    gap: 6px 8px !important;
+  body[data-dash] {
+    --dash-filter-fs: 14px;
+    --dash-filter-chip-fs: 13px;
+    --dash-filter-pad-x: 12px;
+    --dash-filter-pad-left: 14px;
   }
 
   body[data-dash] .static-filters {
-    grid-column: 1 !important;
-    grid-row: 1 !important;
-    flex-wrap: wrap !important;
-    overflow-x: visible !important;
-    width: 100% !important;
+    gap: 5px 8px !important;
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
   }
 
   body[data-dash] .filterGroups {
-    grid-column: 1 !important;
-    grid-row: 2 !important;
-    justify-content: flex-start !important;
-    flex-wrap: wrap !important;
-    overflow: visible !important;
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    justify-content: flex-end !important;
   }
 
   body[data-dash] #chips,
   body[data-dash] #regionChips {
-    flex: 1 1 100% !important;
-    flex-flow: row wrap !important;
-    overflow-x: visible !important;
-    overflow-y: visible !important;
-    justify-content: flex-start !important;
-    max-width: 100% !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    justify-content: flex-end !important;
+    -webkit-overflow-scrolling: touch;
   }
 }
 
-/* ทับ @media 980px ใน inline ของ d1/d2… ที่แยก 2 แถว */
-@media (max-width: 980px) {
-  body[data-dash] .filters {
-    grid-template-columns: auto minmax(0, 1fr) !important;
+/* d9 — ตัวกรองเยอะ: แถวเดียว + เลื่อนได้ ชิปภาคกะทัดรัด */
+body[data-dash="9"] {
+  --dash-filter-fs: 14px;
+  --dash-filter-chip-fs: 12px;
+}
+
+body[data-dash="9"] .filters {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+}
+
+body[data-dash="9"] .static-filters span {
+  padding-left: 8px !important;
+}
+
+body[data-dash="9"] .filters .chip {
+  padding: 2px 5px !important;
+  font-size: var(--dash-filter-chip-fs) !important;
+}
+
+body[data-dash="9"] .filterGroups .lbl {
+  font-size: var(--dash-filter-chip-fs) !important;
+}
+
+@media (max-width: 1200px) {
+  body[data-dash="9"] .filters {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
     grid-template-rows: 1fr !important;
-    min-height: var(--dash-filter-min-h) !important;
   }
 
-  body[data-dash] .static-filters {
+  body[data-dash="9"] .static-filters,
+  body[data-dash="9"] .filterGroups {
+    grid-row: 1 !important;
+  }
+
+  body[data-dash="9"] .static-filters {
     grid-column: 1 !important;
-    grid-row: 1 !important;
+    overflow-x: auto !important;
+    flex-wrap: nowrap !important;
   }
 
-  body[data-dash] .filterGroups {
+  body[data-dash="9"] .filterGroups {
     grid-column: 2 !important;
-    grid-row: 1 !important;
   }
 }
 

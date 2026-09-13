@@ -26,7 +26,7 @@ header .sub{color:#B7C7DC;font-size:var(--fs-chrome-sub);margin-top:2px;line-hei
 header .right{text-align:right;font-size:var(--fs-chrome-meta);line-height:1.35}
 header .org{color:#B7C7DC;font-size:var(--fs-chrome-org);margin-top:2px;line-height:1.3}
 header .right .asof{font-weight:600}
-.filters{background:#fff;border-bottom:1px solid var(--line);padding:6px 16px 6px 22px;display:grid;grid-template-columns:1fr auto;gap:8px 10px;align-items:center;position:sticky;top:0;z-index:1200;box-shadow:0 1px 0 var(--line)}
+.filters{background:#fff;border-bottom:1px solid var(--line);padding:6px 16px 6px 22px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 10px;align-items:center;position:sticky;top:0;z-index:1200;box-shadow:0 1px 0 var(--line)}
 .static-filters{grid-column:1;justify-self:start;min-width:0;display:flex;gap:12px;color:var(--muted);font-size:var(--fs-filter);flex-wrap:wrap;align-items:center}
 .static-filters span{white-space:nowrap;padding-left:12px;border-left:1px solid var(--line)}
 .static-filters span:first-child{padding-left:0;border-left:none}
@@ -76,7 +76,7 @@ table.data td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight
 .legend-swatch span.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-2px;box-shadow:0 0 0 1px rgba(255,255,255,.8)}
 footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify-content:space-between;color:var(--muted);font-size:var(--fs-ui-md);gap:16px;flex-wrap:wrap}
 @media(max-width:1024px){.span8,.span7,.span6,.span5,.span4,.span3{grid-column:span 12}}
-@media(max-width:980px){.filters{grid-template-columns:1fr;gap:8px}.static-filters,.filterGroups{grid-column:1;justify-self:stretch}#chips,#regionChips{justify-content:flex-start}}
+@media(max-width:900px){.filters{grid-template-columns:1fr;grid-template-rows:auto auto;gap:8px}.static-filters,.filterGroups{grid-column:1;justify-self:stretch}.static-filters{flex-wrap:wrap}#regionChips{flex-wrap:wrap;justify-content:flex-start}}
 @media(max-width:700px){header h1{font-size:26px}header .right{text-align:left}}
 </style>
   <link rel="stylesheet" href="shared/dash-sidebar.css">
@@ -101,7 +101,7 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
     <span class="lbl">ภาค:</span>
     <span id="regionChips"><button type="button" class="chip" aria-pressed="true" data-r="ALL">ทั้งหมด</button>
 <button type="button" class="chip" aria-pressed="false" data-r="N">เหนือ</button>
-<button type="button" class="chip" aria-pressed="false" data-r="NE">ตะวันออกเฉียงเหนือ</button>
+<button type="button" class="chip" aria-pressed="false" data-r="NE" title="ตะวันออกเฉียงเหนือ">อีสาน</button>
 <button type="button" class="chip" aria-pressed="false" data-r="C">กลาง</button>
 <button type="button" class="chip" aria-pressed="false" data-r="E">ตะวันออก</button>
 <button type="button" class="chip" aria-pressed="false" data-r="W">ตะวันตก</button>

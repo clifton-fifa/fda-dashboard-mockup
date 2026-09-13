@@ -17,13 +17,12 @@
     --sh-1:0 1px 3px rgba(18,48,91,.08);
     --r:8px;
     /* สเกล KPI (คงที่) vs UI รอง (ปรับได้) — โหมดอ่านง่าย */
-    --fs-kpi:54px; --fs-kpi-name:25px; --fs-kpi-unit:22px;
-    --fs-base:28px; --fs-h2:33px;
-    /* แถบบน + ตัวกรอง — เล็กกว่าเนื้อหา เพื่อโฟกัส KPI/กราฟ */
-    --fs-chrome-h1:30px; --fs-chrome-sub:20px; --fs-chrome-meta:19px; --fs-chrome-org:17px;
-    --fs-filter:19px; --fs-filter-chip:18px;
-    --fs-ui:24px; --fs-ui-md:22px; --fs-ui-sm:20px;
-    --fs-axis:22px; --fs-chart-lbl:18px; --fs-chart-data:14px; --fs-tip:26px; --fs-period:20px;
+    --fs-kpi:40px; --fs-kpi-name:17px; --fs-kpi-unit:16px;
+    --fs-base:24px; --fs-h2:28px;
+    --fs-chrome-h1:26px; --fs-chrome-sub:18px; --fs-chrome-meta:17px; --fs-chrome-org:15px;
+    --fs-filter:17px; --fs-filter-chip:16px;
+    --fs-ui:20px; --fs-ui-md:18px; --fs-ui-sm:16px;
+    --fs-axis:16px; --fs-chart-lbl:15px; --fs-chart-data:12px; --fs-tip:20px; --fs-period:16px;
   }
   *{box-sizing:border-box}
   html,body{margin:0;padding:0}
@@ -130,7 +129,7 @@
   /* auto-fit แทนการตรึง 6 คอลัมน์ — ปรับตามจำนวนการ์ดจริงเอง (มอค 6 ใบ / จริง 4 ใบ
      ตอนนี้) ไม่ต้องแก้ CSS ทุกครั้งที่จำนวนการ์ดเปลี่ยน */
   .kpis{grid-column:span 12; display:grid;
-        grid-template-columns:repeat(auto-fit, minmax(228px, 1fr)); gap:16px}
+        grid-template-columns:repeat(auto-fit, minmax(200px, 1fr)); gap:14px}
   .kpi{background:var(--card); border:1px solid var(--line); border-radius:var(--r);
        overflow:hidden; position:relative; cursor:default; box-shadow:var(--sh-1)}
   .kpi .bar{height:4px}
@@ -651,7 +650,7 @@ function trendSeries(){
    ข้อมูลมอคมี SARIMAX พยากรณ์รายปีงบประมาณจริง เก็บ path เดิมไว้ไม่แตะเลย
    ส่วนข้อมูลจริงที่ต่อ DB ตรง ยังไม่มีพยากรณ์ (ต้องมี >=12 เดือนต่อรอบ) แสดง
    รายเดือนจะเห็นแนวโน้มได้ชัดกว่าการยุบเหลือแค่ 2-3 จุดต่อปีงบประมาณ */
-const TREND_SVG = { W: 980, H: 300, P: { t: 32, r: 18, b: 36, l: 72 } };
+const TREND_SVG = { W: 980, H: 300, P: { t: 40, r: 20, b: 42, l: 88 } };
 
 function trendChartDataFontPx() {
   const v = getComputedStyle(document.documentElement).getPropertyValue("--fs-chart-data").trim();
@@ -673,8 +672,8 @@ function trendPointValueLabel(cx, cy, value, color, opts) {
     style="fill:${color};font-size:${fs}px;font-weight:600">${fmt(value)}</text>`;
 }
 function trendYAxisUnitLabel(P) {
-  return `<text class="axis" x="${P.l - 4}" y="${Math.max(14, P.t - 10)}" text-anchor="end"
-    style="font-size:17px">ล้านบาท</text>`;
+  return `<text class="axis" x="${P.l - 6}" y="${P.t - 14}" text-anchor="end"
+    style="font-size:13px;font-weight:600">ล้านบาท</text>`;
 }
 function trendLineLabelShow(i, total, seriesCount) {
   if (seriesCount <= 1) return true;
@@ -1075,7 +1074,8 @@ function renderCagr(){
   const real = isRealDataMode();
   const growth = real ? growthForPeriod(periodCagr) : null;
   const titleEl = document.getElementById("cagrTitle");
-  const W = 420, rowH = 36, L = 152, R = 48, barH = rowH - 15;
+  const W = 420, rowH = 34, L = 182, R = 44, barH = rowH - 12;
+  const cagrLabelFs = Math.min(15, trendChartDataFontPx() + 2);
 
   if (real && !growth){
     // *** เลือก "ทั้งหมด" (ไม่มีช่วงก่อนหน้าให้เทียบ) หรือข้อมูลย้อนหลังไม่พอสำหรับ
@@ -1090,12 +1090,12 @@ function renderCagr(){
       const col = (DATA.groups.find(g => g.code === d.product_group) || {}).color || NAVY;
       const dim = selected !== "ALL" && selected !== d.product_group ? " dim" : "";
       const t = `${d.name_th} (${d.product_group})\nผู้ประกอบการที่ยังดำเนินการ ${fmt(d.active_entity_count)} ราย`;
-      return `<text class="axis" x="${L-11}" y="${y+barH/2+5}" text-anchor="end"
-               style="fill:#16222E;font-size:24px;font-weight:700">${esc(d.name_th)} (${d.product_group})</text>
+      return `<text class="axis" x="${L-8}" y="${y+barH/2+4}" text-anchor="end"
+               style="fill:#16222E;font-size:${cagrLabelFs}px;font-weight:600">${esc(d.name_th)} (${d.product_group})</text>
         <rect x="${L}" y="${y}" width="${W-L-R}" height="${barH}" rx="4" fill="#F1F4F8"/>
         <rect class="hit${dim}" x="${L}" y="${y}" width="${bw}" height="${barH}" rx="4"
          fill="${col}" data-group="${d.product_group}" ${tip(t)}/>
-        <text class="barlbl" x="${L+bw+8}" y="${y+barH/2+5}">${fmt(d.active_entity_count)}</text>`;
+        <text class="barlbl" x="${L+bw+6}" y="${y+barH/2+4}">${fmt(d.active_entity_count)}</text>`;
     }).join("");
     document.getElementById("cagrChart").innerHTML =
       `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${s}</svg>`;
@@ -1136,12 +1136,12 @@ function renderCagr(){
     const lblX = neg ? barX - 8 : barX + bw + 8;
     const anchor = neg ? "end" : "start";
     // รางสีอ่อนเต็มความกว้าง ช่วยให้เทียบสัดส่วนแท่งกับค่าสูงสุดได้ด้วยตา
-    return `<text class="axis" x="${L-11}" y="${y+barH/2+5}" text-anchor="end"
-             style="fill:#16222E;font-size:24px;font-weight:700">${esc(d.name_th)} (${d.product_group})</text>
+    return `<text class="axis" x="${L-8}" y="${y+barH/2+4}" text-anchor="end"
+             style="fill:#16222E;font-size:${cagrLabelFs}px;font-weight:600">${esc(d.name_th)} (${d.product_group})</text>
       <rect x="${L}" y="${y}" width="${barAreaW}" height="${barH}" rx="4" fill="#F1F4F8"/>
       <rect class="hit${dim}" x="${barX}" y="${y}" width="${bw}" height="${barH}" rx="4"
        fill="${col}" data-group="${d.product_group}" ${tip(t)}/>
-      <text class="barlbl" x="${lblX}" y="${y+barH/2+5}" text-anchor="${anchor}">${sign}${fmt(d.cagr_3y_pct,1)}%</text>`;
+      <text class="barlbl" x="${lblX}" y="${y+barH/2+4}" text-anchor="${anchor}">${sign}${fmt(d.cagr_3y_pct,1)}%</text>`;
   }).join("");
   // เส้นศูนย์ — ต้องมีให้เห็นชัดว่า 0% อยู่ตรงไหน (โชว์เฉพาะตอนมีทั้งบวกและลบปนกัน)
   const zeroLine = maxNeg > 0
@@ -1166,7 +1166,8 @@ function countryData(){
 
 function renderCountry(){
   const items = countryData();
-  const W = 620, H = 300, P = {t:30, b:36, l:10, r:10};
+  const W = 620, H = 300, P = {t:28, b:52, l:10, r:10};
+  const countryLblFs = Math.min(14, trendChartDataFontPx() + 1);
   const bw = (W - P.l - P.r) / items.length, max = Math.max(...items.map(d => d.value));
   const pal = ["#1F6FB2","#12A594","#3E9F55","#E8A317","#7E57C2","#C0392B"];
   const base = H - P.b, R = 5;
@@ -1185,8 +1186,8 @@ function renderCountry(){
                + ` Q${x+w},${y} ${x+w},${y+r} V${base} Z`;
     return `<path class="hit" d="${path}" fill="url(#${id})" ${tip(t)}/>
       <text class="barlbl" x="${cx}" y="${y-9}" text-anchor="middle">${fmt(d.value)}</text>
-      <text class="axis" x="${cx}" y="${base+21}" text-anchor="middle"
-       style="fill:#16222E;font-size:24px;font-weight:700">${esc(d.name)}</text>`;
+      <text class="axis" x="${cx}" y="${base+18}" text-anchor="middle"
+       style="fill:#16222E;font-size:${countryLblFs}px;font-weight:600">${esc(d.name)}</text>`;
   }).join("");
   const axis = `<line x1="${P.l}" y1="${base}" x2="${W-P.r}" y2="${base}"
                  stroke="#C6D1DE" stroke-width="1.4"/>`;

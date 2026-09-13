@@ -2,26 +2,26 @@
 
 /* มาตรฐานขนาด UI (zoom เดียวกันทุกหน้า d1–d10) — ค่าคงที่ ไม่ใช้ vw/vh */
 body[data-dash] {
-  --fs-base: 28px;
-  --fs-h2: 33px;
-  --fs-kpi: 54px;
-  --fs-kpi-name: 25px;
-  --fs-kpi-unit: 22px;
-  --fs-ui: 24px;
-  --fs-ui-md: 22px;
-  --fs-table: 18px;
-  --fs-ui-sm: 20px;
-  --fs-axis: 22px;
-  --fs-chart-lbl: 18px;
-  --fs-chart-data: 14px;
-  --fs-chrome-h1: 30px;
-  --fs-chrome-sub: 20px;
-  --fs-chrome-meta: 19px;
-  --fs-chrome-org: 17px;
-  --fs-filter: 19px;
-  --fs-filter-chip: 18px;
-  --fs-tip: 26px;
-  --fs-period: 20px;
+  --fs-base: 24px;
+  --fs-h2: 28px;
+  --fs-kpi: 40px;
+  --fs-kpi-name: 17px;
+  --fs-kpi-unit: 16px;
+  --fs-ui: 20px;
+  --fs-ui-md: 18px;
+  --fs-table: 16px;
+  --fs-ui-sm: 16px;
+  --fs-axis: 16px;
+  --fs-chart-lbl: 15px;
+  --fs-chart-data: 12px;
+  --fs-chrome-h1: 26px;
+  --fs-chrome-sub: 18px;
+  --fs-chrome-meta: 17px;
+  --fs-chrome-org: 15px;
+  --fs-filter: 17px;
+  --fs-filter-chip: 16px;
+  --fs-tip: 20px;
+  --fs-period: 16px;
   --dash-chart-h: 280px;
   --dash-chart-h-sm: 220px;
   --dash-chart-h-lg: 340px;
@@ -31,6 +31,25 @@ body[data-dash] {
 /* d3 — กราฟแถวคู่สูงกว่ามาตรฐาน (เดิม 400px ใน mockup) */
 body[data-dash="3"] {
   --dash-chart-h-lg: 400px;
+}
+
+/* d1 — KPI / SVG กราฟ (Executive Overview) */
+body[data-dash="1"] .kpi .name {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  line-height: 1.28;
+}
+
+body[data-dash="1"] .kpi .val {
+  font-size: clamp(28px, 4.2vw, var(--fs-kpi));
+  letter-spacing: -0.02em;
+}
+
+body[data-dash="1"] #cagrChart svg,
+body[data-dash="1"] #countryChart svg {
+  overflow: visible;
 }
 
 body[data-dash] .dash-page,

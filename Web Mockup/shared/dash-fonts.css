@@ -24,7 +24,7 @@ body[data-dash] header h1,
 body[data-dash] .card > h2,
 body[data-dash] .kpi .val,
 body[data-dash] table.data td.num {
-  font-weight: var(--dash-fw-heading);
+  font-weight: var(--dash-fw-ui);
 }
 
 body[data-dash] .chip,

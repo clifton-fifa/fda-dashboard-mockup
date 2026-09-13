@@ -9,6 +9,7 @@ body[data-dash] {
   --fs-kpi-unit: 22px;
   --fs-ui: 24px;
   --fs-ui-md: 22px;
+  --fs-table: 18px;
   --fs-ui-sm: 20px;
   --fs-axis: 22px;
   --fs-chart-lbl: 18px;
@@ -338,9 +339,13 @@ body[data-dash="10"] main .card.card--donut-paired .chart-box.chart-box--donut {
 /* ห้ามตั้ง table.data เป็น display:block — แถวจะกว้างแค่เนื้อหา ไม่เต็มการ์ด
    ตารางกว้างเกินให้เลื่อนใน wrapper (.table-scroll หรือ div ที่มี overflow) แทน */
 .dash-page .table-scroll,
-.dash-page .table-wrap {
+.dash-page .table-wrap,
+body[data-dash] .rss-table-wrap,
+body[data-dash] .card > .rss-table-wrap {
   overflow-x: auto;
+  overflow-y: visible;
   max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ── ตารางข้อมูล: หัวคอลัมน์จัดแนวตรงข้อมูล + เส้นคั่นหัวข้อ ── */
@@ -416,6 +421,8 @@ body[data-dash] table.data {
   width: 100%;
   border-collapse: collapse;
   table-layout: auto;
+  font-size: var(--fs-table, var(--fs-ui-md));
+  line-height: 1.35;
 }
 
 body[data-dash] table.data thead th {
@@ -426,7 +433,17 @@ body[data-dash] table.data thead th {
   color: var(--muted, #5b6b7e);
   border-bottom: 2px solid var(--line, #d8e0ea);
   border-right: 1px solid var(--line2, #eaeff4);
-  padding: 10px 12px;
+  padding: 8px 10px;
+  white-space: normal;
+  line-height: 1.28;
+}
+
+body[data-dash] table.data.table-rss {
+  min-width: 1120px;
+}
+
+body[data-dash] table.data.table-rss thead th.num {
+  min-width: 4.8em;
 }
 
 body[data-dash] table.data thead th:last-child {
@@ -435,9 +452,14 @@ body[data-dash] table.data thead th:last-child {
 
 body[data-dash] table.data tbody td {
   vertical-align: middle;
-  padding: 9px 12px;
+  padding: 7px 10px;
   border-bottom: 1px solid var(--line2, #eaeff4);
   border-right: 1px solid var(--line2, #eaeff4);
+}
+
+body[data-dash] table.data .badge {
+  font-size: calc(var(--fs-table, 18px) * 0.88);
+  white-space: nowrap;
 }
 
 body[data-dash] table.data tbody td:last-child {
@@ -483,6 +505,7 @@ header .right .dash-mock-badge {
     --fs-kpi-unit: 20px;
     --fs-ui: 21px;
     --fs-ui-md: 20px;
+    --fs-table: 17px;
     --fs-chrome-h1: 26px;
     --dash-chart-h: 260px;
     --dash-chart-h-lg: 320px;

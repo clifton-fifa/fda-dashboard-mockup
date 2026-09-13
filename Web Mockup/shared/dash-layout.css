@@ -371,8 +371,45 @@ body[data-dash] .card > .table-scroll,
 body[data-dash] .card > div.table-scroll,
 body[data-dash] .card > .rss-table-wrap,
 body[data-dash] .card > #productTableWrap,
-body[data-dash] .card > #compTableWrap {
+body[data-dash] .card > #compTableWrap,
+body[data-dash] .card > #hsTableWrap {
   margin-top: 12px;
+}
+
+/* d2 — ตาราง HS Chapter: เลื่อนในขอบการ์ด ไม่ล้น */
+body[data-dash] .table-scroll.table-scroll--hs,
+body[data-dash] #hsTableWrap.table-scroll {
+  overflow: auto;
+  max-width: 100%;
+  max-height: min(480px, 62vh);
+  border: 1px solid var(--line2, #eaeff4);
+  border-radius: 6px;
+  -webkit-overflow-scrolling: touch;
+}
+
+body[data-dash] table.data.table-hs {
+  table-layout: fixed;
+  width: 100%;
+  min-width: 0;
+}
+
+body[data-dash] table.data.table-hs .col-rank { width: 5.5%; }
+body[data-dash] table.data.table-hs .col-hs { width: 7%; }
+body[data-dash] table.data.table-hs .col-desc { width: 28%; }
+body[data-dash] table.data.table-hs .col-grp { width: 9%; }
+body[data-dash] table.data.table-hs .col-val { width: 16%; }
+body[data-dash] table.data.table-hs .col-cagr { width: 11%; }
+body[data-dash] table.data.table-hs .col-trend { width: 12%; }
+
+body[data-dash] table.data.table-hs td.cell-desc,
+body[data-dash] table.data.table-hs th:nth-child(3) {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.35;
+}
+
+body[data-dash] table.data.table-hs td.cen .badge {
+  white-space: nowrap;
 }
 
 body[data-dash] table.data {

@@ -161,7 +161,7 @@
     flex:0 0 auto !important; width:100%; height:auto; min-height:0; line-height:0}
   #trendChart svg{
     display:block; width:100% !important; height:auto !important; max-height:none !important;
-    aspect-ratio:980/268}
+    aspect-ratio:980/288}
   #treemap{
     flex:1 1 auto; min-height:var(--dash-chart-h); height:var(--dash-chart-h)}
   #treemap svg{
@@ -625,7 +625,7 @@ function trendScaleY(allValues, nTicks){
   const dataLo = Math.min(...nums), dataHi = Math.max(...nums);
   const posMax = Math.max(0, ...nums);
   const span = dataHi - dataLo || Math.max(Math.abs(dataHi), Math.abs(dataLo), 1);
-  const headroom = Math.max(posMax * 0.065, span * 0.04, 8000);
+  const headroom = Math.max(posMax * 0.085, span * 0.06, 9000);
   const padBot = Math.max(span * 0.03, Math.abs(dataLo) * 0.05);
   const topTarget = (posMax || dataHi) + headroom;
   const loTarget = dataLo - padBot;
@@ -696,7 +696,7 @@ function trendSeries(){
    ข้อมูลมอคมี SARIMAX พยากรณ์รายปีงบประมาณจริง เก็บ path เดิมไว้ไม่แตะเลย
    ส่วนข้อมูลจริงที่ต่อ DB ตรง ยังไม่มีพยากรณ์ (ต้องมี >=12 เดือนต่อรอบ) แสดง
    รายเดือนจะเห็นแนวโน้มได้ชัดกว่าการยุบเหลือแค่ 2-3 จุดต่อปีงบประมาณ */
-const TREND_SVG = { W: 980, H: 268, P: { t: 18, r: 12, b: 32, l: 78 } };
+const TREND_SVG = { W: 980, H: 288, P: { t: 26, r: 54, b: 38, l: 78 } };
 
 function trendChartDataFontPx() {
   const v = getComputedStyle(document.documentElement).getPropertyValue("--fs-chart-data").trim();
@@ -707,15 +707,29 @@ function trendPointValueLabel(cx, cy, value, color, opts) {
   const o = opts || {};
   const P = o.P || TREND_SVG.P;
   const H = o.H || TREND_SVG.H;
+  const W = o.W || TREND_SVG.W;
+  const idx = o.i, total = o.n;
   const n = Number(value);
   let dy = o.dy != null ? o.dy : (isFinite(n) && n < 0 ? 14 : -8);
   const fs = trendChartDataFontPx() + (o.compact ? -1 : 0);
-  const labelY = cy + dy;
-  if (labelY < P.t + 4 && dy < 0) dy = 14;
-  if (labelY > H - P.b - 6 && dy > 0) dy = -10;
-  if (cy < P.t + 22 && dy < 0) dy = 15;
-  return `<text class="barlbl" x="${cx}" y="${cy + dy}" text-anchor="middle"
+  let anchor = "middle", dx = 0;
+  if (idx === 0) { anchor = "start"; dx = 2; }
+  else if (total != null && idx === total - 1) { anchor = "end"; dx = -2; }
+  let labelY = cy + dy;
+  if (labelY < P.t + 6 && dy < 0) dy = 14;
+  if (labelY > H - P.b - 8 && dy > 0) dy = -10;
+  if (cy < P.t + 24 && dy < 0) dy = 15;
+  labelY = cy + dy;
+  const minX = P.l + 2, maxX = W - P.r - 2;
+  let lx = cx + dx;
+  if (anchor === "start" && lx < minX) lx = minX;
+  if (anchor === "end" && lx > maxX) lx = maxX;
+  return `<text class="barlbl" x="${lx}" y="${labelY}" text-anchor="${anchor}"
     style="fill:${color};font-size:${fs}px;font-weight:600">${fmt(value)}</text>`;
+}
+function trendXAxisYearLabel(f, i, n, xi, H, P) {
+  const anchor = i === 0 ? "start" : i === n - 1 ? "end" : "middle";
+  return `<text class="axis" x="${xi}" y="${H - P.b + 20}" text-anchor="${anchor}">${f}</text>`;
 }
 function trendYAxisUnitLabel() {
   return "";
@@ -782,7 +796,7 @@ function renderTrendMonthly(){
       if (trendLineLabelShow(i, xs.length, series.length)) {
         const cy = y(v);
         s += trendPointValueLabel(x(i), cy, v, c, {
-          dy: trendLineLabelDy(si, v, cy, P), compact: xs.length > 14, P, H,
+          dy: trendLineLabelDy(si, v, cy, P), compact: xs.length > 14, P, H, W, i, n: xs.length,
         });
       }
     });
@@ -844,12 +858,14 @@ function renderTrendYearly(){
       s += `<circle class="hit" cx="${x(i)}" cy="${cy}" r="4.8" fill="${c}"
              stroke="#fff" stroke-width="2.6" ${tip(t)}/>`;
       if (trendLineLabelShow(i, fys.length, series.length))
-        s += trendPointValueLabel(x(i), cy, v, c, { dy: trendLineLabelDy(si, v, cy, P), P, H });
+        s += trendPointValueLabel(x(i), cy, v, c, {
+          dy: trendLineLabelDy(si, v, cy, P), P, H, W, i, n: fys.length,
+        });
     });
   });
 
   fys.forEach((f,i) => {
-    s += `<text class="axis" x="${x(i)}" y="${H-P.b+20}" text-anchor="middle">${f}</text>`;
+    s += trendXAxisYearLabel(f, i, fys.length, x(i), H, P);
   });
   s += trendYAxisUnitLabel(P);
 
@@ -954,7 +970,7 @@ function renderTrend(){
       if (trendLineLabelShow(i, fys.length, series.length)) {
         const cy = y(v);
         s += trendPointValueLabel(x(i), cy, v, c, {
-          dy: trendLineLabelDy(si, v, cy, P), P, H,
+          dy: trendLineLabelDy(si, v, cy, P), P, H, W, i, n: fys.length,
         });
       }
     });
@@ -962,7 +978,7 @@ function renderTrend(){
   // แกนปี
   fys.forEach((f,i) => {
     const fc = series[0].isFc[i];
-    s += `<text class="axis" x="${x(i)}" y="${H-P.b+20}" text-anchor="middle">${f}${fc?"F":""}</text>`;
+    s += trendXAxisYearLabel(`${f}${fc ? "F" : ""}`, i, fys.length, x(i), H, P);
   });
   s += trendYAxisUnitLabel(P);
   document.getElementById("trendChart").innerHTML =
@@ -1007,12 +1023,18 @@ function shareForPeriod(period){
   }).sort((a,b) => b.trade_value_mb - a.trade_value_mb);
 }
 
+function svgEllipsis(text, maxChars){
+  const s = String(text || "");
+  if (s.length <= maxChars) return esc(s);
+  if (maxChars <= 2) return esc(s.slice(0, maxChars));
+  return esc(s.slice(0, Math.max(1, maxChars - 1)) + "…");
+}
 function treemapStatForCell(w, d){
   const full = `${fmt(d.trade_value_mb)} ลบ. · ${fmt(d.share_pct,1)}%`;
   const valOnly = `${fmt(d.trade_value_mb)} ลบ.`;
   const pct = `${fmt(d.share_pct,1)}%`;
-  const innerW = Math.max(w - 20, 0);
-  const maxChars = innerW / 7.5;
+  const innerW = Math.max(w - 22, 0);
+  const maxChars = innerW / 8.5;
   if (full.length <= maxChars) return full;
   if (valOnly.length <= maxChars) return valOnly;
   if (innerW >= 34) return pct;
@@ -1030,9 +1052,10 @@ function treemapCellText(x, y, w, h, d, dim, t, SH, W, H){
   let s = "";
   // ช่องแคบสูง (เช่น อาหาร/เครื่องสำอาง) — ชื่อ + มูลค่า/% (ย่อตามความกว้าง)
   if (w <= 78 && h > 68){
-    const fs = h > 120 ? 17.5 : 16;
+    const fs = h > 120 ? 16 : 15;
+    const nameMax = Math.max(2, Math.floor((w - 16) / (fs * 0.55)));
     s += `<text class="hit${dim}" x="${x+9}" y="${y+20}" fill="#fff" ${SH}
-           font-size="${fs}" font-weight="700" data-group="${d.product_group}" ${tip(t)}>${esc(d.name_th)}</text>`;
+           font-size="${fs}" font-weight="700" data-group="${d.product_group}" ${tip(t)}>${svgEllipsis(d.name_th, nameMax)}</text>`;
     if (h > 52 && stat)
       s += `<text class="${dc}" x="${x+9}" y="${y+38}" fill="#fff" font-size="${treemapStatFs(w, stat)}"
              opacity=".95" ${SH} data-group="${d.product_group}" ${tip(t)}>${stat}</text>`;
@@ -1042,12 +1065,13 @@ function treemapCellText(x, y, w, h, d, dim, t, SH, W, H){
     return s;
   }
   if (w <= 74 || h <= 26) return s;
-  const titleFs = big ? 21 : (w > 100 ? 17.5 : 16);
-  const title = w > 132 ? `${esc(d.name_th)} (${d.product_group})`
-              : w > 82 ? esc(d.name_th) : d.product_group;
+  const titleFs = big ? 19 : (w > 100 ? 16 : 15);
+  let titleRaw = w > 132 ? `${d.name_th} (${d.product_group})`
+              : w > 82 ? d.name_th : d.product_group;
+  const titleMax = Math.max(2, Math.floor((w - 22) / (titleFs * 0.55)));
   s += `<text class="hit${dim}" x="${x+11}" y="${y+22}" fill="#fff" ${SH}
          font-size="${titleFs}" font-weight="700"
-         data-group="${d.product_group}" ${tip(t)}>${title}</text>`;
+         data-group="${d.product_group}" ${tip(t)}>${svgEllipsis(titleRaw, titleMax)}</text>`;
   if (h > 46 && w > 78 && stat){
     const statFs = treemapStatFs(w, stat);
     const statY = h > 58 ? y + 42 : y + h - 10;
@@ -1217,30 +1241,54 @@ function countryData(){
     .sort((a,b) => b.value - a.value).slice(0,6);
 }
 
+function countryChartViewport(){
+  const el = document.getElementById("countryChart");
+  const W = Math.max(300, Math.round((el && el.clientWidth) || 620));
+  const H = Math.max(240, Math.round(W * 300 / 620));
+  return { W, H };
+}
+function countryNameLines(name, bw, fs){
+  const maxOne = Math.max(3, Math.floor(bw / (fs * 0.52)));
+  if (name.length <= maxOne) return { l1: name, l2: "" };
+  const mid = name.indexOf(" ") > 0 ? name.indexOf(" ") : Math.ceil(name.length / 2);
+  let l1 = name.slice(0, mid).trim(), l2 = name.slice(mid).trim();
+  const max2 = Math.max(2, Math.floor(bw / (fs * 0.48)));
+  if (l1.length > maxOne) l1 = l1.slice(0, maxOne - 1) + "…";
+  if (l2.length > max2) l2 = l2.slice(0, max2 - 1) + "…";
+  return { l1, l2 };
+}
 function renderCountry(){
   const items = countryData();
-  const W = 620, H = 300, P = {t:28, b:52, l:10, r:10};
-  const countryLblFs = Math.min(14, trendChartDataFontPx() + 1);
-  const bw = (W - P.l - P.r) / items.length, max = Math.max(...items.map(d => d.value));
+  const { W, H } = countryChartViewport();
+  const P = { t: 34, b: 56, l: 12, r: 16 };
+  const countryLblFs = Math.min(13, trendChartDataFontPx());
+  const bw = (W - P.l - P.r) / Math.max(items.length, 1);
+  const max = Math.max(...items.map(d => d.value), 1);
   const pal = ["#1F6FB2","#12A594","#3E9F55","#E8A317","#7E57C2","#C0392B"];
   const base = H - P.b, R = 5;
   let defs = "";
   const s = items.map((d,i) => {
     const h = (d.value / max) * (H - P.t - P.b);
-    const x = P.l + i*bw + bw*0.19, w = bw*0.62, y = base - h, cx = x + w/2;
+    const x = P.l + i*bw + bw*0.16, w = bw*0.68, y = base - h, cx = x + w/2;
     const c = pal[i % pal.length], id = "cg" + i;
     const t = `${d.name}\nมูลค่านำเข้า ${fmt(d.value)} ล้านบาท`;
     defs += `<linearGradient id="${id}" x1="0" y1="0" x2="0" y2="1">
       <stop offset="0" stop-color="${c}"/><stop offset="1" stop-color="${c}" stop-opacity=".72"/>
       </linearGradient>`;
-    // มนเฉพาะมุมบน ฐานแท่งต้องชิดเส้นแกนสนิทเพื่อให้เทียบความสูงได้ตรง
     const r = Math.min(R, h);
     const path = `M${x},${base} V${y+r} Q${x},${y} ${x+r},${y} H${x+w-r}`
                + ` Q${x+w},${y} ${x+w},${y+r} V${base} Z`;
+    let valY = y - 8;
+    if (valY < P.t + 12) valY = Math.min(base - 6, y + 16);
+    const { l1, l2 } = countryNameLines(d.name, w, countryLblFs);
+    const nameY = base + (l2 ? 16 : 20);
+    let nameSvg = `<text class="axis" x="${cx}" y="${nameY}" text-anchor="middle"
+       style="fill:#16222E;font-size:${countryLblFs}px;font-weight:600">${esc(l1)}</text>`;
+    if (l2) nameSvg += `<text class="axis" x="${cx}" y="${nameY + countryLblFs + 3}" text-anchor="middle"
+       style="fill:#16222E;font-size:${countryLblFs}px;font-weight:600">${esc(l2)}</text>`;
     return `<path class="hit" d="${path}" fill="url(#${id})" ${tip(t)}/>
-      <text class="barlbl" x="${cx}" y="${y-9}" text-anchor="middle">${fmt(d.value)}</text>
-      <text class="axis" x="${cx}" y="${base+18}" text-anchor="middle"
-       style="fill:#16222E;font-size:${countryLblFs}px;font-weight:600">${esc(d.name)}</text>`;
+      <text class="barlbl" x="${cx}" y="${valY}" text-anchor="middle">${fmt(d.value)}</text>
+      ${nameSvg}`;
   }).join("");
   const axis = `<line x1="${P.l}" y1="${base}" x2="${W-P.r}" y2="${base}"
                  stroke="#C6D1DE" stroke-width="1.4"/>`;

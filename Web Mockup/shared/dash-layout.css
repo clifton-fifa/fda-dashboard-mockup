@@ -67,9 +67,18 @@ body[data-dash="1"] .kpi .val {
   letter-spacing: -0.02em;
 }
 
+body[data-dash="1"] #trendChart svg,
 body[data-dash="1"] #cagrChart svg,
-body[data-dash="1"] #countryChart svg {
+body[data-dash="1"] #countryChart svg,
+body[data-dash="1"] #treemap svg {
   overflow: visible;
+}
+
+body[data-dash="1"] #countryChart svg,
+body[data-dash="1"] #treemap svg {
+  width: 100% !important;
+  height: 100% !important;
+  max-width: 100%;
 }
 
 /* d1 — แนวโน้ม: SVG สูงตามความกว้าง (ไม่ยืดกล่องแล้วเว้นขาวใน SVG) */
@@ -88,7 +97,7 @@ body[data-dash="1"] #trendChart svg {
   width: 100% !important;
   height: auto !important;
   max-height: none !important;
-  aspect-ratio: 980 / 268;
+  aspect-ratio: 980 / 288;
 }
 
 body[data-dash="1"] #treemap {

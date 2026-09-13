@@ -585,7 +585,7 @@ header .right .dash-mock-badge {
 /* แถบตัวกรอง → shared/dash-filters.css (โหลดหลังไฟล์นี้) */
 
 /* ── Responsive: tablet / mobile (iframe + standalone .dash-page) ── */
-/* 1280 — เนื้อหาใน iframe แคบ (เช่น จอ ~1500px + sidebar 280px) ต้อง stack ก่อน ไม่งั้น treemap/ชิปตัด */
+/* เปิด/ปิด sidebar เปลี่ยนแค่ความกว้าง — คง grid 8+4 / 4+5+3 จนกว่าจอเนื้อหาแคบจริง (~1024) */
 @media (max-width: 1280px) {
   body[data-dash] {
     --fs-base: 22px;
@@ -605,7 +605,15 @@ header .right .dash-mock-badge {
     --dash-chart-h-lg: 300px;
     --dash-map-h: 420px;
   }
+}
 
+/* d1 — KPI 4 คอลัมน์แบบ mockup (ไม่หดเป็น 2 คอลัมน์แค่เพราะมี sidebar) */
+body[data-dash="1"] .kpis,
+body[data-dash="1"] main > .kpis {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+@media (max-width: 1024px) {
   body[data-dash] main [class*="span"],
   body[data-dash] main .trend,
   body[data-dash] main .treemapCard,
@@ -626,17 +634,13 @@ header .right .dash-mock-badge {
     padding-left: 12px !important;
     padding-right: 12px !important;
     gap: 12px;
-  }
-
-  body[data-dash] .kpis,
-  .dash-page .kpis {
-    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-  }
-
-  body[data-dash] main,
-  .dash-page main {
     min-width: 0;
     overflow-x: hidden;
+  }
+
+  body[data-dash="1"] .kpis,
+  body[data-dash="1"] main > .kpis {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 

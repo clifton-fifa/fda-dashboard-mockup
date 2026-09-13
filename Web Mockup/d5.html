@@ -190,17 +190,6 @@ function bindRowFilter(tbodyId) {
     if (tr && tr.dataset.code) clickGroup(tr.dataset.code);
   });
 }
-function chartClickGroup(chart, labels, codes) {
-  if (!chart) return;
-  chart.options.onClick = (_, els) => {
-    if (!els.length) return;
-    const code = codes ? codes[els[0].index] : (GROUPS[els[0].index]?.code);
-    if (code) clickGroup(code);
-  };
-  chart.update();
-}
-
-
 const PTS = [{"code": "DRUG", "name": "ยา", "rss": 72.3, "rbi": 42, "color": "#1F6FB2"}, {"code": "MDC", "name": "เครื่องมือแพทย์", "rss": 86.3, "rbi": 49, "color": "#12A594"}, {"code": "FOOD", "name": "อาหาร", "rss": 69.6, "rbi": 52, "color": "#3E9F55"}, {"code": "CMT", "name": "เครื่องสำอาง", "rss": 72.6, "rbi": 57, "color": "#E8A317"}, {"code": "HERB", "name": "สมุนไพร", "rss": 89.4, "rbi": 64, "color": "#7E57C2"}, {"code": "TXC", "name": "วัตถุอันตราย", "rss": 63.7, "rbi": 67, "color": "#C0392B"}, {"code": "NCT", "name": "วัตถุเสพติด", "rss": 58.9, "rbi": 72, "color": "#7F8C8D"}];
 function quadrant(rss, rbi) {
   if (rss >= 70 && rbi >= 60) return ['Q1 ด่วน', 'เร่งลด RBI รักษาโอกาส'];
@@ -222,7 +211,7 @@ function applyFilters() {
   bindRowFilter('mxBody');
   const show = g==='ALL'?PTS:list;
   const cM = setChart('cMatrix', {type:'scatter', data:{datasets:[{label:'กลุ่ม', data:show.map(p=>({x:p.rss,y:p.rbi,label:p.name,code:p.code})), backgroundColor:show.map(p=>p.color), pointRadius:show.map(p=>p.code===g&&g!=='ALL'?18:12)}]}, options:{responsive:true,maintainAspectRatio:false, scales:{x:{title:{display:true,text:'คะแนนดาวรุ่ง →'},min:50,max:100},y:{title:{display:true,text:'ดัชนีคอขวด →'},min:35,max:90}}, plugins:{tooltip:{callbacks:{label:c=>c.raw.label+' (คะแนนดาวรุ่ง: '+c.raw.x+', ดัชนีคอขวด: '+c.raw.y+')'}}}}});
-  if(cM){ cM.options.onClick=(_,els)=>{if(els.length)clickGroup(show[els[0].index].code);}; cM.update(); }
+  chartClickGroup(cM, null, show.map(p => p.code));
 }
 applyFilters();
 

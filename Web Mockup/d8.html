@@ -210,17 +210,6 @@ function bindRowFilter(tbodyId) {
     if (tr && tr.dataset.code) clickGroup(tr.dataset.code);
   });
 }
-function chartClickGroup(chart, labels, codes) {
-  if (!chart) return;
-  chart.options.onClick = (_, els) => {
-    if (!els.length) return;
-    const code = codes ? codes[els[0].index] : (GROUPS[els[0].index]?.code);
-    if (code) clickGroup(code);
-  };
-  chart.update();
-}
-
-
 let impactChart;
 function upd(){
   const d=+document.getElementById('slDays').value, s=+document.getElementById('slStaff').value, h=+document.getElementById('slHs').value;

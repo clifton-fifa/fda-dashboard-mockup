@@ -216,17 +216,6 @@ function bindRowFilter(tbodyId) {
     if (tr && tr.dataset.code) clickGroup(tr.dataset.code);
   });
 }
-function chartClickGroup(chart, labels, codes) {
-  if (!chart) return;
-  chart.options.onClick = (_, els) => {
-    if (!els.length) return;
-    const code = codes ? codes[els[0].index] : (GROUPS[els[0].index]?.code);
-    if (code) clickGroup(code);
-  };
-  chart.update();
-}
-
-
 const DATA = {"rows": [{"code": "HERB", "name": "สมุนไพร", "rss": 90.0, "cagr": 12.300000000632917, "trade": 84.6, "product": 73.5, "app": 68, "biz": 70.3, "innov": 59.8, "reg": 40, "market": 71.8}, {"code": "MDC", "name": "เครื่องมือแพทย์", "rss": 85.9, "cagr": 11.162102325418456, "trade": 82.3, "product": 71.7, "app": 65, "biz": 69.2, "innov": 58.4, "reg": 42, "market": 70.9}, {"code": "CMT", "name": "เครื่องสำอาง", "rss": 72.5, "cagr": 6.279897486285124, "trade": 72.6, "product": 64.4, "app": 62, "biz": 64.3, "innov": 52.5, "reg": 44, "market": 67.0}, {"code": "DRUG", "name": "ยา", "rss": 71.1, "cagr": 6.191085585478451, "trade": 72.4, "product": 64.3, "app": 59, "biz": 64.2, "innov": 52.4, "reg": 46, "market": 67.0}, {"code": "FOOD", "name": "อาหาร", "rss": 67.4, "cagr": 5.19999999988221, "trade": 70.4, "product": 62.8, "app": 56, "biz": 63.2, "innov": 51.2, "reg": 48, "market": 66.2}, {"code": "TXC", "name": "วัตถุอันตราย", "rss": 60.9, "cagr": 3.0999999998514216, "trade": 66.2, "product": 59.6, "app": 53, "biz": 61.1, "innov": 48.7, "reg": 50, "market": 64.5}, {"code": "NCT", "name": "วัตถุเสพติด", "rss": 55.5, "cagr": 1.400000000609336, "trade": 62.8, "product": 57.1, "app": 50, "biz": 59.4, "innov": 46.7, "reg": 52, "market": 63.1}], "components": ["การค้า", "ผลิตภัณฑ์", "คำขอ", "ผู้ประกอบการ", "นวัตกรรม", "กฎระเบียบ", "ตลาด"], "stockAll": 218941.0};
 const PRODUCTS = {
   HERB: ["ฟ้าทะลายโจร แคปซูล", "ขมิ้นชันสกัด แคปซูล", "ยาดมสมุนไพร", "น้ำมันไพลนวด", "ชาชงตะไคร้", "ชาชงใบบัวบก", "ยาหม่องสมุนไพร", "แคปซูลกระชายขาว", "น้ำมันเหลืองสมุนไพร", "ยาแก้ไอมะขามป้อม", "แคปซูลบอระเพ็ด", "ยาธาตุสมุนไพร", "ครีมว่านหางจระเข้", "แชมพูสมุนไพรอัญชัน", "สบู่สมุนไพรมะกรูด", "ยาหอมสมุนไพร", "แคปซูลใบมะรุม", "น้ำมันหอมระเหยตะไคร้หอม", "ยาลูกกลอนสมุนไพร", "ชาชงดอกคำฝอย", "แคปซูลรางจืด", "ยาสีฟันสมุนไพรกานพลู", "น้ำมันนวดสมุนไพรพริก", "ผงขมิ้นชันบรรจุแคปซูล", "สเปรย์สมุนไพรพ่นคอ", "ยาแก้ปวดสมุนไพรไพล", "แคปซูลเห็ดหลินจือ", "ชาชงหญ้าหนวดแมว", "โลชั่นสมุนไพรตะไคร้หอมกันยุง", "ยาระบายสมุนไพรมะขามแขก", "ฟ้าทะลายโจร แคปซูล (แคปซูล 30 แคปซูล/ขวด)", "ฟ้าทะลายโจร แคปซูล (ชนิดผง 100 กรัม)", "ฟ้าทะลายโจร แคปซูล สูตรสารสกัดเข้มข้น", "ฟ้าทะลายโจร แคปซูล (ชนิดชาชง 20 ซอง/กล่อง)", "ฟ้าทะลายโจร แคปซูล (ขนาด 60 มล.)", "ฟ้าทะลายโจร แคปซูล (ขนาด 100 มล.)", "ฟ้าทะลายโจร แคปซูล สูตรผสมน้ำผึ้ง", "ฟ้าทะลายโจร แคปซูล (บรรจุ 60 แคปซูล/ขวด)", "ขมิ้นชันสกัด แคปซูล (แคปซูล 30 แคปซูล/ขวด)", "ขมิ้นชันสกัด แคปซูล (ชนิดผง 100 กรัม)", "ขมิ้นชันสกัด แคปซูล สูตรสารสกัดเข้มข้น", "ขมิ้นชันสกัด แคปซูล (ชนิดชาชง 20 ซอง/กล่อง)", "ขมิ้นชันสกัด แคปซูล (ขนาด 60 มล.)", "ขมิ้นชันสกัด แคปซูล (ขนาด 100 มล.)", "ขมิ้นชันสกัด แคปซูล สูตรผสมน้ำผึ้ง", "ขมิ้นชันสกัด แคปซูล (บรรจุ 60 แคปซูล/ขวด)", "ยาดมสมุนไพร (แคปซูล 30 แคปซูล/ขวด)", "ยาดมสมุนไพร (ชนิดผง 100 กรัม)", "ยาดมสมุนไพร สูตรสารสกัดเข้มข้น", "ยาดมสมุนไพร (ชนิดชาชง 20 ซอง/กล่อง)", "ยาดมสมุนไพร (ขนาด 60 มล.)", "ยาดมสมุนไพร (ขนาด 100 มล.)", "ยาดมสมุนไพร สูตรผสมน้ำผึ้ง", "ยาดมสมุนไพร (บรรจุ 60 แคปซูล/ขวด)", "น้ำมันไพลนวด (แคปซูล 30 แคปซูล/ขวด)", "น้ำมันไพลนวด (ชนิดผง 100 กรัม)", "น้ำมันไพลนวด สูตรสารสกัดเข้มข้น", "น้ำมันไพลนวด (ชนิดชาชง 20 ซอง/กล่อง)", "น้ำมันไพลนวด (ขนาด 60 มล.)", "น้ำมันไพลนวด (ขนาด 100 มล.)", "น้ำมันไพลนวด สูตรผสมน้ำผึ้ง", "น้ำมันไพลนวด (บรรจุ 60 แคปซูล/ขวด)", "ชาชงตะไคร้ (แคปซูล 30 แคปซูล/ขวด)", "ชาชงตะไคร้ (ชนิดผง 100 กรัม)", "ชาชงตะไคร้ สูตรสารสกัดเข้มข้น", "ชาชงตะไคร้ (ชนิดชาชง 20 ซอง/กล่อง)", "ชาชงตะไคร้ (ขนาด 60 มล.)", "ชาชงตะไคร้ (ขนาด 100 มล.)", "ชาชงตะไคร้ สูตรผสมน้ำผึ้ง", "ชาชงตะไคร้ (บรรจุ 60 แคปซูล/ขวด)", "ชาชงใบบัวบก (แคปซูล 30 แคปซูล/ขวด)", "ชาชงใบบัวบก (ชนิดผง 100 กรัม)", "ชาชงใบบัวบก สูตรสารสกัดเข้มข้น", "ชาชงใบบัวบก (ชนิดชาชง 20 ซอง/กล่อง)", "ชาชงใบบัวบก (ขนาด 60 มล.)", "ชาชงใบบัวบก (ขนาด 100 มล.)", "ชาชงใบบัวบก สูตรผสมน้ำผึ้ง", "ชาชงใบบัวบก (บรรจุ 60 แคปซูล/ขวด)", "ยาหม่องสมุนไพร (แคปซูล 30 แคปซูล/ขวด)", "ยาหม่องสมุนไพร (ชนิดผง 100 กรัม)", "ยาหม่องสมุนไพร สูตรสารสกัดเข้มข้น", "ยาหม่องสมุนไพร (ชนิดชาชง 20 ซอง/กล่อง)", "ยาหม่องสมุนไพร (ขนาด 60 มล.)", "ยาหม่องสมุนไพร (ขนาด 100 มล.)", "ยาหม่องสมุนไพร สูตรผสมน้ำผึ้ง", "ยาหม่องสมุนไพร (บรรจุ 60 แคปซูล/ขวด)", "แคปซูลกระชายขาว (แคปซูล 30 แคปซูล/ขวด)", "แคปซูลกระชายขาว (ชนิดผง 100 กรัม)"],
@@ -313,7 +302,9 @@ function renderProductDrill() {
 function badge(r) { return r.rss>=80?'<span class="badge badge-star">ดาวรุ่ง</span>':r.rss>=65?'<span class="badge badge-rise">มีศักยภาพ</span>':'<span class="badge badge-stable">ติดตาม</span>'; }
 function applyFilters() {
   const g = FILTER.group;
+  const fyM = window.dashFyFactor ? dashFyFactor(FILTER.fy) : 1;
   let rows = g==='ALL' ? [...DATA.rows] : DATA.rows.filter(r=>r.code===g);
+  rows = rows.map(r => ({ ...r, rss: +(r.rss * fyM).toFixed(1) }));
   rows.sort((a,b)=>b.rss-a.rss);
   const stars = DATA.rows.filter(r=>r.rss>=80).length;
   const avg = (rows.reduce((s,r)=>s+r.rss,0)/Math.max(rows.length,1)).toFixed(1);
@@ -360,7 +351,7 @@ function applyFilters() {
     return v.reduce((s,x,i)=>s + x*v[(i+1)%v.length], 0); };
   const byArea = [...radarRows].sort((a,b)=>rArea(a)-rArea(b)).map(r=>r.code);
   const alpha = radarFill ? '33' : '26';
-  setChart('cRadar', {type:'radar', data:{labels:rIdx.map(i=>DATA.components[i]), datasets:radarRows.map(r=>({label:r.name, data:rIdx.map(i=>r[RKEY[i]]), borderColor:gColor(r.code), backgroundColor:gColor(r.code)+alpha, fill:true, order:byArea.indexOf(r.code), borderWidth:2, pointRadius:3, pointBackgroundColor:gColor(r.code)}))}, options:{responsive:true, maintainAspectRatio:false, layout:{padding:{top:4, bottom:2, left:2, right:2}}, plugins:{legend:{position:'bottom', labels:{font:{size:18}, usePointStyle:true, pointStyle:'circle', boxWidth:8, boxHeight:8, padding:8,
+  const cRadar = setChart('cRadar', {type:'radar', data:{labels:rIdx.map(i=>DATA.components[i]), datasets:radarRows.map(r=>({label:r.name, data:rIdx.map(i=>r[RKEY[i]]), borderColor:gColor(r.code), backgroundColor:gColor(r.code)+alpha, fill:true, order:byArea.indexOf(r.code), borderWidth:2, pointRadius:3, pointBackgroundColor:gColor(r.code)}))}, options:{responsive:true, maintainAspectRatio:false, layout:{padding:{top:4, bottom:2, left:2, right:2}}, plugins:{legend:{position:'bottom', labels:{font:{size:18}, usePointStyle:true, pointStyle:'circle', boxWidth:8, boxHeight:8, padding:8,
     // ต้องสร้างป้ายเอง เพราะโหมดหลายกลุ่มตั้ง backgroundColor เป็นโปร่งใส (ไม่งั้น 7 ชั้น
     // ทับกันจนอ่านไม่ออก) Chart.js เลยวาดสัญลักษณ์เป็นวงกลมกลวงเห็นแต่เส้นขอบ
     // ตรงนี้บังคับให้ทึบด้วยสีประจำกลุ่มเสมอ ไม่ขึ้นกับว่ากราฟถมสีหรือไม่
@@ -368,6 +359,7 @@ function applyFilters() {
       strokeStyle:ds.borderColor, lineWidth:0, pointStyle:'circle',
       hidden:!ch.isDatasetVisible(i), datasetIndex:i}))}},
   tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.formattedValue}`}}}, scales:{r:{min:0, max:100, pointLabels:{font:{size:22}}, ticks:{font:{size:20}, stepSize:20}}}}});
+  if (g === 'ALL' && radarRows.length > 1) chartClickGroup(cRadar, null, radarRows.map(r => r.code));
   renderProductDrill();
 }
 // วันที่ข้อมูลล่าสุดและรายการปี เอามาจากข้อมูลจริง (DATA.asOf / DATA.years) ไม่ฝังค่า

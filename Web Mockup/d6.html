@@ -185,17 +185,6 @@ function bindRowFilter(tbodyId) {
     if (tr && tr.dataset.code) clickGroup(tr.dataset.code);
   });
 }
-function chartClickGroup(chart, labels, codes) {
-  if (!chart) return;
-  chart.options.onClick = (_, els) => {
-    if (!els.length) return;
-    const code = codes ? codes[els[0].index] : (GROUPS[els[0].index]?.code);
-    if (code) clickGroup(code);
-  };
-  chart.update();
-}
-
-
 const DATA = {"companies": [{"name": "บริษัท สยาม ฟาร์มาซูติคอล จำกัด", "bg": 12.4, "tier": "Mega Growth", "prov": "กรุงเทพฯ", "grp": "DRUG"}, {"name": "บริษัท กรุงเทพ เฮลท์แคร์ จำกัด", "bg": 9.1, "tier": "Rising Star", "prov": "นนทบุรี", "grp": "MDC"}, {"name": "บริษัท ไทยยูเนี่ยน เมดิคอล จำกัด", "bg": 7.8, "tier": "Rising Star", "prov": "สมุทรปราการ", "grp": "MDC"}, {"name": "บริษัท เอเชียแปซิฟิก ไบโอเทค จำกัด", "bg": 5.2, "tier": "Stable", "prov": "ชลบุรี", "grp": "DRUG"}, {"name": "บริษัท สกาย คอสเมติกส์ จำกัด", "bg": 11.6, "tier": "Mega Growth", "prov": "กรุงเทพฯ", "grp": "CMT"}, {"name": "บริษัท ภูมิใจไทย เฮิร์บ จำกัด", "bg": 8.9, "tier": "Rising Star", "prov": "เชียงใหม่", "grp": "HERB"}], "provs": ["กรุงเทพฯ", "นนทบุรี", "สมุทรปราการ", "ชลบุรี", "เชียงใหม่", "ขอนแก่น", "ภูเก็ต"], "provVals": [4200, 1850, 1620, 980, 720, 540, 380], "entAll": 14382.0};
 const tierBadge = t => t==='Mega Growth'?'<span class="badge badge-star">Mega Growth</span>':t==='Rising Star'?'<span class="badge badge-rise">Rising Star</span>':'<span class="badge badge-stable">Stable</span>';
 function applyFilters() {
@@ -209,8 +198,12 @@ function applyFilters() {
     `<div class="kpi"><div class="bar" style="background:#7E57C2"></div><div class="body"><div class="name">BG เฉลี่ย</div><div class="val">${cos.length?(cos.reduce((s,c)=>s+c.bg,0)/cos.length).toFixed(1):'—'}</div><div class="unit">%</div></div></div>`;
   document.getElementById('coBody').innerHTML = cos.map(c=>`<tr class="clickable ${c.grp===g?'active-row':''}" data-code="${c.grp}"><td>${c.name}</td><td class="num">+${c.bg}%</td><td class="cen">${tierBadge(c.tier)}</td><td>${c.grp}</td><td>${c.prov}</td></tr>`).join('');
   bindRowFilter('coBody');
-  setChart('cProv', {type:'bar', data:{labels:DATA.provs, datasets:[{data:DATA.provVals, backgroundColor:'#1F6FB2'}]}, options:{indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}});
-  setChart('cTier', {type:'doughnut', data:{labels:['Mega','Rising','Stable','Declining'], datasets:[{data:[48,312,1280,13742], backgroundColor:['#1F6FB2','#12A594','#95A5A6','#C0392B']}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}}}});
+  const gScale = g === 'ALL' ? 1 : Math.max(0.15, cos.length / Math.max(DATA.companies.length, 1));
+  const fyM = window.dashFyFactor ? dashFyFactor(FILTER.fy) : 1;
+  const provVals = DATA.provVals.map(v => Math.round(v * gScale * fyM));
+  const tierBase = [48, 312, 1280, 13742].map(v => Math.max(1, Math.round(v * gScale * fyM)));
+  setChart('cProv', {type:'bar', data:{labels:DATA.provs, datasets:[{data:provVals, backgroundColor:'#1F6FB2'}]}, options:{indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}});
+  setChart('cTier', {type:'doughnut', data:{labels:['Mega','Rising','Stable','Declining'], datasets:[{data:tierBase, backgroundColor:['#1F6FB2','#12A594','#95A5A6','#C0392B']}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}}}});
 }
 applyFilters();
 

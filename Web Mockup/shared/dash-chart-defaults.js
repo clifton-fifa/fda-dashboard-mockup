@@ -252,12 +252,26 @@
     applyDonutDataLabels(cfg);
   }
 
+  function ensureChartInteraction(cfg) {
+    cfg.options = cfg.options || {};
+    var interaction = Object.assign({ mode: "nearest", intersect: false }, cfg.options.interaction || {});
+    if (cfg.options.indexAxis === "y") interaction.axis = "y";
+    cfg.options.interaction = interaction;
+    var prevHover = cfg.options.onHover;
+    cfg.options.onHover = function (evt, elements) {
+      if (typeof prevHover === "function") prevHover.call(this, evt, elements);
+      var t = evt.native && evt.native.target;
+      if (t) t.style.cursor = elements.length ? "pointer" : "default";
+    };
+    return cfg;
+  }
+
   window.dashPrepareChart = function (cfg) {
     if (!cfg) return cfg;
     applyCircleLegend(cfg);
     if (cfg.type === "doughnut" || cfg.type === "pie") {
       applyDonutLayout(cfg);
-      return cfg;
+      return ensureChartInteraction(cfg);
     }
     if (cfg.type === "scatter" || cfg.type === "bubble") {
       cfg.options = cfg.options || {};
@@ -268,12 +282,15 @@
         padding: Object.assign({ top: 14, bottom: 8, left: 8, right: 12 }, scPad),
       });
       applyScatterDataLabels(cfg);
-      return cfg;
+      return ensureChartInteraction(cfg);
     }
-    if (cfg.type !== "bar" && cfg.type !== "line") return cfg;
+    if (cfg.type === "radar") {
+      return ensureChartInteraction(cfg);
+    }
+    if (cfg.type !== "bar" && cfg.type !== "line") return ensureChartInteraction(cfg);
     cfg.options = cfg.options || {};
     cfg.options.plugins = cfg.options.plugins || {};
-    if (cfg.options.plugins.datalabels === false) return cfg;
+    if (cfg.options.plugins.datalabels === false) return ensureChartInteraction(cfg);
     if (cfg.type === "line") {
       cfg.options.layout = Object.assign(
         { padding: { top: 14, bottom: 6, left: 4, right: 8 } },
@@ -283,6 +300,61 @@
     var user = cfg.options.plugins.datalabels;
     var base = defaultDataLabelsFor(cfg);
     cfg.options.plugins.datalabels = Object.assign({}, base, user || {});
-    return cfg;
+    return ensureChartInteraction(cfg);
+  };
+
+  /** คลิกกราฟ / legend โดนัท → กรองกลุ่มผลิตภัณฑ์ (ใช้ร่วม d2–d8) */
+  window.chartClickGroup = function (chart, labels, codes, onPick) {
+    if (!chart) return;
+    var pick =
+      onPick ||
+      (typeof window.onGroupFilter === "function" ? window.onGroupFilter : null);
+    if (!pick && typeof clickGroup === "function") pick = clickGroup;
+    if (!pick) return;
+
+    function pickAt(idx) {
+      if (idx == null || idx < 0) return;
+      var code = codes && codes.length ? codes[idx] : null;
+      if (code) pick(code);
+    }
+
+    var type = chart.config.type;
+
+    chart.options.onClick = function (evt, elements) {
+      if (!elements || !elements.length) return;
+      var el = elements[0];
+      if (type === "radar" || type === "scatter" || type === "bubble") {
+        pickAt(el.datasetIndex != null ? el.datasetIndex : el.index);
+      } else {
+        pickAt(el.index);
+      }
+    };
+
+    if (type === "doughnut" || type === "pie") {
+      chart.options.plugins = chart.options.plugins || {};
+      var leg = chart.options.plugins.legend || {};
+      chart.options.plugins.legend = Object.assign({}, leg, {
+        onClick: function (e, legendItem) {
+          if (e && e.native && e.native.stopPropagation) e.native.stopPropagation();
+          pickAt(legendItem.index);
+        },
+      });
+    }
+
+    chart.options.interaction = Object.assign(
+      { mode: "nearest", intersect: false },
+      chart.options.interaction || {}
+    );
+    chart.options.onHover = function (evt, elements) {
+      var t = evt.native && evt.native.target;
+      if (t) t.style.cursor = elements.length ? "pointer" : "default";
+    };
+    chart.update("none");
+  };
+
+  window.dashFyFactor = function (fy, baseYear) {
+    var base = baseYear == null ? 2568 : baseYear;
+    var y = fy == null ? base : +fy;
+    return 1 + (base - y) * 0.02;
   };
 })();

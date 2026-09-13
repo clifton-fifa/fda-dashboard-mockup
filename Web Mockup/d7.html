@@ -205,17 +205,6 @@ function bindRowFilter(tbodyId) {
     if (tr && tr.dataset.code) clickGroup(tr.dataset.code);
   });
 }
-function chartClickGroup(chart, labels, codes) {
-  if (!chart) return;
-  chart.options.onClick = (_, els) => {
-    if (!els.length) return;
-    const code = codes ? codes[els[0].index] : (GROUPS[els[0].index]?.code);
-    if (code) clickGroup(code);
-  };
-  chart.update();
-}
-
-
 const DATA = {"products": [{"id": "P0003", "name": "Paracetamol 500 mg Tablet", "grp": "DRUG", "status": "Active", "days": 128, "co": "สยาม ฟาร์มาซูติคอล"}, {"id": "P0018", "name": "Amoxicillin 500 mg Capsule", "grp": "DRUG", "status": "Active", "days": 112, "co": "ไทยเมด ฟาร์มา"}, {"id": "P0041", "name": "Metformin 850 mg Tablet", "grp": "DRUG", "status": "Active", "days": 95, "co": "บีเอส ฟาร์มา"}, {"id": "P0142", "name": "Digital Blood Pressure Monitor", "grp": "MDC", "status": "Active", "days": 99, "co": "กรุงเทพ เฮลท์แคร์"}, {"id": "P0288", "name": "Vitamin C 1000 mg", "grp": "FOOD", "status": "Active", "days": 76, "co": "เอเชียแปซิฟิก ไบโอเทค"}, {"id": "P0311", "name": "Sunscreen SPF50+", "grp": "CMT", "status": "Active", "days": 82, "co": "สกาย คอสเมติกส์"}, {"id": "P0330", "name": "Herbal Ginger Extract", "grp": "HERB", "status": "Active", "days": 88, "co": "สมุนไพรไทย"}]};
 const APPS = {
   P0003:[['DR-2569-001842','ขึ้นทะเบียน','15/01/2569','20/06/2569',128,'อนุมัติ'],['DR-2568-009921','ต่ออายุ','03/11/2568','10/02/2569',99,'อนุมัติ']],

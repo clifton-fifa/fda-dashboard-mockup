@@ -186,17 +186,6 @@ function bindRowFilter(tbodyId) {
     if (tr && tr.dataset.code) clickGroup(tr.dataset.code);
   });
 }
-function chartClickGroup(chart, labels, codes) {
-  if (!chart) return;
-  chart.options.onClick = (_, els) => {
-    if (!els.length) return;
-    const code = codes ? codes[els[0].index] : (GROUPS[els[0].index]?.code);
-    if (code) clickGroup(code);
-  };
-  chart.update();
-}
-
-
 const DATA = {"rbi": [{"code": "DRUG", "name": "ยา", "days": 128, "rbi": 72, "backlog": 3420, "rework": 18.2}, {"code": "MDC", "name": "เครื่องมือแพทย์", "days": 115, "rbi": 68, "backlog": 1890, "rework": 14.5}, {"code": "FOOD", "name": "อาหาร", "days": 89, "rbi": 54, "backlog": 1560, "rework": 11.0}, {"code": "CMT", "name": "เครื่องสำอาง", "days": 76, "rbi": 48, "backlog": 980, "rework": 9.8}, {"code": "HERB", "name": "สมุนไพร", "days": 102, "rbi": 61, "backlog": 720, "rework": 15.3}, {"code": "TXC", "name": "วัตถุอันตราย", "days": 94, "rbi": 56, "backlog": 380, "rework": 12.1}, {"code": "NCT", "name": "วัตถุเสพติด", "days": 142, "rbi": 78, "backlog": 170, "rework": 22.4}], "stages": ["รับเรื่อง", "ตรวจเอกสาร", "ประเมินเทคนิค", "ที่ประชุม", "ออกใบอนุญาต"], "stageDays": [12, 28, 45, 18, 25], "backlogAll": 9120.0};
 function lvl(r) { return r.rbi>=70?'<span class="badge badge-warn">คอขวดสูง</span>':r.rbi>=55?'<span class="badge badge-warn">เฝ้าระวัง</span>':'<span class="badge badge-pass">ปกติ</span>'; }
 function applyFilters() {

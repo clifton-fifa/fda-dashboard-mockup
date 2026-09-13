@@ -7,6 +7,7 @@
 
 # สำรอง local — ไม่จำเป็นบน GitHub (ลบบรรทัดนี้ถ้าต้องการ commit Backup)
 Web Mockup/Backup/
+*.zip
 
 # Python (KNIME scripts / tooling)
 __pycache__/

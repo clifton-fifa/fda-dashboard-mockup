@@ -95,6 +95,11 @@
     return "shared/" + fileName;
   }
 
+  function logoSrcForSidebar() {
+    if (window.FDA_LOGO_DATA_URI) return window.FDA_LOGO_DATA_URI;
+    return sharedAssetHref("fda-logo.svg");
+  }
+
   function applySidebarLogo() {
     var img = document.querySelector(".dash-sidebar-logo-img");
     if (!img) return;
@@ -180,7 +185,9 @@
     var head = document.createElement("div");
     head.className = "dash-sidebar-head";
     head.innerHTML =
-      '<img class="dash-sidebar-logo-img" alt="">' +
+      '<img class="dash-sidebar-logo-img" alt="อย." src="' +
+      logoSrcForSidebar() +
+      '">' +
       '<div class="dash-sidebar-org">สำนักงานคณะกรรมการอาหารและยา<br>กระทรวงสาธารณสุข</div>';
     aside.appendChild(head);
 
@@ -259,8 +266,8 @@
     if (frame.getAttribute("src") !== hrefForDash(current)) frame.setAttribute("src", hrefForDash(current));
 
     frame.addEventListener("load", function () {
-      if (navTimer) return;
       frame.classList.remove("dash-frame-loading");
+      if (navTimer) return;
       applySidebarLogo();
       afterSidebarToggle();
     });
@@ -293,7 +300,9 @@
     });
 
     window.addEventListener("message", function (e) {
-      if (e && e.data === "fda-dash-toggle-sidebar") toggleSidebar();
+      if (!e || !e.data) return;
+      if (e.data === "fda-dash-toggle-sidebar") toggleSidebar();
+      if (e.data === "fda-dash-iframe-ready") applySidebarLogo();
     });
   }
 

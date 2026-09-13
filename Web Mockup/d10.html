@@ -79,6 +79,9 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 @media(max-width:980px){.filters{grid-template-columns:1fr;gap:8px}.static-filters,.filterGroups{grid-column:1;justify-self:stretch}#chips,#regionChips{justify-content:flex-start}}
 @media(max-width:700px){header h1{font-size:26px}header .right{text-align:left}}
 </style>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="shared/dash-fonts.css">
   <link rel="stylesheet" href="shared/dash-sidebar.css">
   <link rel="stylesheet" href="shared/dash-layout.css">
 <link rel="stylesheet" href="shared/dash-filters.css">
@@ -113,7 +116,7 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 <main>
 <section class="kpis" id="healthKpi"></section>
 <section class="card span6 card--row-stretch"><h2>คุณภาพข้อมูลรายเมตริก</h2>
-<div class="table-scroll"><table class="data"><thead><tr><th>เมตริก</th><th class="num">ค่า</th><th class="cen">สถานะ</th></tr></thead><tbody id="healthBody"></tbody></table></div></section>
+<div class="table-scroll"><table class="data"><thead><tr><th>เมตริก</th><th class="num">ค่า</th><th class="cen">สถานะ</th></tr></thead><tbody id="healthBody"><tr><td colspan="3" class="cen" style="color:var(--muted)">กำลังโหลดข้อมูล…</td></tr></tbody></table></div></section>
 <section class="card span6 card--row-stretch card--donut-paired"><h2>สถิติขั้นตอนทำความสะอาดข้อมูล</h2>
 <div class="chart-box chart-box--donut lg"><canvas id="cClean"></canvas></div></section>
 <section class="card span12"><h2>ที่มาข้อมูลและธรรมาภิบาล</h2>
@@ -124,137 +127,7 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 <tr><td>Cleansing Pipeline</td><td>fda_before_after.csv</td><td class="num">96.2%</td><td>Demo</td><td>Data Steward</td></tr>
 <tr><td>External</td><td>กรมศุลกากร HS</td><td class="num">92.0%</td><td>30 มิ.ย. 2569</td><td>กรมศุลกากร</td></tr>
 </tbody></table></div></section></main>
-<script>
-const GROUPS = [{"code": "DRUG", "name": "ยา", "color": "#1F6FB2"}, {"code": "MDC", "name": "เครื่องมือแพทย์", "color": "#12A594"}, {"code": "FOOD", "name": "อาหาร", "color": "#3E9F55"}, {"code": "CMT", "name": "เครื่องสำอาง", "color": "#E8A317"}, {"code": "HERB", "name": "สมุนไพร", "color": "#7E57C2"}, {"code": "TXC", "name": "วัตถุอันตราย", "color": "#C0392B"}, {"code": "NCT", "name": "วัตถุเสพติด", "color": "#7F8C8D"}];
-document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => clickGroup(c.dataset.g)));
-
-const FILTER = { group: 'ALL', fy: 2568, txn: 'all', prov: 'ทั่วประเทศ' };
-const charts = {};
-function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
-function setChart(id, cfg) {
-  const el = document.getElementById(id);
-  if (!el || typeof Chart === 'undefined') return null;
-  destroyChart(id);
-  charts[id] = new Chart(el, window.dashPrepareChart ? dashPrepareChart(cfg) : cfg);
-  return charts[id];
-}
-function gName(code) { return code === 'ALL' ? 'ทั้งหมด' : (GROUPS.find(g => g.code === code)?.name || code); }
-function gColor(code) { return GROUPS.find(g => g.code === code)?.color || '#1F6FB2'; }
-
-function syncChips(code) {
-  document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x.dataset.g === code ? 'true' : 'false'));
-}
-function clickGroup(code) { FILTER.group = code; syncChips(code); applyFilters(); }
-/* ── แถบตัวกรองแบบ d1 ── */
-const TH_MONTH_NAME = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-function initD1FilterBar(){
-  const selM = document.getElementById("filterMonth");
-  if (selM && selM.options.length <= 1)
-    selM.innerHTML = '<option value="ALL" selected>ทั้งหมด</option>' +
-      TH_MONTH_NAME.map((n,i) => '<option value="'+String(i+1).padStart(2,"0")+'">'+n+'</option>').join("");
-}
-function resetDashFilters(){
-  if (typeof FILTER !== "undefined") {
-    if ("group" in FILTER) FILTER.group = "ALL";
-    if ("fy" in FILTER) FILTER.fy = 2568;
-    if ("txn" in FILTER) FILTER.txn = "all";
-    if ("prov" in FILTER) FILTER.prov = "ทั่วประเทศ";
-    if ("region" in FILTER) FILTER.region = "ALL";
-  }
-  if (typeof syncChips === "function") syncChips("ALL");
-  document.querySelectorAll(".chip[data-g]").forEach(c =>
-    c.setAttribute("aria-pressed", c.dataset.g === "ALL" ? "true" : "false"));
-  document.querySelectorAll("#regionChips .chip").forEach(c =>
-    c.setAttribute("aria-pressed", c.dataset.r === "ALL" ? "true" : "false"));
-  const fy = document.getElementById("fySel"); if (fy) fy.value = "2568";
-  const txn = document.getElementById("txnSel"); if (txn) txn.value = "all";
-  const prov = document.getElementById("provSel"); if (prov) {
-    prov.value = prov.querySelector('option[value="ทั่วประเทศ"]') ? "ทั่วประเทศ" :
-      (prov.querySelector('option[value="ALL"]') ? "ALL" : prov.options[0]?.value);
-  }
-  const zone = document.getElementById("zoneSel"); if (zone) zone.value = "ALL";
-  const selM = document.getElementById("filterMonth"); if (selM) selM.value = "ALL";  if (typeof applyFilters === "function") applyFilters();
-  else if (typeof renderAll === "function") renderAll();
-}
-document.getElementById("resetFiltersBtn")?.addEventListener("click", resetDashFilters);
-initD1FilterBar();
-window.onGroupFilter = clickGroup;
-document.getElementById('fySel')?.addEventListener('change', e => { FILTER.fy = e.target.value === "ALL" ? 2568 : +e.target.value; applyFilters(); });
-document.getElementById('txnSel')?.addEventListener('change', e => { FILTER.txn = e.target.value; applyFilters(); });
-document.getElementById('provSel')?.addEventListener('change', e => { FILTER.prov = e.target.value; applyFilters(); });
-function bindRowFilter(tbodyId) {
-  const tb = document.getElementById(tbodyId);
-  if (!tb || tb.dataset.bound) return;
-  tb.dataset.bound = '1';
-  tb.addEventListener('click', e => {
-    const tr = e.target.closest('tr.clickable');
-    if (tr && tr.dataset.code) clickGroup(tr.dataset.code);
-  });
-}
-function chartClickGroup(chart, labels, codes) {
-  if (!chart) return;
-  chart.options.onClick = (_, els) => {
-    if (!els.length) return;
-    const code = codes ? codes[els[0].index] : (GROUPS[els[0].index]?.code);
-    if (code) clickGroup(code);
-  };
-  chart.update();
-}
-
-
-const HEALTH = [{"metric_code": "completeness", "metric_name_th": "ความครบถ้วนของข้อมูล", "value": 98.6, "unit": "%", "status": "ปกติ"}, {"metric_code": "validity", "metric_name_th": "ความถูกต้องตามกฎ", "value": 96.2, "unit": "%", "status": "ปกติ"}, {"metric_code": "duplicate", "metric_name_th": "ข้อมูลซ้ำซ้อน", "value": 0.8, "unit": "%", "status": "ปกติ"}, {"metric_code": "hs_mapping", "metric_name_th": "อัตราเชื่อมโยงรหัส HS สำเร็จ", "value": 92.0, "unit": "%", "status": "เฝ้าระวัง"}, {"metric_code": "last_refresh", "metric_name_th": "รอบปรับปรุงข้อมูลล่าสุด", "value": NaN, "unit": "30 มิ.ย. 2569", "status": "ปกติ"}, {"metric_code": "source_count", "metric_name_th": "จำนวนตารางต้นทางที่เชื่อมต่อ", "value": NaN, "unit": "25 ตาราง / 24 แหล่งภายนอก", "status": "ปกติ"}];
-function applyFilters() {
-  const g = FILTER.group;
-  const factor = g==='ALL'?1:(g==='HERB'?0.97:g==='DRUG'?0.99:1.01);
-  function healthMetricDisplay(h, factor) {
-    if (h.unit === '%') return (Number(h.value) * factor).toFixed(1) + '%';
-    const v = h.value;
-    if (v == null || (typeof v === 'number' && isNaN(v))) return h.unit || '—';
-    return String(v) + (h.unit ? ' ' + h.unit : '');
-  }
-  document.getElementById('healthKpi').innerHTML = HEALTH.slice(0,4).map(h=>`
-    <div class="kpi"><div class="bar" style="background:${gColor(g)}"></div><div class="body"><div class="name">${h.metric_name_th}</div>
-    <div class="val">${healthMetricDisplay(h, factor)}</div></div></div>`).join('');
-  document.getElementById('healthBody').innerHTML = HEALTH.map(h=>`<tr><td>${h.metric_name_th}</td><td class="num">${healthMetricDisplay(h, factor)}</td>
-    <td class="cen">${h.status==='ปกติ'?'<span class="badge badge-pass">'+h.status+'</span>':'<span class="badge badge-warn">'+h.status+'</span>'}</td></tr>`).join('');
-  const pass=Math.round(4100*factor), fail=Math.round(900/factor), qa=Math.round(48*factor);
-  const cleanLabels = ['ผ่าน', 'ไม่ผ่าน', 'ตรวจสอบ', 'ไม่เปลี่ยน'];
-  const cleanColors = ['#1F7A45', '#C0392B', '#D68910', '#9AA5B1'];
-  setChart('cClean', {type:'doughnut', data:{labels: cleanLabels, datasets:[{
-    data:[pass, fail, qa, 952],
-    backgroundColor: cleanColors,
-    hoverBackgroundColor: cleanColors,
-    borderColor: '#fff',
-    borderWidth: 2,
-    radius:'88%',
-    hoverRadius:'90%'
-  }]}, options:{responsive:true, maintainAspectRatio:false, layout:{padding:{top:6,bottom:2,left:4,right:4}}, plugins:{legend:{position:'bottom', labels:{padding:10}}}}});
-}
-function bootDashData() {
-  try {
-    if (typeof applyFilters === "function") applyFilters();
-  } catch (err) {
-    console.error("[d10] applyFilters failed", err);
-  }
-}
-if (typeof Chart === "undefined") {
-  window.addEventListener("load", bootDashData, { once: true });
-} else {
-  bootDashData();
-}
-
-/* วันที่หัวข้อ — วันเปิดดู (พ.ศ.) */
-const TH_MONTH_ABBR = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-function formatThaiDateToday(){
-  const d = new Date();
-  return d.getDate() + " " + TH_MONTH_ABBR[d.getMonth()] + " " + (d.getFullYear() + 543);
-}
-function renderHeaderAsOf(){
-  const el = document.getElementById("asOf");
-  if (el) el.textContent = formatThaiDateToday();
-}
-renderHeaderAsOf();
-</script>
+<script src="shared/d10-app.js" defer></script>
 <script src="shared/dash-layout.js" defer></script>
 </div>
 </body></html>

@@ -144,7 +144,8 @@
 
   .trend{grid-column:span 8}
   /* คำอธิบายสีอยู่นอก SVG — ไม่แย่งพื้นที่ plot กับตัวอักษรที่ scale ตามความกว้างการ์ด */
-  .trendLegend{display:flex; flex-wrap:wrap; gap:4px 12px; margin:0 0 4px 13px;
+  .trendLegend{display:flex; flex-wrap:wrap; align-items:center; gap:4px 12px;
+               margin:2px 0 12px 13px; padding-bottom:2px;
                font-size:var(--fs-trend-legend); font-weight:600; color:var(--muted)}
   .trendLegend .lg{display:inline-flex; align-items:center; gap:6px}
   .trendLegend .lg i{display:inline-block; width:10px; height:10px; border-radius:50%;
@@ -627,19 +628,30 @@ function trendScaleY(allValues, nTicks){
   const padBot = Math.max(span * 0.03, Math.abs(dataLo) * 0.05);
   const topTarget = (posMax || dataHi) + headroom;
   const loTarget = dataLo - padBot;
-  let step = niceStep((topTarget - loTarget) / 8);
-  for (let k = 0; k < 8; k++) {
+  const maxTickCount = Math.max(5, Math.min(7, nTicks || 6));
+  let step = niceStep((topTarget - loTarget) / (maxTickCount - 1));
+  const minStep = step;
+  for (let k = 0; k < 4; k++) {
     const band = Math.ceil(topTarget / step) * step - topTarget;
     if (band <= step * 0.35) break;
-    step = step / 2;
-    if (step < 2500) break;
+    const finer = step / 2;
+    if (finer < minStep) break;
+    step = finer;
   }
-  const lo = Math.floor(loTarget / step) * step;
+  let lo = Math.floor(loTarget / step) * step;
   let hi = Math.ceil(topTarget / step) * step;
   if (hi < topTarget) hi += step;
-  const ticks = [];
+  let ticks = [];
   for (let v = lo; v <= hi + step * 1e-6; v += step) ticks.push(v);
-  return { lo, hi, ticks };
+  while (ticks.length > maxTickCount + 1 && step < 500000) {
+    step *= 2;
+    lo = Math.floor(loTarget / step) * step;
+    hi = Math.ceil(topTarget / step) * step;
+    if (hi < topTarget) hi += step;
+    ticks = [];
+    for (let v = lo; v <= hi + step * 1e-6; v += step) ticks.push(v);
+  }
+  return { lo, hi, ticks, step };
 }
 function niceStep(raw){
   if (!isFinite(raw) || raw <= 0) return 1;
@@ -683,7 +695,7 @@ function trendSeries(){
    ข้อมูลมอคมี SARIMAX พยากรณ์รายปีงบประมาณจริง เก็บ path เดิมไว้ไม่แตะเลย
    ส่วนข้อมูลจริงที่ต่อ DB ตรง ยังไม่มีพยากรณ์ (ต้องมี >=12 เดือนต่อรอบ) แสดง
    รายเดือนจะเห็นแนวโน้มได้ชัดกว่าการยุบเหลือแค่ 2-3 จุดต่อปีงบประมาณ */
-const TREND_SVG = { W: 980, H: 268, P: { t: 14, r: 12, b: 32, l: 78 } };
+const TREND_SVG = { W: 980, H: 268, P: { t: 18, r: 12, b: 32, l: 78 } };
 
 function trendChartDataFontPx() {
   const v = getComputedStyle(document.documentElement).getPropertyValue("--fs-chart-data").trim();

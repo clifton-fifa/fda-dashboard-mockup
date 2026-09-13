@@ -425,6 +425,8 @@ body[data-dash] .card > .cap {
 body[data-dash] .trendLegend {
   font-size: var(--fs-trend-legend) !important;
   font-weight: 600;
+  margin: 2px 0 12px 13px !important;
+  padding-bottom: 2px;
 }
 
 /* d7 — เลือกผลิตภัณฑ์: ไม่ใช้เส้นคั่นใต้หัวข้อ + ให้รายการค้นหาลอยทับได้ */

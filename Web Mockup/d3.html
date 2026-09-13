@@ -121,7 +121,8 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 <div class="chart-box lg"><canvas id="cRss"></canvas></div></section>
 <section class="card span4 card--row-stretch card--chart-grow"><h2>องค์ประกอบคะแนนดาวรุ่ง</h2>
 <div class="cap" id="radarNote"></div>
-<div class="chart-box lg"><canvas id="cRadar"></canvas></div></section>
+<div class="chart-box lg"><canvas id="cRadar"></canvas></div>
+<div class="dash-chart-legend" id="radarLegend" aria-label="สัญลักษณ์กลุ่มผลิตภัณฑ์"></div></section>
 <section class="card span12"><h2>ตารางคะแนนดาวรุ่งรายกลุ่มผลิตภัณฑ์</h2>
 <div class="rss-table-wrap"><table class="data table-rss"><thead><tr>
 <th class="num">อันดับ</th><th>กลุ่ม</th><th class="num">คะแนนดาวรุ่ง</th><th class="num">การค้า</th><th class="num">ผลิตภัณฑ์</th><th class="num">คำขอ</th><th class="num">ผู้ประกอบการ</th><th class="num">นวัตกรรม</th><th class="num">กฎระเบียบ</th><th class="num">ตลาด</th><th class="num">มูลค่านำเข้า <span style="white-space:nowrap">(ล้านบาท)</span></th><th class="num">มูลค่าส่งออก <span style="white-space:nowrap">(ล้านบาท)</span></th><th class="num">มูลค่าการผลิต <span style="white-space:nowrap">(ล้านบาท)</span></th><th class="num">มูลค่าการขาย <span style="white-space:nowrap">(ล้านบาท)</span></th><th class="cen">สถานะ</th>
@@ -320,6 +321,19 @@ function renderProductDrill() {
     `<div class="kpi"><div class="bar" style="background:#7E57C2"></div><div class="body"><div class="name">มูลค่าการขาย</div><div class="val">${fmtTHB(t.sale)}</div><div class="unit">ล้านบาท</div></div></div>`;
 }
 function badge(r) { return r.rss>=80?'<span class="badge badge-star">ดาวรุ่ง</span>':r.rss>=65?'<span class="badge badge-rise">มีศักยภาพ</span>':'<span class="badge badge-stable">ติดตาม</span>'; }
+function renderRadarLegend(items) {
+  const el = document.getElementById('radarLegend');
+  if (!el) return;
+  if (!items || !items.length) {
+    el.innerHTML = '';
+    el.hidden = true;
+    return;
+  }
+  el.hidden = false;
+  el.innerHTML = items.map(r =>
+    `<span class="dash-chart-legend-item"><i style="background:${gColor(r.code)}"></i><span>${r.name}</span></span>`
+  ).join('');
+}
 function applyFilters() {
   const g = FILTER.group;
   const fyM = window.dashFyFactor ? dashFyFactor(FILTER.fy) : 1;
@@ -371,14 +385,8 @@ function applyFilters() {
     return v.reduce((s,x,i)=>s + x*v[(i+1)%v.length], 0); };
   const byArea = [...radarRows].sort((a,b)=>rArea(a)-rArea(b)).map(r=>r.code);
   const alpha = radarFill ? '33' : '26';
-  const cRadar = setChart('cRadar', {type:'radar', data:{labels:rIdx.map(i=>DATA.components[i]), datasets:radarRows.map(r=>({label:r.name, data:rIdx.map(i=>r[RKEY[i]]), borderColor:gColor(r.code), backgroundColor:gColor(r.code)+alpha, fill:true, order:byArea.indexOf(r.code), borderWidth:2, pointRadius:3, pointBackgroundColor:gColor(r.code)}))}, options:{responsive:true, maintainAspectRatio:false, layout:{padding:{top:4, bottom:2, left:2, right:2}}, plugins:{legend:{position:'bottom', labels:{font:{size:18}, usePointStyle:true, pointStyle:'circle', boxWidth:8, boxHeight:8, padding:8,
-    // ต้องสร้างป้ายเอง เพราะโหมดหลายกลุ่มตั้ง backgroundColor เป็นโปร่งใส (ไม่งั้น 7 ชั้น
-    // ทับกันจนอ่านไม่ออก) Chart.js เลยวาดสัญลักษณ์เป็นวงกลมกลวงเห็นแต่เส้นขอบ
-    // ตรงนี้บังคับให้ทึบด้วยสีประจำกลุ่มเสมอ ไม่ขึ้นกับว่ากราฟถมสีหรือไม่
-    generateLabels:ch=>ch.data.datasets.map((ds,i)=>({text:ds.label, fillStyle:ds.borderColor,
-      strokeStyle:ds.borderColor, lineWidth:0, pointStyle:'circle',
-      hidden:!ch.isDatasetVisible(i), datasetIndex:i}))}},
-  tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.formattedValue}`}}}, scales:{r:{min:0, max:100, pointLabels:{padding:6}, ticks:{stepSize:20}}}}});
+  renderRadarLegend(radarRows);
+  const cRadar = setChart('cRadar', {type:'radar', data:{labels:rIdx.map(i=>DATA.components[i]), datasets:radarRows.map(r=>({label:r.name, data:rIdx.map(i=>r[RKEY[i]]), borderColor:gColor(r.code), backgroundColor:gColor(r.code)+alpha, fill:true, order:byArea.indexOf(r.code), borderWidth:2, pointRadius:3, pointBackgroundColor:gColor(r.code)}))}, options:{responsive:true, maintainAspectRatio:false, layout:{padding:{top:8, bottom:4, left:4, right:4}}, plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.formattedValue}`}}}, scales:{r:{min:0, max:100, pointLabels:{padding:6}, ticks:{stepSize:20}}}}});
   if (g === 'ALL' && radarRows.length > 1) chartClickGroup(cRadar, null, radarRows.map(r => r.code));
   renderProductDrill();
 }

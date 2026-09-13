@@ -42,6 +42,14 @@
     return 14;
   }
 
+  function chartLegendFontSize() {
+    var legFs = parseInt(cssVar("--fs-trend-legend"), 10);
+    if (legFs && !isNaN(legFs)) return legFs;
+    var uiMd = parseInt(cssVar("--fs-ui-md"), 10);
+    if (uiMd && !isNaN(uiMd)) return uiMd;
+    return 14;
+  }
+
   /** แกนกราฟ — ป้ายหมวดแนวนอน (bar indexAxis y) ใช้ฟอนต์เล็กลง */
   function applyAxisFonts(cfg) {
     if (!cfg || !cfg.options) return cfg;
@@ -166,6 +174,7 @@
     if (leg === false || (leg && leg.display === false)) return;
     var userLeg = leg || {};
     var userLabels = userLeg.labels || {};
+    var legFs = chartLegendFontSize();
     cfg.options.plugins.legend = Object.assign({}, userLeg, {
       labels: Object.assign(
         {
@@ -173,7 +182,11 @@
           pointStyle: "circle",
           boxWidth: 8,
           boxHeight: 8,
-          padding: 12,
+          padding: 10,
+          font: Object.assign(
+            { size: legFs, family: Chart.defaults.font.family, weight: "600" },
+            userLabels.font || {}
+          ),
         },
         userLabels,
         {
@@ -401,7 +414,11 @@
       var t = evt.native && evt.native.target;
       if (t) t.style.cursor = elements.length ? "pointer" : "default";
     };
-    chart.update("none");
+    try {
+      chart.update("none");
+    } catch (e) {
+      /* อย่าให้ update ล้มแล้วหยุด applyFilters กลางทาง (d2 กราฟล่าง/ตาราง HS) */
+    }
   };
 
   window.dashFyFactor = function (fy, baseYear) {

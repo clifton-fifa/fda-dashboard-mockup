@@ -9,14 +9,14 @@ body[data-dash-shell] {
   --dash-sidebar-blue: #3a8fe8;
   --dash-sidebar-muted: #5b6b7e;
   /* ตัวเลขฐาน d1 */
-  --dash-sidebar-font: 20px;
-  --dash-sidebar-label-font: 15px;
-  --dash-sidebar-num-font: 14px;
-  --dash-sidebar-org-font: 15px;
+  --dash-sidebar-font: 16px;
+  --dash-sidebar-label-font: 13px;
+  --dash-sidebar-num-font: 12px;
+  --dash-sidebar-org-font: 13px;
   --dash-sidebar-logo-h: 72px;
   --dash-sidebar-head-pad: 14px 16px 12px;
-  --dash-sidebar-link-pad: 10px 14px 10px 16px;
-  --dash-sidebar-link-gap: 12px;
+  --dash-sidebar-link-pad: 8px 12px 8px 14px;
+  --dash-sidebar-link-gap: 10px;
 }
 
 body.dash-with-sidebar {
@@ -153,9 +153,9 @@ body[data-dash] .dash-sidebar * {
 .dash-sidebar-link .num {
   display: inline-grid;
   place-items: center;
-  min-width: 26px;
-  width: 26px;
-  height: 26px;
+  min-width: 24px;
+  width: 24px;
+  height: 24px;
   border-radius: 6px;
   background: #e2e8f0;
   color: var(--dash-sidebar-muted);

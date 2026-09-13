@@ -7,8 +7,10 @@ body[data-dash] {
   --fs-kpi: 40px;
   --fs-kpi-name: 17px;
   --fs-kpi-unit: 16px;
-  --fs-ui: 20px;
-  --fs-ui-md: 18px;
+  --fs-ui: 16px;
+  --fs-ui-md: 15px;
+  --fs-cap: 15px;
+  --fs-trend-legend: 14px;
   --fs-table: 16px;
   --fs-ui-sm: 16px;
   --fs-axis: 16px;
@@ -180,15 +182,15 @@ body[data-dash]:not(.dash-with-sidebar) main .card.card--chart-grow:not(.card--r
   flex: 0 0 auto;
 }
 
-/* การ์ดคู่แถวเดียวกัน — กราฟ (ไม่ใช่โดนัท) ขยายเต็มใต้หัวข้อ ไม่หดต่ำกว่า lg/มาตรฐาน */
+/* การ์ดคู่แถวเดียวกัน — Chart.js ต้องมีความสูงชัด (height:auto ทำให้ canvas 0px ใน iframe) */
 body[data-dash] main .card.card--row-stretch.card--chart-grow .chart-box:not(.chart-box--donut-fill),
 body[data-dash]:not(.dash-with-sidebar)
   main
   .card.card--row-stretch.card--chart-grow
   .chart-box:not(.chart-box--donut-fill),
 .dash-page .card.card--row-stretch.card--chart-grow .chart-box:not(.chart-box--donut-fill) {
-  flex: 1 1 auto;
-  height: auto !important;
+  flex: 1 1 0;
+  height: var(--dash-chart-h) !important;
   min-height: var(--dash-chart-h);
   max-height: none !important;
 }
@@ -199,6 +201,7 @@ body[data-dash]:not(.dash-with-sidebar)
   .card.card--row-stretch.card--chart-grow
   .chart-box.lg:not(.chart-box--donut-fill),
 .dash-page .card.card--row-stretch.card--chart-grow .chart-box.lg:not(.chart-box--donut-fill) {
+  height: var(--dash-chart-h-lg) !important;
   min-height: var(--dash-chart-h-lg);
 }
 
@@ -218,9 +221,9 @@ body[data-dash]:not(.dash-with-sidebar)
   .card.card--row-stretch.card--chart-grow
   .chart-box.chart-box--donut-fill,
 .dash-page .card.card--row-stretch.card--chart-grow .chart-box.chart-box--donut-fill {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-height: var(--dash-chart-h-lg);
-  height: auto !important;
+  height: var(--dash-chart-h-lg) !important;
   max-height: none !important;
 }
 
@@ -410,6 +413,17 @@ body[data-dash] .card > h2 {
 
 body[data-dash] .card > h2::before {
   height: 16px;
+}
+
+body[data-dash] .card > .cap {
+  font-size: var(--fs-cap) !important;
+  line-height: 1.4;
+  margin: 4px 0 8px 13px;
+}
+
+body[data-dash] .trendLegend {
+  font-size: var(--fs-trend-legend) !important;
+  font-weight: 600;
 }
 
 /* d7 — เลือกผลิตภัณฑ์: ไม่ใช้เส้นคั่นใต้หัวข้อ + ให้รายการค้นหาลอยทับได้ */

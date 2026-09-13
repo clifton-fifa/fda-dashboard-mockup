@@ -630,8 +630,8 @@ function trendScaleY(allValues, nTicks){
   for (let k = 0; k < 8; k++) {
     const band = Math.ceil(topTarget / step) * step - topTarget;
     if (band <= step * 0.35) break;
-    step = Math.max(niceStep(step * 0.5), step / 2);
-    if (step < 2000) break;
+    step = step / 2;
+    if (step < 2500) break;
   }
   const lo = Math.floor(loTarget / step) * step;
   let hi = Math.ceil(topTarget / step) * step;

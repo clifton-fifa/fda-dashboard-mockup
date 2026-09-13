@@ -143,7 +143,7 @@
 
   .trend{grid-column:span 8}
   /* คำอธิบายสีอยู่นอก SVG — ไม่แย่งพื้นที่ plot กับตัวอักษรที่ scale ตามความกว้างการ์ด */
-  .trendLegend{display:flex; flex-wrap:wrap; gap:6px 18px; margin:0 0 8px 13px;
+  .trendLegend{display:flex; flex-wrap:wrap; gap:4px 14px; margin:0 0 4px 13px;
                font-size:var(--fs-ui-md); font-weight:600; color:var(--muted)}
   .trendLegend .lg{display:inline-flex; align-items:center; gap:6px}
   .trendLegend .lg i{display:inline-block; width:10px; height:10px; border-radius:50%;
@@ -154,9 +154,13 @@
   .card.countryCard.card--row-stretch,
   .card.healthCard.card--row-stretch{
     display:flex; flex-direction:column; align-self:stretch; min-height:0}
-  #trendChart,#treemap,#cagrChart,#countryChart{
+  #trendChart{
+    flex:0 0 auto; width:100%; height:auto; min-height:0;
+    aspect-ratio:980/280; max-height:300px}
+  #trendChart svg{display:block; width:100% !important; height:100% !important; max-height:100% !important}
+  #treemap,#cagrChart,#countryChart{
     flex:0 0 auto; min-height:var(--dash-chart-h-lg); height:var(--dash-chart-h-lg)}
-  #trendChart svg,#treemap svg,#cagrChart svg,#countryChart svg{
+  #treemap svg,#cagrChart svg,#countryChart svg{
     display:block; width:100% !important; height:var(--dash-chart-h-lg) !important;
     max-height:var(--dash-chart-h-lg) !important}
   .treemapCard{grid-column:span 4}
@@ -603,17 +607,26 @@ function renderTrendLegend(){
 }
 function trendPlotX(i, n, W, P){
   const plotW = W - P.l - P.r;
-  const pad = n <= 6 ? plotW * 0.08 : 0;
+  const pad = n <= 6 ? plotW * 0.03 : plotW * 0.01;
   return P.l + pad + i * (plotW - 2 * pad) / Math.max(n - 1, 1);
 }
 function trendScaleY(allValues, nTicks){
   const nums = allValues.filter(v => v != null);
   if (!nums.length) return niceScale(0, 1, nTicks);
-  let lo = Math.min(0, ...nums), hi = Math.max(0, ...nums);
-  const span = hi - lo || Math.max(Math.abs(hi), 1);
-  const padLo = span * 0.06;
-  const padHi = span * 0.14;
-  return niceScale(lo - padLo, hi + padHi, nTicks);
+  const dataLo = Math.min(...nums), dataHi = Math.max(...nums);
+  const span = dataHi - dataLo || Math.max(Math.abs(dataHi), Math.abs(dataLo), 1);
+  const padTop = Math.max(span * 0.045, Math.abs(dataHi) * 0.022);
+  const padBot = Math.max(span * 0.035, Math.abs(dataLo) * 0.06);
+  let lo = dataLo - padBot, hi = dataHi + padTop;
+  const sc = niceScale(lo, hi, nTicks);
+  if (sc.ticks.length > 3) {
+    const step = sc.ticks[1] - sc.ticks[0];
+    if (sc.hi - dataHi > step * 1.15) {
+      const ticks = sc.ticks.slice(0, -1);
+      return { lo: sc.lo, hi: ticks[ticks.length - 1], ticks };
+    }
+  }
+  return sc;
 }
 
 const TREND_DISPLAY_YEARS = 5;
@@ -650,7 +663,7 @@ function trendSeries(){
    ข้อมูลมอคมี SARIMAX พยากรณ์รายปีงบประมาณจริง เก็บ path เดิมไว้ไม่แตะเลย
    ส่วนข้อมูลจริงที่ต่อ DB ตรง ยังไม่มีพยากรณ์ (ต้องมี >=12 เดือนต่อรอบ) แสดง
    รายเดือนจะเห็นแนวโน้มได้ชัดกว่าการยุบเหลือแค่ 2-3 จุดต่อปีงบประมาณ */
-const TREND_SVG = { W: 980, H: 300, P: { t: 40, r: 20, b: 42, l: 88 } };
+const TREND_SVG = { W: 980, H: 280, P: { t: 26, r: 14, b: 34, l: 82 } };
 
 function trendChartDataFontPx() {
   const v = getComputedStyle(document.documentElement).getPropertyValue("--fs-chart-data").trim();
@@ -672,7 +685,7 @@ function trendPointValueLabel(cx, cy, value, color, opts) {
     style="fill:${color};font-size:${fs}px;font-weight:600">${fmt(value)}</text>`;
 }
 function trendYAxisUnitLabel(P) {
-  return `<text class="axis" x="${P.l - 6}" y="${P.t - 14}" text-anchor="end"
+  return `<text class="axis" x="${P.l - 6}" y="${P.t - 8}" text-anchor="end"
     style="font-size:13px;font-weight:600">ล้านบาท</text>`;
 }
 function trendLineLabelShow(i, total, seriesCount) {
@@ -752,7 +765,7 @@ function renderTrendMonthly(){
   s += trendYAxisUnitLabel(P);
 
   document.getElementById("trendChart").innerHTML =
-    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${s}</svg>`;
+    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMin meet">${s}</svg>`;
   document.getElementById("trendCap").textContent = "";
 }
 
@@ -809,7 +822,7 @@ function renderTrendYearly(){
   s += trendYAxisUnitLabel(P);
 
   document.getElementById("trendChart").innerHTML =
-    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${s}</svg>`;
+    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMin meet">${s}</svg>`;
   document.getElementById("trendCap").textContent = "";
 }
 
@@ -921,7 +934,7 @@ function renderTrend(){
   });
   s += trendYAxisUnitLabel(P);
   document.getElementById("trendChart").innerHTML =
-    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${s}</svg>`;
+    `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMin meet">${s}</svg>`;
 
   document.getElementById("trendCap").textContent = "";
 }
@@ -1098,7 +1111,7 @@ function renderCagr(){
         <text class="barlbl" x="${L+bw+6}" y="${y+barH/2+4}">${fmt(d.active_entity_count)}</text>`;
     }).join("");
     document.getElementById("cagrChart").innerHTML =
-      `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid meet">${s}</svg>`;
+      `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMin meet">${s}</svg>`;
     document.getElementById("cagrCap").textContent = !periodCagr
       ? `จำนวนผู้ประกอบการที่ยังดำเนินการ ณ ${DATA.meta.asOf} — เลือกช่วงเวลา (ปุ่มกรวย) เพื่อดูอัตราการเติบโตแทน`
       : `ข้อมูลย้อนหลังก่อนช่วงที่เลือกยังไม่พอเทียบ — โชว์จำนวนผู้ประกอบการแทนไปก่อน`;

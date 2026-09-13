@@ -56,6 +56,19 @@ body[data-dash="1"] #countryChart svg {
   overflow: visible;
 }
 
+/* d1 — แนวโน้มการค้า: ความสูงตาม aspect-ratio ลดช่องว่างใต้กราฟ */
+body[data-dash="1"] #trendChart {
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: 300px;
+  aspect-ratio: 980 / 280;
+}
+
+body[data-dash="1"] #trendChart svg {
+  height: 100% !important;
+  max-height: 100% !important;
+}
+
 body[data-dash] .dash-page,
 body[data-dash]:not(.dash-with-sidebar) {
   font-size: var(--fs-base);
@@ -336,8 +349,7 @@ body[data-dash="10"] main .card.card--donut-paired .chart-box.chart-box--donut {
   max-height: var(--dash-map-h);
 }
 
-/* d1 — SVG ให้สูงเท่ากราฟ Chart.js */
-.dash-page #trendChart svg,
+/* d1 — SVG ให้สูงเท่ากราฟ Chart.js (ยกเว้น trend ใช้ aspect-ratio) */
 .dash-page #treemap svg,
 .dash-page #cagrChart svg,
 .dash-page #countryChart svg {

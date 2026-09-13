@@ -35,6 +35,20 @@ body[data-dash="3"] {
   --dash-chart-h-lg: 400px;
 }
 
+/* d9 — อันดับจังหวัด Top 10: แท่งหนาเต็มพื้นที่การ์ด (คู่กับแผนที่) */
+body[data-dash="9"] .card--rank.card--chart-grow {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+body[data-dash="9"] .card--rank .chart-box.lg {
+  flex: 1 1 auto;
+  min-height: 320px;
+  height: auto !important;
+  max-height: none !important;
+}
+
 body[data-dash="3"] .card--row-stretch:has(#cRss) .chart-box.lg {
   min-height: 320px;
 }

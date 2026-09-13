@@ -115,7 +115,7 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 <div id="mapEl"></div>
 <div class="legend-swatch" id="mapLegend"></div>
 </section>
-<section class="card span4 card--row-stretch card--chart-grow"><h2>อันดับจังหวัด Top 10
+<section class="card span4 card--row-stretch card--chart-grow card--rank"><h2>อันดับจังหวัด Top 10
 <span class="card-filter-pick">
   <select id="rankMetric" class="card-filter-select" aria-label="เลือกมิติจัดอันดับ">
     <option value="total" selected>มูลค่ารวม</option>
@@ -642,21 +642,51 @@ function rankingScopeKeys() {
   }
   return top.sort((a, b) => rankValue(b) - rankValue(a));
 }
+function rankBarThickness(n) {
+  const box = document.getElementById('cRank')?.parentElement;
+  const h = (box && box.clientHeight) || 400;
+  const plot = Math.max(220, h - 52);
+  const count = Math.max(1, n || 10);
+  return Math.min(42, Math.max(24, Math.floor((plot / count) * 0.78)));
+}
 function renderRanking() {
   const vk = rankingScopeKeys();
   const labels = vk.map(k => PROVINCES[k].th);
   const data = vk.map(k => rankValue(k));
   const colors = vk.map(k => isSelectedProvince(k) ? '#B7922E' : '#1F6FB2');
+  const barH = rankBarThickness(vk.length);
   document.getElementById('rankCap').textContent = `เรียงตาม${RANK_METRIC_LABEL[RANK_METRIC]} (ล้านบาท)`;
   setChart('cRank', {
     type: 'bar',
-    data: { labels, datasets: [{ label: 'มูลค่า', data, backgroundColor: colors }] },
+    data: {
+      labels,
+      datasets: [{
+        label: 'มูลค่า',
+        data,
+        backgroundColor: colors,
+        barThickness: barH,
+        maxBarThickness: 44,
+        borderRadius: 4,
+        borderSkipped: false
+      }]
+    },
     options: {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
+      layout: { padding: { top: 2, bottom: 0, left: 2, right: 10 } },
       plugins: { legend: { display: false } },
-      scales: { x: { ticks: { font: { size: 22 } } }, y: { ticks: { font: { size: 22 } } } },
+      datasets: { bar: { categoryPercentage: 0.92, barPercentage: 0.88 } },
+      scales: {
+        x: {
+          grid: { color: '#EAEFF4' },
+          ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8 }
+        },
+        y: {
+          grid: { display: false },
+          ticks: { autoSkip: false, padding: 8 }
+        }
+      },
       onClick: (_, els) => {
         if (els.length) selectProvince(String(vk[els[0].index]), { fromUi: 'rankChart' });
       }
@@ -762,8 +792,16 @@ fetch(DISTRICTS_URL).then(r => r.json()).then(list => {
   initMap();
   render();
 });
-window.addEventListener('load', () => { if (mapObj) mapObj.invalidateSize(true); });
+window.addEventListener('load', () => {
+  if (mapObj) mapObj.invalidateSize(true);
+  renderRanking();
+});
 window.addEventListener('pageshow', () => { if (mapObj) mapObj.invalidateSize(true); });
+let rankResizeT;
+window.addEventListener('resize', () => {
+  clearTimeout(rankResizeT);
+  rankResizeT = setTimeout(renderRanking, 150);
+});
 
 /* ── แถบตัวกรองแบบ d1 ── */
 const TH_MONTH_NAME = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];

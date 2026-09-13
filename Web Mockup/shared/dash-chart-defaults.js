@@ -157,6 +157,7 @@
         anchor: "center",
         align: lineLabelAlign,
         offset: lineLabelOffset,
+        clip: true,
       });
     }
 
@@ -164,7 +165,8 @@
       display: true,
       anchor: horizontal ? "end" : "end",
       align: horizontal ? "end" : "top",
-      offset: horizontal ? 3 : 2,
+      offset: horizontal ? 3 : 4,
+      clip: true,
     });
   }
 
@@ -359,9 +361,24 @@
     }
     if (cfg.type === "line") {
       cfg.options.layout = Object.assign(
-        { padding: { top: 14, bottom: 6, left: 4, right: 8 } },
+        { padding: { top: 24, bottom: 8, left: 6, right: 32 } },
         cfg.options.layout || {}
       );
+    }
+    if (cfg.type === "bar" && cfg.options.indexAxis !== "y") {
+      cfg.options.layout = Object.assign(
+        { padding: { top: 22, bottom: 6, left: 4, right: 10 } },
+        cfg.options.layout || {}
+      );
+      cfg.options.scales = cfg.options.scales || {};
+      var xSc = cfg.options.scales.x;
+      if (xSc !== false) {
+        xSc = xSc || {};
+        var xTicks = xSc.ticks || {};
+        cfg.options.scales.x = Object.assign({}, xSc, {
+          ticks: Object.assign({ maxRotation: 0, autoSkip: false }, xTicks),
+        });
+      }
     }
     var user = cfg.options.plugins.datalabels;
     var base = defaultDataLabelsFor(cfg);

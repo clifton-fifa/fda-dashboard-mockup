@@ -73,6 +73,31 @@ body[data-dash="3"] .card--row-stretch:has(#cRss) .chart-box.lg {
 }
 
 /* d1 — KPI / SVG กราฟ (Executive Overview) */
+/* KPI — กันชื่อ/ค่า/หน่วยทับกัน (เช่น การ์ด กลุ่ม · ทั้งหมด · ปี 2568) */
+body[data-dash] .kpi .body {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-bottom: 14px !important;
+}
+
+body[data-dash] .kpi .name {
+  line-height: 1.4 !important;
+}
+
+body[data-dash] .kpi .val {
+  margin-top: 2px !important;
+  line-height: 1.18 !important;
+  font-size: clamp(22px, 3.5vw, var(--fs-kpi)) !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+body[data-dash] .kpi .unit {
+  margin-top: 2px !important;
+  line-height: 1.35 !important;
+}
+
 body[data-dash="1"] .kpi .name {
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -116,7 +141,7 @@ body[data-dash="1"] #trendChart svg {
   width: 100% !important;
   height: auto !important;
   max-height: none !important;
-  aspect-ratio: 980 / 288;
+  aspect-ratio: 980 / 300;
 }
 
 body[data-dash="1"] #treemap {

@@ -161,7 +161,7 @@
     flex:0 0 auto !important; width:100%; height:auto; min-height:0; line-height:0}
   #trendChart svg{
     display:block; width:100% !important; height:auto !important; max-height:none !important;
-    aspect-ratio:980/288}
+    aspect-ratio:980/300}
   #treemap{
     flex:1 1 auto; min-height:var(--dash-chart-h); height:var(--dash-chart-h)}
   #treemap svg{
@@ -696,7 +696,7 @@ function trendSeries(){
    ข้อมูลมอคมี SARIMAX พยากรณ์รายปีงบประมาณจริง เก็บ path เดิมไว้ไม่แตะเลย
    ส่วนข้อมูลจริงที่ต่อ DB ตรง ยังไม่มีพยากรณ์ (ต้องมี >=12 เดือนต่อรอบ) แสดง
    รายเดือนจะเห็นแนวโน้มได้ชัดกว่าการยุบเหลือแค่ 2-3 จุดต่อปีงบประมาณ */
-const TREND_SVG = { W: 980, H: 288, P: { t: 26, r: 54, b: 38, l: 78 } };
+const TREND_SVG = { W: 980, H: 300, P: { t: 32, r: 82, b: 40, l: 82 } };
 
 function trendChartDataFontPx() {
   const v = getComputedStyle(document.documentElement).getPropertyValue("--fs-chart-data").trim();
@@ -734,8 +734,9 @@ function trendXAxisYearLabel(f, i, n, xi, H, P) {
 function trendYAxisUnitLabel() {
   return "";
 }
-function trendLineLabelShow(i, total, seriesCount) {
+function trendLineLabelShow(i, total, seriesCount, seriesIndex) {
   if (seriesCount <= 1) return true;
+  if (i === 0 && seriesIndex === 2) return false;
   if (i === 0 || i === total - 1) return true;
   if (total <= 6) return i === total - 2;
   if (total >= 7) return i % 2 === 1;
@@ -793,7 +794,7 @@ function renderTrendMonthly(){
       const t = `${SERIES[ser.key].label} ${xs[i]}\n${fmt(v)} ล้านบาท`;
       s += `<circle class="hit" cx="${x(i)}" cy="${y(v)}" r="3" fill="${c}"
              stroke="#fff" stroke-width="1.4" ${tip(t)}/>`;
-      if (trendLineLabelShow(i, xs.length, series.length)) {
+      if (trendLineLabelShow(i, xs.length, series.length, si)) {
         const cy = y(v);
         s += trendPointValueLabel(x(i), cy, v, c, {
           dy: trendLineLabelDy(si, v, cy, P), compact: xs.length > 14, P, H, W, i, n: xs.length,
@@ -857,7 +858,7 @@ function renderTrendYearly(){
       const cy = y(v);
       s += `<circle class="hit" cx="${x(i)}" cy="${cy}" r="4.8" fill="${c}"
              stroke="#fff" stroke-width="2.6" ${tip(t)}/>`;
-      if (trendLineLabelShow(i, fys.length, series.length))
+      if (trendLineLabelShow(i, fys.length, series.length, si))
         s += trendPointValueLabel(x(i), cy, v, c, {
           dy: trendLineLabelDy(si, v, cy, P), P, H, W, i, n: fys.length,
         });
@@ -967,7 +968,7 @@ function renderTrend(){
              fill="${ser.isFc[i] ? "#fff" : c}" stroke="#fff" stroke-width="2.6" ${tip(t)}/>
             <circle class="hit" cx="${x(i)}" cy="${y(v)}" r="4.8" fill="none"
              stroke="${c}" stroke-width="2" ${tip(t)}/>`;
-      if (trendLineLabelShow(i, fys.length, series.length)) {
+      if (trendLineLabelShow(i, fys.length, series.length, si)) {
         const cy = y(v);
         s += trendPointValueLabel(x(i), cy, v, c, {
           dy: trendLineLabelDy(si, v, cy, P), P, H, W, i, n: fys.length,
@@ -1247,9 +1248,19 @@ function countryChartViewport(){
   const H = Math.max(240, Math.round(W * 300 / 620));
   return { W, H };
 }
+const COUNTRY_LABEL_SHORT = {
+  "สหรัฐอเมริกา": "สหรัฐฯ",
+  "เยอรมนี": "เยอรมนี",
+  "อื่น ๆ": "อื่นๆ",
+};
+function countryDisplayName(name) {
+  return COUNTRY_LABEL_SHORT[name] || name;
+}
 function countryNameLines(name, bw, fs){
+  const short = countryDisplayName(name);
   const maxOne = Math.max(3, Math.floor(bw / (fs * 0.52)));
-  if (name.length <= maxOne) return { l1: name, l2: "" };
+  if (short.length <= maxOne) return { l1: short, l2: "" };
+  name = short;
   const mid = name.indexOf(" ") > 0 ? name.indexOf(" ") : Math.ceil(name.length / 2);
   let l1 = name.slice(0, mid).trim(), l2 = name.slice(mid).trim();
   const max2 = Math.max(2, Math.floor(bw / (fs * 0.48)));
@@ -1260,7 +1271,7 @@ function countryNameLines(name, bw, fs){
 function renderCountry(){
   const items = countryData();
   const { W, H } = countryChartViewport();
-  const P = { t: 34, b: 56, l: 12, r: 16 };
+  const P = { t: 38, b: 58, l: 14, r: 18 };
   const countryLblFs = Math.min(13, trendChartDataFontPx());
   const bw = (W - P.l - P.r) / Math.max(items.length, 1);
   const max = Math.max(...items.map(d => d.value), 1);

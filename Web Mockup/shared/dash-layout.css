@@ -127,10 +127,16 @@ body[data-dash] .kpi .name {
   line-height: 1.4 !important;
 }
 
+/* การ์ดตัวชี้วัดย่อขนาดตามความกว้างการ์ด (cqi) ไม่ใช่ความกว้างจอ (vw)
+   — เปิดแถบเมนูแล้วการ์ดแคบลง ตัวเลขจะเล็กลงตาม แทนการล้นหรือขึ้นแถวใหม่ */
+body[data-dash] .kpi {
+  container-type: inline-size;
+}
+
 body[data-dash] .kpi .val {
   margin-top: 2px !important;
   line-height: 1.18 !important;
-  font-size: clamp(22px, 3.5vw, var(--fs-kpi)) !important;
+  font-size: clamp(20px, 14.6cqi, var(--fs-kpi)) !important;
   overflow-wrap: anywhere;
   word-break: break-word;
 }
@@ -521,6 +527,15 @@ body[data-dash="10"] main .card.card--donut-paired .chart-box.chart-box--donut {
 
 .dash-page .kpis {
   grid-template-columns: repeat(auto-fit, minmax(228px, 1fr)) !important;
+}
+
+/* จอกว้าง: การ์ดตัวชี้วัดอยู่แถวเดียวเท่าจำนวนการ์ด ทั้งตอนซ่อนและแสดงแถบเมนู
+   (หน้าที่กำหนดจำนวนคอลัมน์เอง เช่น d4 d6 d10 ใช้ selector ที่เจาะจงกว่า จึงยังใช้ค่าของหน้านั้น) */
+@media (min-width: 1025px) {
+  body[data-dash] .kpis:where(:has(> .kpi:nth-child(3):last-child)) { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+  body[data-dash] .kpis:where(:has(> .kpi:nth-child(4):last-child)) { grid-template-columns: repeat(4, minmax(0, 1fr)) !important; }
+  body[data-dash] .kpis:where(:has(> .kpi:nth-child(5):last-child)) { grid-template-columns: repeat(5, minmax(0, 1fr)) !important; }
+  body[data-dash] .kpis:where(:has(> .kpi:nth-child(6):last-child)) { grid-template-columns: repeat(6, minmax(0, 1fr)) !important; }
 }
 
 .dash-page main {

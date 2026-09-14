@@ -87,6 +87,38 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
   <link rel="stylesheet" href="shared/dash-sidebar.css">
   <link rel="stylesheet" href="shared/dash-layout.css">
 <link rel="stylesheet" href="shared/dash-filters.css">
+<style>
+/* d3 — ตามรูปที่ 3 (ต้นแบบหน้าจอที่ 3) ในเอกสาร 4.3.4 */
+body[data-dash="3"]{--dash-chart-h:300px}
+.filters .crumb{color:#0F7F86;font-weight:600;white-space:nowrap}
+.filters .crumb .sep{color:var(--muted);margin:0 2px}
+.card>h2 .tag-badge{margin-left:auto;background:#E3F5F3;color:#0F7F86;border-radius:999px;padding:2px 12px;font-size:var(--fs-ui-sm);font-weight:700;white-space:nowrap}
+/* สูตรและน้ำหนัก */
+.formula{margin:4px 0 0 13px;font-size:14px;color:var(--muted);font-variant-numeric:tabular-nums;line-height:1.4}
+.wlist{display:flex;flex-direction:column;justify-content:space-around;flex:1;gap:4px;margin:10px 0 4px}
+.wrow{display:grid;grid-template-columns:minmax(0,44%) 1fr 40px;align-items:center;gap:10px;padding:3px 0;cursor:help}
+.wrow .nm{font-size:15px;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.wrow .nm b{display:inline-block;min-width:46px;font-weight:700}
+.wrow .fill{height:14px;border-radius:2px}
+.wrow .pct{font-size:15px;font-weight:600;text-align:right;color:var(--muted);font-variant-numeric:tabular-nums}
+.card .foot-note{margin:6px 0 0;font-size:13px;color:var(--muted)}
+/* ตารางจัดอันดับ */
+.rank-wrap{flex:1 1 0;min-height:306px;overflow:auto}
+body[data-dash="3"] table.data.rank-table{font-size:14px}
+body[data-dash="3"] table.data.rank-table thead th{padding:6px 8px;font-size:13.5px;white-space:nowrap}
+body[data-dash="3"] table.data.rank-table td{padding:6px 8px;font-size:14px;line-height:1.35}
+body[data-dash="3"] table.data.rank-table td.nm{min-width:180px}
+table.data tr.row-hot{background:#FFF7E6}
+table.data tr.row-hot:hover{background:#FFEFD0}
+tr.empty-row td{text-align:center;color:var(--muted);padding:22px}
+.lvl{display:inline-flex;align-items:center;gap:6px;font-weight:600;white-space:nowrap}
+.lvl svg{width:10px;height:10px;flex:none}
+.band-chip{display:inline-flex;align-items:center;gap:4px;margin-left:6px;padding:0 8px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font:inherit;font-size:13px;font-weight:600;cursor:pointer;vertical-align:1px}
+.band-chip:hover{background:var(--line2)}
+.band-chip:focus-visible,.wrow:focus-visible{outline:2px solid #0F7F86;outline-offset:2px}
+footer .note{color:var(--muted)}
+@media(max-width:1024px){.rank-wrap{flex:none;max-height:380px}}
+</style>
 </head><body data-dash="3">
 <div id="dashPage"><script src="shared/dash-sidebar.js"></script>
 <header><div class="brand"><span class="dash-header-logo"><img class="brandLogo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJiIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNDAiIGhlaWdodD0iMjQwIiB2aWV3Qm94PSIwIDAgMjQwIDI0MCI+PGRlZnM+PHN0eWxlPi5ke2ZpbGw6IzAwNGNhZjt9PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImMiPjxwYXRoIGNsYXNzPSJkIiBkPSJtMTE5LjE1LDBjLTIzLjcuMTctNDYuODEsNy4zNS02Ni40MywyMC42NC0xOS42MiwxMy4yOS0zNC44NywzMi4wOS00My44Miw1NC4wM0MtLjA2LDk2LjYxLTIuMzIsMTIwLjcxLDIuNDEsMTQzLjkzYzQuNzMsMjMuMjIsMTYuMjIsNDQuNTIsMzMuMDQsNjEuMjIsMTYuODIsMTYuNywzOC4yLDI4LjA0LDYxLjQ1LDMyLjYsMjMuMjUsNC41Niw0Ny4zNCwyLjEzLDY5LjIyLTYuOTcsMjEuODgtOS4xMSw0MC41Ny0yNC40OSw1My43Mi00NC4yLDEzLjE1LTE5LjcyLDIwLjE2LTQyLjg4LDIwLjE2LTY2LjU4LS4xMS0zMS45NC0xMi45MS02Mi41Mi0zNS41OC04NS4wM0MxODEuNzYsMTIuNDcsMTUxLjA5LS4xMSwxMTkuMTUsMFptMCwyMjQuN2MtMTQuOS4xLTI5LjY0LTIuOTctNDMuMjYtOS4wMi0xMy42MS02LjA1LTI1Ljc4LTE0LjkzLTM1LjY5LTI2LjA2LTkuOTEtMTEuMTItMTcuMzMtMjQuMjMtMjEuNzYtMzguNDUtNC40NC0xNC4yMi01Ljc5LTI5LjIyLTMuOTctNDQuMDFoNzAuNTljMS44LDAsMi4zNS41OCwyLjM1LDIuNDUtLjA1LDIxLjMxLS4wNiw0Mi42MS0uMDQsNjMuOTIsMCwuNTUuMjEsMS4xNi0uMzgsMS43OGwtMjYuNTItMjkuNTNoOC44OHEzLjEsMCwzLjExLTMuMTljMC0zLjEyLS4wNS02LjI0LDAtOS4zNS4wMy0xLjU1LS40OC0yLjI1LTIuMDQtMi4yNS0xMy4wOS4wMy0yNi4xOCwwLTM5LjI2LjAyLS41NCwwLTEuMjktLjE1LTEuNDcuNTEtLjE5LjY2LjQ4LDEuMTQuOSwxLjYsNi45Miw3LjY1LDEzLjg1LDE1LjMsMjAuNzgsMjIuOTUsMTMuNjcsMTUuMTIsMjcuMzQsMzAuMjUsNDEsNDUuMzcsMi43MSwyLjk5LDIuMDQsMi45NCw0LjY2LDAsMTMuNDItMTUuMTgsMjYuODItMzAuMzksNDAuMTktNDUuNjMsOS4xOS0xMC40MiwxOC4zOS0yMC44MywyNy42LTMxLjIzLDguOTUtMTAuMTMsMTcuODktMjAuMjYsMjYuODMtMzAuMzkuMTgtLjE5LjMzLS4zOS40Ny0uNi4yNS0uNDIuODgtLjcyLjY3LTEuMjlzLS44Ny0uMzgtMS4zMy0uMzhjLTQuNDksMC04Ljk3LDAtMTMuNDYtLjAyLS40Ny0uMDEtLjk0LjA4LTEuMzYuMjgtLjQzLjItLjguNDktMS4wOS44Ni04LjI4LDkuMzUtMTYuNTcsMTguNjktMjQuODcsMjguMDQtNS4wNyw1LjcyLTEwLjE0LDExLjQ1LTE1LjIsMTcuMTgtMTAuNTcsMTEuOTItMjEuMTUsMjMuODQtMzEuNzIsMzUuNzUtLjMuNDItLjU3Ljg2LS44LDEuMzMtLjI2LS4zMy0uNDUtLjcxLS41Ni0xLjEyLS4xMS0uNDEtLjEzLS44My0uMDYtMS4yNS0uMDItOC4xOC0uMDItMTYuMzcsMC0yNC41NSwwLTIuNTEuMDgtMi41OSwyLjU2LTIuNiw0LjExLDAsOC4yMy0uMDQsMTIuMzQsMCwxLjUyLjAyLDIuMTEtLjUzLDIuMDgtMi4xNi0uMDktMy41MS0uMDktNy4wMSwwLTEwLjUyLjA0LTEuNjQtLjU5LTIuMTYtMi4wOC0yLjE0LTQuMTcuMDYtOC4zNC0uMDUtMTIuNTMuMDUtMS43Ny4wNC0yLjQyLS41OS0yLjM5LTIuNDYuMDgtNi4zLjA4LTEyLjYsMC0xOC45LS4wMi0xLjgzLjUyLTIuNTQsMi4zNC0yLjUsNC4yNC4xMSw4LjQ4LDAsMTIuNzEuMDYsMS42My4wMywyLjIyLS42NCwyLjE5LTIuMy0uMDYtMy40NCwwLTYuODksMC0xMC4zMywwLTIuNjgtLjAzLTIuNy0yLjYzLTIuN0gxNy41M2M1LjEyLTE4Ljk4LDE1LjQ1LTM2LjE0LDI5LjgyLTQ5LjU2LDE0LjM3LTEzLjQxLDMyLjIxLTIyLjU0LDUxLjQ5LTI2LjM0LDE5LjI4LTMuOCwzOS4yNS0yLjE0LDU3LjY0LDQuODEsMTguMzksNi45NSwzNC40NiwxOC45MSw0Ni40MSwzNC41MiwxMS45NSwxNS42MSwxOS4yOSwzNC4yNSwyMS4xOSw1My44MiwxLjksMTkuNTYtMS43MSwzOS4yNy0xMC40Miw1Ni44OS04LjcxLDE3LjYyLTIyLjE4LDMyLjQ1LTM4Ljg4LDQyLjgyLTE2LjcsMTAuMzYtMzUuOTcsMTUuODUtNTUuNjMsMTUuODNaIi8+PC9nPjwvc3ZnPg==" alt="อย."></span><div>
@@ -96,37 +128,29 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 <div class="filters">
   <div class="static-filters">
     <button type="button" class="dash-menu-btn" aria-label="แสดงเมนู" title="แสดงเมนู" aria-expanded="false"><i class="dash-menu-icon" aria-hidden="true"></i></button>
-    <span>ปี: <select id="fySel"><option value="2562">2562</option><option value="2563">2563</option><option value="2564">2564</option><option value="2565">2565</option><option value="2566">2566</option><option value="2567">2567</option><option value="2568" selected>2568</option><option value="2569">2569</option></select></span>
-    <span>เดือน: <select id="filterMonth"><option value="ALL" selected>ทั้งหมด</option></select></span><span>ธุรกรรม <select id="txnSel"><option value="all">ทั้งหมด</option><option value="import">นำเข้า</option><option value="export">ส่งออก</option></select></span>
-    <span>จังหวัด <select id="provSel"><option value="ทั่วประเทศ">ทั่วประเทศ</option><option value="กรุงเทพฯ">กรุงเทพฯ</option><option value="นนทบุรี">นนทบุรี</option><option value="สมุทรปราการ">สมุทรปราการ</option><option value="เชียงใหม่">เชียงใหม่</option><option value="ชลบุรี">ชลบุรี</option><option value="ขอนแก่น">ขอนแก่น</option></select></span>
+    <span>กลุ่มผลิตภัณฑ์: <select id="groupSel" aria-label="กลุ่มผลิตภัณฑ์"></select></span>
+    <span>ระดับการวิเคราะห์: <select id="levelSel" aria-label="ระดับการวิเคราะห์"><option value="sub" selected>กลุ่มย่อย</option><option value="group">กลุ่มผลิตภัณฑ์</option></select></span>
+    <span>ช่วงเวลา: <select id="periodSel" aria-label="ช่วงเวลา"><option value="8" selected>2567–2568</option><option value="4">2568</option></select></span>
+    <span>เกณฑ์ RSS: <select id="thresholdSel" aria-label="เกณฑ์คะแนน RSS"><option value="80">≥ 80</option><option value="65" selected>≥ 65</option><option value="50">≥ 50</option><option value="35">≥ 35</option></select></span>
     <span><button type="button" class="reset-btn" id="resetFiltersBtn">คืนค่า</button></span>
-    
-  </div>
-  <div class="filterGroups">
-    <span class="lbl">กลุ่มผลิตภัณฑ์:</span>
-    <span id="chips"><button type="button" class="chip" aria-pressed="true" data-g="ALL"><span class="dot" style="background:#12305B"></span>ทั้งหมด</button>
-<button type="button" class="chip" aria-pressed="false" data-g="DRUG"><span class="dot" style="background:#1F6FB2"></span>ยา</button>
-<button type="button" class="chip" aria-pressed="false" data-g="MDC"><span class="dot" style="background:#12A594"></span>เครื่องมือแพทย์</button>
-<button type="button" class="chip" aria-pressed="false" data-g="FOOD"><span class="dot" style="background:#3E9F55"></span>อาหาร</button>
-<button type="button" class="chip" aria-pressed="false" data-g="CMT"><span class="dot" style="background:#E8A317"></span>เครื่องสำอาง</button>
-<button type="button" class="chip" aria-pressed="false" data-g="HERB"><span class="dot" style="background:#7E57C2"></span>สมุนไพร</button>
-<button type="button" class="chip" aria-pressed="false" data-g="TXC"><span class="dot" style="background:#C0392B"></span>วัตถุอันตราย</button>
-<button type="button" class="chip" aria-pressed="false" data-g="NCT"><span class="dot" style="background:#7F8C8D"></span>วัตถุเสพติด</button></span>
+    <span class="crumb" id="crumb"></span>
   </div>
 </div>
 
 <main>
-<section class="kpis" id="kpiRow"></section>
-<section class="card span8 card--row-stretch card--chart-grow"><h2>จัดอันดับคะแนนดาวรุ่ง</h2>
-<div class="chart-box lg"><canvas id="cRss"></canvas></div></section>
-<section class="card span4 card--row-stretch card--chart-grow"><h2>องค์ประกอบคะแนนดาวรุ่ง</h2>
-<div class="cap" id="radarNote"></div>
-<div class="chart-box lg"><canvas id="cRadar"></canvas></div>
-<div class="dash-chart-legend" id="radarLegend" aria-label="สัญลักษณ์กลุ่มผลิตภัณฑ์"></div></section>
-<section class="card span12"><h2>ตารางคะแนนดาวรุ่งรายกลุ่มผลิตภัณฑ์</h2>
-<div class="rss-table-wrap"><table class="data table-rss"><thead><tr>
-<th class="num">อันดับ</th><th>กลุ่ม</th><th class="num">คะแนนดาวรุ่ง</th><th class="num">การค้า</th><th class="num">ผลิตภัณฑ์</th><th class="num">คำขอ</th><th class="num">ผู้ประกอบการ</th><th class="num">นวัตกรรม</th><th class="num">กฎระเบียบ</th><th class="num">ตลาด</th><th class="num">มูลค่านำเข้า <span style="white-space:nowrap">(ล้านบาท)</span></th><th class="num">มูลค่าส่งออก <span style="white-space:nowrap">(ล้านบาท)</span></th><th class="num">มูลค่าการผลิต <span style="white-space:nowrap">(ล้านบาท)</span></th><th class="num">มูลค่าการขาย <span style="white-space:nowrap">(ล้านบาท)</span></th><th class="cen">สถานะ</th>
-</tr></thead><tbody id="rssBody"></tbody></table></div></section>
+<section class="card span5 card--row-stretch"><h2>สูตรและองค์ประกอบของดัชนี Rising Star Score</h2>
+<div class="formula" id="formula"></div>
+<div class="wlist" id="wlist"></div>
+<div class="foot-note">หมายเหตุ: น้ำหนักเป็นค่าเริ่มต้นสำหรับการออกแบบระบบ · ชี้ที่องค์ประกอบเพื่อดูคำอธิบาย</div></section>
+<section class="card span7 card--row-stretch"><h2>อันดับผลิตภัณฑ์ตามคะแนน Rising Star Score<span class="tag-badge">Predictive Scoring</span></h2>
+<div class="cap" id="rankCap"></div>
+<div class="rank-wrap"><table class="data rank-table"><thead id="rankHead"></thead><tbody id="rankBody"></tbody></table></div></section>
+<section class="card span5 card--row-stretch card--chart-grow"><h2>เกณฑ์การจัดระดับตามคะแนน RSS และการกระจายตัว</h2>
+<div class="cap" id="distCap"></div>
+<div class="chart-box"><canvas id="cDist" aria-label="จำนวนตามระดับคะแนน RSS"></canvas></div></section>
+<section class="card span7 card--row-stretch card--chart-grow"><h2>พัฒนาการของคะแนน RSS รายไตรมาส (Trend Stability Check)</h2>
+<div class="cap" id="trendCap"></div>
+<div class="chart-box"><canvas id="cTrend" aria-label="คะแนน RSS รายไตรมาส"></canvas></div></section>
 <section class="card span12" id="productDrillCard">
 <h2>รายการผลิตภัณฑ์ในกลุ่ม
 <span class="card-filter-pick">
@@ -145,98 +169,292 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 <th class="sortable num" data-key="exp">มูลค่าส่งออก <span style="white-space:nowrap">(ล้านบาท)</span> <span class="sort-arrow" id="arrow-exp"></span></th>
 <th class="sortable num" data-key="prod">มูลค่าการผลิต <span style="white-space:nowrap">(ล้านบาท)</span> <span class="sort-arrow" id="arrow-prod"></span></th>
 <th class="sortable num" data-key="sale">มูลค่าการขาย <span style="white-space:nowrap">(ล้านบาท)</span> <span class="sort-arrow" id="arrow-sale"></span></th>
-</tr></thead><tbody id="productBody"></tbody></table></div></section></main>
+</tr></thead><tbody id="productBody"></tbody></table></div></section>
+</main>
+<footer><span class="note" id="condNote"></span></footer>
 <script>
 const GROUPS = [{"code": "DRUG", "name": "ยา", "color": "#1F6FB2"}, {"code": "MDC", "name": "เครื่องมือแพทย์", "color": "#12A594"}, {"code": "FOOD", "name": "อาหาร", "color": "#3E9F55"}, {"code": "CMT", "name": "เครื่องสำอาง", "color": "#E8A317"}, {"code": "HERB", "name": "สมุนไพร", "color": "#7E57C2"}, {"code": "TXC", "name": "วัตถุอันตราย", "color": "#C0392B"}, {"code": "NCT", "name": "วัตถุเสพติด", "color": "#7F8C8D"}];
-document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => clickGroup(c.dataset.g)));
 
-const FILTER = { group: 'ALL', fy: null, txn: 'all', prov: 'ทั่วประเทศ' };
+/* องค์ประกอบและน้ำหนัก — ตารางที่ 5 ในเอกสาร 4.3.4 */
+const COMP = [
+  {k: "tg",   code: "TG",   name: "Trade Growth",        w: .20, color: "#2F6FC2", desc: "การเติบโตของมูลค่าการค้ารวม", src: "FACT_TRADE"},
+  {k: "eg",   code: "EG",   name: "Export Growth",       w: .15, color: "#12A594", desc: "การเติบโตของมูลค่าส่งออก", src: "FACT_TRADE + กรมศุลกากร"},
+  {k: "cagr", code: "CAGR", name: "การเติบโตต่อเนื่อง",   w: .15, color: "#1F9D62", desc: "อัตราการเติบโตเฉลี่ยสะสมต่อเนื่อง (Compound Annual Growth Rate)", src: "FACT_TRADE"},
+  {k: "pg",   code: "PG",   name: "Product Growth",      w: .15, color: "#E8A317", desc: "การเพิ่มขึ้นของจำนวนผลิตภัณฑ์ใหม่", src: "FACT_PRODUCT"},
+  {k: "bg",   code: "BG",   name: "Business Growth",     w: .15, color: "#7E57C2", desc: "การเพิ่มขึ้นของจำนวนผู้ประกอบการ", src: "FACT_ESTABLISHMENT"},
+  {k: "ag",   code: "AG",   name: "Application Growth",  w: .10, color: "#D0463B", desc: "การเพิ่มขึ้นของจำนวนคำขอ", src: "FACT_APPLICATION"},
+  {k: "ds",   code: "DS",   name: "Demand Signal",       w: .10, color: "#8A96A3", desc: "สัญญาณอุปสงค์จากตลาดภายนอก", src: "ข้อมูลภายนอก (ยังไม่มีแหล่งข้อมูลจริง)"}
+];
+/* ระดับตามคะแนน RSS — สัญลักษณ์รูปทรงเดียวกับหน้าจอที่ 2 และ 6 */
+const LEVELS = [
+  {key: "Mega Trend",  min: 80,        range: "80–100", color: "#C0392B", svg: '<path d="M5 0 L9.5 3.1 H0.5 Z M5 3.45 L9.5 6.55 H0.5 Z M5 6.9 L9.5 10 H0.5 Z" fill="currentColor"/>'},
+  {key: "Rising Star", min: 65,        range: "65–79",  color: "#1F9D62", svg: '<path d="M5 0 L9.5 4.6 H0.5 Z M5 5 L9.5 9.6 H0.5 Z" fill="currentColor"/>'},
+  {key: "Emerging",    min: 50,        range: "50–64",  color: "#D98A00", svg: '<path d="M1.6 8.4 L8.2 1.8 M3.6 1.6 H8.4 V6.4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"/>'},
+  {key: "Mature",      min: 35,        range: "35–49",  color: "#2F6FC2", svg: '<path d="M0.5 4 H9.5 V6 H0.5 Z" fill="currentColor"/>'},
+  {key: "Declining",   min: -Infinity, range: "<35",    color: "#6B7785", svg: '<path d="M0.5 1 H9.5 L5 9 Z" fill="currentColor"/>'}
+];
+const QUARTERS = ["Q1/67", "Q2/67", "Q3/67", "Q4/67", "Q1/68", "Q2/68", "Q3/68", "Q4/68"];
+const TREND_COLORS = ["#2F6FC2", "#12A594", "#1F9D62", "#E8A317"];
+const TREND_DEFAULT = ["Software as a Medical Device (SaMD)", "AI Medical Device", "Active Ingredient / Science-based", "ยากลุ่มโรคไม่ติดต่อเรื้อรัง"];
+/* ข้อมูลจำลองกลุ่มย่อย 74 กลุ่ม: คะแนนองค์ประกอบ 0–100 และคะแนน RSS 8 ไตรมาส (ไตรมาสสุดท้าย = คะแนนปัจจุบัน) */
+const SUBS = [
+  {"g": "MDC", "name": "Software as a Medical Device (SaMD)", "short": "SaMD", "tg": 92, "eg": 78, "cagr": 82, "pg": 88, "bg": 84, "ag": 88, "ds": 94, "hist": [70.2, 72.5, 74.8, 77.0, 79.6, 81.8, 84.1, 86.4]},
+  {"g": "MDC", "name": "AI Medical Device", "short": "AI Medical Device", "tg": 89, "eg": 71, "cagr": 87, "pg": 86, "bg": 80, "ag": 83, "ds": 74, "hist": [66.0, 68.1, 70.7, 72.6, 75.3, 77.9, 80.2, 82.1]},
+  {"g": "DRUG", "name": "ชีววัตถุคล้ายคลึง (Biosimilar)", "short": "Biosimilar", "tg": 84, "eg": 68, "cagr": 84, "pg": 76, "bg": 74, "ag": 81, "ds": 84, "hist": [69.0, 70.5, 72.0, 73.4, 74.9, 76.2, 77.5, 78.6]},
+  {"g": "CMT", "name": "Active Ingredient / Science-based", "short": "Active Ingredient", "tg": 71, "eg": 86, "cagr": 75, "pg": 72, "bg": 69, "ag": 73, "ds": 74, "hist": [67.5, 75.8, 61.2, 72.4, 63.8, 70.1, 58.9, 74.2]},
+  {"g": "MDC", "name": "IVD / Home Diagnostics", "short": "IVD / Home Diagnostics", "tg": 76, "eg": 72, "cagr": 74, "pg": 70, "bg": 66, "ag": 70, "ds": 73, "hist": [52.0, 54.6, 57.1, 59.8, 62.5, 64.1, 68.0, 71.8]},
+  {"g": "DRUG", "name": "API (วัตถุดิบตัวยาสำคัญ)", "short": "API", "tg": 78, "eg": 48, "cagr": 72, "pg": 62, "bg": 58, "ag": 72, "ds": 75, "hist": [60.2, 61.5, 63.0, 62.4, 64.6, 63.9, 65.2, 66.3]},
+  {"g": "HERB", "name": "สารสกัดสมุนไพรเพื่อสุขภาพ", "short": "สารสกัดสมุนไพร", "tg": 64, "eg": 68, "cagr": 60, "pg": 58, "bg": 54, "ag": 57, "ds": 69, "hist": [57.0, 58.2, 58.9, 59.7, 60.1, 60.8, 61.0, 61.4]},
+  {"g": "DRUG", "name": "ยากลุ่มโรคไม่ติดต่อเรื้อรัง", "short": "ยากลุ่ม NCDs", "tg": 52, "eg": 44, "cagr": 59, "pg": 61, "bg": 60, "ag": 55, "ds": 62, "hist": [53.0, 53.6, 54.1, 54.0, 54.6, 55.0, 55.3, 55.7]},
+  {"g": "MDC", "name": "Wearable / Remote Monitoring", "short": "Wearable / Remote Monitoring", "tg": 51, "eg": 63, "cagr": 56, "pg": 51, "bg": 58, "ag": 55, "ds": 55, "hist": [51.2, 51.3, 51.3, 53.5, 53.2, 54.2, 54.6, 55.4]},
+  {"g": "MDC", "name": "เครื่องมือวินิจฉัยด้วยภาพ", "short": "เครื่องมือวินิจฉัยด้วยภาพ", "tg": 50, "eg": 57, "cagr": 53, "pg": 53, "bg": 43, "ag": 59, "ds": 63, "hist": [47.6, 48.6, 48.4, 51.0, 51.9, 50.1, 51.3, 53.1]},
+  {"g": "MDC", "name": "อุปกรณ์ฝังในร่างกาย", "short": "อุปกรณ์ฝังในร่างกาย", "tg": 47, "eg": 59, "cagr": 46, "pg": 58, "bg": 61, "ag": 50, "ds": 46, "hist": [46.4, 49.4, 47.6, 49.4, 51.5, 51.3, 50.7, 52.6]},
+  {"g": "MDC", "name": "เครื่องช่วยหายใจ/บำบัดด้วยออกซิเจน", "short": "เครื่องช่วยหายใจ/บำบัดด้วยออกซิเจน", "tg": 62, "eg": 47, "cagr": 42, "pg": 57, "bg": 52, "ag": 59, "ds": 36, "hist": [46.0, 46.2, 46.7, 48.6, 48.0, 48.9, 51.0, 51.6]},
+  {"g": "MDC", "name": "เครื่องมือผ่าตัด", "short": "เครื่องมือผ่าตัด", "tg": 58, "eg": 54, "cagr": 42, "pg": 54, "bg": 38, "ag": 50, "ds": 39, "hist": [46.3, 48.6, 46.6, 48.2, 46.9, 48.9, 48.2, 48.7]},
+  {"g": "MDC", "name": "เครื่องมือทันตกรรม", "short": "เครื่องมือทันตกรรม", "tg": 42, "eg": 52, "cagr": 38, "pg": 52, "bg": 54, "ag": 46, "ds": 39, "hist": [48.3, 46.3, 47.3, 46.6, 47.7, 47.1, 46.7, 46.3]},
+  {"g": "MDC", "name": "วัสดุสิ้นเปลืองทางการแพทย์", "short": "วัสดุสิ้นเปลืองทางการแพทย์", "tg": 49, "eg": 34, "cagr": 40, "pg": 47, "bg": 47, "ag": 37, "ds": 55, "hist": [43.3, 44.2, 43.9, 43.1, 44.2, 45.3, 44.8, 44.2]},
+  {"g": "MDC", "name": "เข็มและกระบอกฉีดยา", "short": "เข็มและกระบอกฉีดยา", "tg": 44, "eg": 32, "cagr": 50, "pg": 43, "bg": 33, "ag": 42, "ds": 48, "hist": [40.2, 38.5, 39.3, 40.3, 41.7, 40.5, 41.6, 41.5]},
+  {"g": "MDC", "name": "เตียงและอุปกรณ์ผู้ป่วย", "short": "เตียงและอุปกรณ์ผู้ป่วย", "tg": 35, "eg": 44, "cagr": 33, "pg": 48, "bg": 43, "ag": 41, "ds": 26, "hist": [39.9, 41.2, 39.2, 39.2, 39.3, 40.9, 39.7, 38.9]},
+  {"g": "MDC", "name": "ถุงมือทางการแพทย์", "short": "ถุงมือทางการแพทย์", "tg": 28, "eg": 45, "cagr": 24, "pg": 27, "bg": 38, "ag": 35, "ds": 46, "hist": [37.8, 36.2, 36.5, 36.7, 34.4, 34.1, 35.2, 33.8]},
+  {"g": "DRUG", "name": "วัคซีน", "short": "วัคซีน", "tg": 64, "eg": 58, "cagr": 46, "pg": 44, "bg": 64, "ag": 47, "ds": 59, "hist": [52.3, 53.3, 54.2, 54.6, 52.9, 53.3, 53.9, 55.2]},
+  {"g": "DRUG", "name": "ยาต้านมะเร็ง", "short": "ยาต้านมะเร็ง", "tg": 60, "eg": 53, "cagr": 53, "pg": 46, "bg": 48, "ag": 60, "ds": 68, "hist": [53.1, 53.9, 53.0, 55.2, 54.3, 54.8, 53.9, 54.8]},
+  {"g": "DRUG", "name": "ยาชีววัตถุใหม่ (Biologics)", "short": "ยาชีววัตถุใหม่ (Biologics)", "tg": 60, "eg": 60, "cagr": 63, "pg": 42, "bg": 53, "ag": 53, "ds": 41, "hist": [48.8, 51.5, 51.8, 50.6, 51.0, 52.2, 52.5, 54.1]},
+  {"g": "DRUG", "name": "ยาต้านไวรัส", "short": "ยาต้านไวรัส", "tg": 51, "eg": 57, "cagr": 55, "pg": 47, "bg": 45, "ag": 53, "ds": 52, "hist": [45.4, 47.6, 47.6, 48.0, 48.0, 49.9, 50.5, 51.3]},
+  {"g": "DRUG", "name": "ยาจิตเวช", "short": "ยาจิตเวช", "tg": 38, "eg": 54, "cagr": 50, "pg": 57, "bg": 53, "ag": 50, "ds": 34, "hist": [49.3, 48.8, 50.0, 48.0, 47.4, 47.2, 47.7, 48.1]},
+  {"g": "DRUG", "name": "ยาปฏิชีวนะ", "short": "ยาปฏิชีวนะ", "tg": 52, "eg": 36, "cagr": 45, "pg": 41, "bg": 52, "ag": 52, "ds": 62, "hist": [46.6, 46.3, 45.9, 47.6, 46.8, 47.0, 48.5, 47.9]},
+  {"g": "DRUG", "name": "ยาสามัญทั่วไป", "short": "ยาสามัญทั่วไป", "tg": 39, "eg": 54, "cagr": 54, "pg": 45, "bg": 35, "ag": 36, "ds": 55, "hist": [43.5, 43.9, 44.9, 44.8, 44.3, 45.2, 46.1, 45.1]},
+  {"g": "DRUG", "name": "ยาระบบทางเดินหายใจ", "short": "ยาระบบทางเดินหายใจ", "tg": 32, "eg": 50, "cagr": 42, "pg": 43, "bg": 47, "ag": 50, "ds": 51, "hist": [45.1, 45.3, 45.2, 44.0, 43.7, 45.5, 45.4, 43.8]},
+  {"g": "DRUG", "name": "ยาระบบทางเดินอาหาร", "short": "ยาระบบทางเดินอาหาร", "tg": 51, "eg": 36, "cagr": 42, "pg": 35, "bg": 49, "ag": 41, "ds": 36, "hist": [42.2, 43.4, 42.8, 41.8, 42.8, 41.0, 43.6, 42.2]},
+  {"g": "DRUG", "name": "ยาแก้ปวดลดไข้", "short": "ยาแก้ปวดลดไข้", "tg": 33, "eg": 52, "cagr": 44, "pg": 35, "bg": 43, "ag": 44, "ds": 35, "hist": [42.6, 44.3, 42.1, 42.6, 43.1, 42.0, 41.5, 40.6]},
+  {"g": "DRUG", "name": "ยาฮอร์โมน", "short": "ยาฮอร์โมน", "tg": 34, "eg": 38, "cagr": 44, "pg": 38, "bg": 42, "ag": 45, "ds": 38, "hist": [42.5, 40.5, 40.8, 40.5, 41.3, 39.7, 40.5, 39.4]},
+  {"g": "DRUG", "name": "วิตามินและแร่ธาตุ", "short": "วิตามินและแร่ธาตุ", "tg": 31, "eg": 38, "cagr": 44, "pg": 38, "bg": 38, "ag": 45, "ds": 23, "hist": [34.5, 36.3, 34.0, 36.2, 36.2, 36.2, 37.8, 36.7]},
+  {"g": "FOOD", "name": "ผลิตภัณฑ์เสริมอาหาร", "short": "ผลิตภัณฑ์เสริมอาหาร", "tg": 60, "eg": 63, "cagr": 53, "pg": 49, "bg": 49, "ag": 62, "ds": 42, "hist": [50.8, 51.6, 53.1, 54.3, 53.2, 53.1, 54.5, 54.5]},
+  {"g": "FOOD", "name": "โพรไบโอติก", "short": "โพรไบโอติก", "tg": 54, "eg": 43, "cagr": 62, "pg": 46, "bg": 51, "ag": 61, "ds": 64, "hist": [49.2, 50.1, 51.3, 52.7, 50.7, 51.7, 51.7, 53.6]},
+  {"g": "FOOD", "name": "อาหารทางการแพทย์", "short": "อาหารทางการแพทย์", "tg": 62, "eg": 52, "cagr": 61, "pg": 48, "bg": 43, "ag": 47, "ds": 52, "hist": [50.4, 50.1, 50.2, 50.0, 52.5, 53.1, 52.7, 52.9]},
+  {"g": "FOOD", "name": "โปรตีนจากพืช", "short": "โปรตีนจากพืช", "tg": 61, "eg": 55, "cagr": 45, "pg": 57, "bg": 53, "ag": 43, "ds": 38, "hist": [45.2, 46.1, 46.8, 48.5, 48.4, 51.1, 52.3, 51.8]},
+  {"g": "FOOD", "name": "อาหารสำหรับผู้สูงอายุ", "short": "อาหารสำหรับผู้สูงอายุ", "tg": 50, "eg": 57, "cagr": 50, "pg": 41, "bg": 48, "ag": 52, "ds": 61, "hist": [48.9, 47.5, 48.8, 48.5, 48.7, 49.0, 50.5, 50.7]},
+  {"g": "FOOD", "name": "เครื่องดื่มฟังก์ชัน", "short": "เครื่องดื่มฟังก์ชัน", "tg": 42, "eg": 39, "cagr": 54, "pg": 57, "bg": 52, "ag": 43, "ds": 62, "hist": [45.4, 46.7, 46.2, 48.4, 47.6, 48.8, 50.2, 49.2]},
+  {"g": "FOOD", "name": "อาหารพร้อมรับประทาน", "short": "อาหารพร้อมรับประทาน", "tg": 37, "eg": 57, "cagr": 53, "pg": 39, "bg": 39, "ag": 50, "ds": 62, "hist": [43.5, 42.6, 45.6, 44.7, 46.6, 44.9, 47.4, 46.8]},
+  {"g": "FOOD", "name": "นมและผลิตภัณฑ์นม", "short": "นมและผลิตภัณฑ์นม", "tg": 53, "eg": 36, "cagr": 49, "pg": 47, "bg": 36, "ag": 47, "ds": 44, "hist": [47.0, 46.0, 47.4, 47.1, 46.7, 44.1, 43.9, 44.9]},
+  {"g": "FOOD", "name": "อาหารทารก", "short": "อาหารทารก", "tg": 40, "eg": 52, "cagr": 45, "pg": 35, "bg": 44, "ag": 53, "ds": 36, "hist": [41.4, 41.7, 42.2, 41.3, 41.7, 44.3, 43.8, 43.3]},
+  {"g": "FOOD", "name": "เครื่องดื่มไม่มีแอลกอฮอล์", "short": "เครื่องดื่มไม่มีแอลกอฮอล์", "tg": 32, "eg": 36, "cagr": 48, "pg": 49, "bg": 43, "ag": 35, "ds": 49, "hist": [40.0, 40.2, 40.2, 40.6, 41.5, 41.7, 42.2, 41.2]},
+  {"g": "FOOD", "name": "อาหารแปรรูปจากสัตว์น้ำ", "short": "อาหารแปรรูปจากสัตว์น้ำ", "tg": 43, "eg": 33, "cagr": 38, "pg": 49, "bg": 30, "ag": 42, "ds": 22, "hist": [35.4, 36.6, 38.1, 37.7, 36.0, 36.6, 38.7, 37.5]},
+  {"g": "FOOD", "name": "เครื่องปรุงรส", "short": "เครื่องปรุงรส", "tg": 46, "eg": 41, "cagr": 27, "pg": 39, "bg": 35, "ag": 28, "ds": 29, "hist": [34.1, 35.0, 36.2, 36.6, 36.2, 35.7, 35.1, 36.2]},
+  {"g": "FOOD", "name": "ขนมขบเคี้ยว", "short": "ขนมขบเคี้ยว", "tg": 43, "eg": 37, "cagr": 30, "pg": 37, "bg": 32, "ag": 29, "ds": 22, "hist": [41.7, 39.4, 38.0, 36.9, 36.3, 35.0, 35.6, 34.1]},
+  {"g": "CMT", "name": "เวชสำอาง", "short": "เวชสำอาง", "tg": 59, "eg": 44, "cagr": 56, "pg": 51, "bg": 63, "ag": 52, "ds": 58, "hist": [52.1, 51.5, 51.7, 51.5, 54.0, 54.5, 55.0, 54.9]},
+  {"g": "CMT", "name": "ผลิตภัณฑ์กันแดด", "short": "ผลิตภัณฑ์กันแดด", "tg": 47, "eg": 43, "cagr": 48, "pg": 52, "bg": 57, "ag": 60, "ds": 68, "hist": [48.4, 50.0, 49.9, 50.3, 50.5, 52.3, 52.6, 52.2]},
+  {"g": "CMT", "name": "เครื่องสำอางออร์แกนิก", "short": "เครื่องสำอางออร์แกนิก", "tg": 55, "eg": 56, "cagr": 57, "pg": 39, "bg": 50, "ag": 48, "ds": 50, "hist": [48.6, 48.9, 49.8, 49.7, 49.5, 50.5, 49.8, 51.1]},
+  {"g": "CMT", "name": "สกินแคร์", "short": "สกินแคร์", "tg": 44, "eg": 56, "cagr": 56, "pg": 54, "bg": 48, "ag": 60, "ds": 35, "hist": [45.1, 46.2, 48.2, 47.2, 48.7, 49.9, 50.6, 50.4]},
+  {"g": "CMT", "name": "ผลิตภัณฑ์ดูแลเส้นผม", "short": "ผลิตภัณฑ์ดูแลเส้นผม", "tg": 57, "eg": 49, "cagr": 44, "pg": 42, "bg": 43, "ag": 40, "ds": 53, "hist": [49.9, 48.7, 47.8, 48.6, 48.8, 46.6, 46.5, 47.4]},
+  {"g": "CMT", "name": "เครื่องสำอางแต่งหน้า", "short": "เครื่องสำอางแต่งหน้า", "tg": 48, "eg": 35, "cagr": 55, "pg": 43, "bg": 45, "ag": 46, "ds": 47, "hist": [41.5, 43.7, 42.4, 45.1, 43.2, 44.6, 44.5, 45.6]},
+  {"g": "CMT", "name": "ผลิตภัณฑ์สำหรับเด็ก", "short": "ผลิตภัณฑ์สำหรับเด็ก", "tg": 55, "eg": 38, "cagr": 33, "pg": 36, "bg": 39, "ag": 48, "ds": 50, "hist": [42.8, 40.8, 41.6, 41.0, 42.8, 41.8, 43.3, 42.7]},
+  {"g": "CMT", "name": "ผลิตภัณฑ์ดูแลช่องปาก", "short": "ผลิตภัณฑ์ดูแลช่องปาก", "tg": 28, "eg": 47, "cagr": 47, "pg": 40, "bg": 36, "ag": 34, "ds": 56, "hist": [38.4, 38.5, 36.7, 37.6, 38.2, 38.2, 39.8, 40.1]},
+  {"g": "CMT", "name": "ผลิตภัณฑ์อาบน้ำ", "short": "ผลิตภัณฑ์อาบน้ำ", "tg": 46, "eg": 37, "cagr": 35, "pg": 44, "bg": 40, "ag": 31, "ds": 25, "hist": [39.3, 40.4, 38.3, 37.9, 39.0, 39.6, 38.5, 38.2]},
+  {"g": "CMT", "name": "ผลิตภัณฑ์ระงับกลิ่นกาย", "short": "ผลิตภัณฑ์ระงับกลิ่นกาย", "tg": 33, "eg": 23, "cagr": 44, "pg": 31, "bg": 34, "ag": 35, "ds": 47, "hist": [35.5, 37.3, 35.4, 37.0, 36.8, 36.1, 36.3, 34.6]},
+  {"g": "CMT", "name": "น้ำหอม", "short": "น้ำหอม", "tg": 32, "eg": 30, "cagr": 28, "pg": 21, "bg": 41, "ag": 29, "ds": 46, "hist": [34.5, 33.9, 34.0, 33.8, 34.3, 31.5, 31.3, 31.9]},
+  {"g": "HERB", "name": "ผลิตภัณฑ์กัญชง", "short": "ผลิตภัณฑ์กัญชง", "tg": 56, "eg": 60, "cagr": 44, "pg": 62, "bg": 64, "ag": 44, "ds": 38, "hist": [50.5, 51.9, 50.8, 53.1, 51.4, 53.9, 54.5, 53.9]},
+  {"g": "HERB", "name": "สมุนไพรเสริมภูมิคุ้มกัน", "short": "สมุนไพรเสริมภูมิคุ้มกัน", "tg": 42, "eg": 60, "cagr": 53, "pg": 54, "bg": 41, "ag": 60, "ds": 68, "hist": [45.4, 47.7, 46.8, 48.4, 49.6, 50.5, 51.3, 52.4]},
+  {"g": "HERB", "name": "ยาสมุนไพรแคปซูล", "short": "ยาสมุนไพรแคปซูล", "tg": 56, "eg": 59, "cagr": 42, "pg": 62, "bg": 49, "ag": 44, "ds": 35, "hist": [44.9, 45.4, 47.9, 47.6, 49.9, 48.7, 51.1, 50.9]},
+  {"g": "HERB", "name": "ยาแผนไทย", "short": "ยาแผนไทย", "tg": 51, "eg": 45, "cagr": 48, "pg": 39, "bg": 46, "ag": 48, "ds": 44, "hist": [44.2, 45.8, 46.4, 45.5, 44.6, 46.7, 45.1, 46.1]},
+  {"g": "HERB", "name": "ชาสมุนไพร", "short": "ชาสมุนไพร", "tg": 32, "eg": 48, "cagr": 37, "pg": 49, "bg": 46, "ag": 33, "ds": 52, "hist": [40.6, 40.3, 41.6, 42.0, 40.4, 40.7, 40.5, 41.9]},
+  {"g": "HERB", "name": "ผลิตภัณฑ์สมุนไพรทาภายนอก", "short": "ผลิตภัณฑ์สมุนไพรทาภายนอก", "tg": 35, "eg": 47, "cagr": 36, "pg": 39, "bg": 40, "ag": 49, "ds": 37, "hist": [43.7, 42.6, 42.5, 41.3, 39.8, 41.7, 39.9, 39.9]},
+  {"g": "HERB", "name": "น้ำมันหอมระเหย", "short": "น้ำมันหอมระเหย", "tg": 48, "eg": 33, "cagr": 31, "pg": 32, "bg": 40, "ag": 38, "ds": 40, "hist": [40.2, 39.3, 39.9, 39.3, 37.4, 37.9, 38.1, 37.8]},
+  {"g": "HERB", "name": "ผลิตภัณฑ์สปาสมุนไพร", "short": "ผลิตภัณฑ์สปาสมุนไพร", "tg": 25, "eg": 41, "cagr": 42, "pg": 28, "bg": 21, "ag": 36, "ds": 42, "hist": [39.2, 37.5, 37.4, 35.5, 35.5, 33.6, 33.0, 32.6]},
+  {"g": "TXC", "name": "น้ำยาฆ่าเชื้อ", "short": "น้ำยาฆ่าเชื้อ", "tg": 57, "eg": 53, "cagr": 51, "pg": 44, "bg": 56, "ag": 43, "ds": 39, "hist": [46.8, 49.4, 48.1, 49.6, 48.0, 48.6, 48.8, 50.2]},
+  {"g": "TXC", "name": "สารกำจัดแมลงในบ้าน", "short": "สารกำจัดแมลงในบ้าน", "tg": 29, "eg": 42, "cagr": 43, "pg": 35, "bg": 46, "ag": 30, "ds": 27, "hist": [33.0, 33.2, 34.6, 35.3, 34.1, 35.0, 36.4, 36.4]},
+  {"g": "TXC", "name": "สารเคมีสระว่ายน้ำ", "short": "สารเคมีสระว่ายน้ำ", "tg": 26, "eg": 43, "cagr": 25, "pg": 24, "bg": 40, "ag": 32, "ds": 49, "hist": [41.4, 41.7, 39.3, 39.3, 38.1, 36.4, 33.2, 33.1]},
+  {"g": "TXC", "name": "สารกำจัดปลวก", "short": "สารกำจัดปลวก", "tg": 37, "eg": 36, "cagr": 25, "pg": 31, "bg": 32, "ag": 29, "ds": 16, "hist": [32.6, 32.1, 33.4, 31.3, 31.8, 31.4, 32.2, 30.5]},
+  {"g": "TXC", "name": "สารทำความสะอาด", "short": "สารทำความสะอาด", "tg": 30, "eg": 38, "cagr": 20, "pg": 32, "bg": 30, "ag": 19, "ds": 28, "hist": [36.2, 34.0, 34.2, 33.8, 31.3, 30.6, 30.6, 28.7]},
+  {"g": "TXC", "name": "สารกำจัดหนู", "short": "สารกำจัดหนู", "tg": 39, "eg": 23, "cagr": 18, "pg": 32, "bg": 21, "ag": 18, "ds": 32, "hist": [30.1, 30.3, 28.5, 28.7, 28.7, 27.5, 27.5, 26.9]},
+  {"g": "TXC", "name": "ผลิตภัณฑ์ฟอกขาว", "short": "ผลิตภัณฑ์ฟอกขาว", "tg": 29, "eg": 21, "cagr": 27, "pg": 20, "bg": 22, "ag": 22, "ds": 28, "hist": [30.4, 31.0, 29.4, 26.7, 27.0, 26.1, 25.0, 24.3]},
+  {"g": "NCT", "name": "วัตถุออกฤทธิ์ทางการแพทย์", "short": "วัตถุออกฤทธิ์ทางการแพทย์", "tg": 25, "eg": 44, "cagr": 40, "pg": 46, "bg": 24, "ag": 33, "ds": 45, "hist": [37.3, 36.3, 35.6, 35.4, 35.9, 35.5, 37.0, 35.9]},
+  {"g": "NCT", "name": "ยาระงับปวดกลุ่มโอปิออยด์", "short": "ยาระงับปวดกลุ่มโอปิออยด์", "tg": 35, "eg": 31, "cagr": 23, "pg": 33, "bg": 43, "ag": 26, "ds": 21, "hist": [35.2, 33.7, 33.4, 32.9, 32.1, 32.5, 31.4, 31.2]},
+  {"g": "NCT", "name": "ยาเสพติดประเภท 2 (ทางการแพทย์)", "short": "ยาเสพติดประเภท 2 (ทางการแพทย์)", "tg": 31, "eg": 19, "cagr": 35, "pg": 29, "bg": 21, "ag": 39, "ds": 37, "hist": [35.6, 36.7, 34.3, 32.6, 32.9, 31.9, 29.4, 29.4]},
+  {"g": "NCT", "name": "ยานอนหลับ/คลายกังวล", "short": "ยานอนหลับ/คลายกังวล", "tg": 33, "eg": 16, "cagr": 26, "pg": 26, "bg": 32, "ag": 31, "ds": 29, "hist": [32.5, 32.2, 29.2, 30.2, 28.2, 27.8, 26.9, 27.6]},
+  {"g": "NCT", "name": "สารตั้งต้น (Precursor)", "short": "สารตั้งต้น (Precursor)", "tg": 16, "eg": 33, "cagr": 31, "pg": 22, "bg": 18, "ag": 25, "ds": 15, "hist": [25.0, 25.6, 23.7, 24.3, 22.5, 22.7, 24.2, 22.8]}
+];
+
+const FILTER = {group: "ALL", level: "sub", period: 8, threshold: 65, band: null};
 const charts = {};
 function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
 function setChart(id, cfg) {
   const el = document.getElementById(id);
-  if (!el || typeof Chart === 'undefined') return null;
-  // Chart.js วาดตัวหนังสือลงบน canvas เอง ไม่ได้รับฟอนต์ต่อจาก CSS ต้องตั้งให้ตรงกับ
-  // body ไม่งั้นตัวหนังสือในกราฟจะเป็นคนละฟอนต์กับทั้งหน้า
+  if (!el || typeof Chart === "undefined") return null;
   Chart.defaults.font.family = getComputedStyle(document.body).fontFamily;
   Chart.defaults.font.weight = 600;
-  Chart.defaults.color = '#5B6B7E';
+  Chart.defaults.color = "#5B6B7E";
   destroyChart(id);
   try {
-    const prep = window.dashPrepareChart ? dashPrepareChart(cfg) : cfg;
-    charts[id] = new Chart(el, prep);
-    requestAnimationFrame(function () {
-      if (charts[id]) charts[id].resize();
-    });
+    charts[id] = new Chart(el, window.dashPrepareChart ? dashPrepareChart(cfg) : cfg);
   } catch (e) {
-    console.error('[dash] chart failed:', id, e);
+    console.error("[dash] chart failed:", id, e);
     return null;
   }
   return charts[id];
 }
-function bootDash() {
+const fmt = (n, d = 0) => Number(n).toLocaleString("th-TH", {minimumFractionDigits: d, maximumFractionDigits: d});
+function gName(code) { return code === "ALL" ? "ทั้งหมด" : (GROUPS.find(g => g.code === code)?.name || code); }
+const rssOf = r => Math.round(COMP.reduce((s, c) => s + c.w * r[c.k], 0) * 10) / 10;
+const levelOf = v => LEVELS.find(l => v >= l.min);
+const lvlHtml = l => `<span class="lvl" style="color:${l.color}"><svg viewBox="0 0 10 10" aria-hidden="true">${l.svg}</svg>${l.key}</span>`;
+
+/* ── แถวตามขอบเขตที่เลือก (กลุ่มย่อย หรือ เฉลี่ยรายกลุ่มผลิตภัณฑ์) ── */
+function scopeRows() {
+  const subs = SUBS.filter(s => FILTER.group === "ALL" || s.g === FILTER.group);
+  if (FILTER.level === "sub") return subs.map(s => ({...s, rss: rssOf(s)}));
+  const codes = FILTER.group === "ALL" ? GROUPS.map(g => g.code) : [FILTER.group];
+  return codes.map(code => {
+    const m = SUBS.filter(s => s.g === code);
+    const r = {g: code, name: gName(code), short: gName(code), n: m.length};
+    COMP.forEach(c => { r[c.k] = m.reduce((a, s) => a + s[c.k], 0) / m.length; });
+    r.rss = rssOf(r);
+    r.hist = QUARTERS.map((_, i) => Math.round(m.reduce((a, s) => a + s.hist[i], 0) / m.length * 10) / 10);
+    r.hist[r.hist.length - 1] = r.rss;
+    return r;
+  });
+}
+/* เงื่อนไข Rising Star: คะแนนถึงเกณฑ์ต่อเนื่อง 4 ไตรมาสล่าสุด และองค์ประกอบถึงเกณฑ์อย่างน้อย 2 มิติ */
+function checkRow(r) {
+  const T = FILTER.threshold, last4 = r.hist.slice(-4);
+  const quarters = last4.filter(v => v >= T).length;
+  const dims = COMP.filter(c => r[c.k] >= T).length;
+  return {quarters, dims, cont: quarters === 4, pass: quarters === 4 && dims >= 2, below: r.rss < T};
+}
+
+/* ── ตัวกรอง ── */
+const groupSel = document.getElementById("groupSel");
+const levelSel = document.getElementById("levelSel");
+const periodSel = document.getElementById("periodSel");
+const thresholdSel = document.getElementById("thresholdSel");
+groupSel.innerHTML = '<option value="ALL">ทั้งหมด</option>' + GROUPS.map(g => `<option value="${g.code}">${g.name}</option>`).join("");
+groupSel.addEventListener("change", e => { FILTER.group = e.target.value; applyFilters(); });
+levelSel.addEventListener("change", e => { FILTER.level = e.target.value; FILTER.band = null; applyFilters(); });
+periodSel.addEventListener("change", e => { FILTER.period = +e.target.value; renderTrend(scopeRows()); });
+thresholdSel.addEventListener("change", e => { FILTER.threshold = +e.target.value; applyFilters(); });
+document.getElementById("resetFiltersBtn").addEventListener("click", () => {
+  Object.assign(FILTER, {group: "ALL", level: "sub", period: 8, threshold: 65, band: null});
+  groupSel.value = "ALL"; levelSel.value = "sub"; periodSel.value = "8"; thresholdSel.value = "65";
   applyFilters();
-  function resizeLater() {
-    if (typeof window.dashLayoutResize === 'function') window.dashLayoutResize();
-  }
-  resizeLater();
-  window.addEventListener('load', function () {
-    resizeLater();
-    setTimeout(resizeLater, 300);
+});
+function setGroup(code) { FILTER.group = code; groupSel.value = code; applyFilters(); }
+window.onGroupFilter = setGroup;
+function setBand(key) { FILTER.band = FILTER.band === key ? null : key; applyFilters(); }
+
+/* ── สูตรและน้ำหนัก ── */
+function renderFormula() {
+  const maxW = Math.max(...COMP.map(c => c.w));
+  document.getElementById("formula").textContent = "RSS = " + COMP.map(c => c.w.toFixed(2) + c.code).join(" + ");
+  document.getElementById("wlist").innerHTML = COMP.map(c =>
+    `<div class="wrow" tabindex="0" title="${c.code} ${c.name}\n${c.desc}\nข้อมูลที่ใช้: ${c.src}">
+      <span class="nm"><b>${c.code}</b>${c.name}</span>
+      <span class="fill" style="width:${c.w / maxW * 100}%;background:${c.color}"></span>
+      <span class="pct">${fmt(c.w * 100)}%</span></div>`).join("");
+}
+
+/* ── ตารางจัดอันดับ ── */
+function goDeepDive() {
+  try { if (window.parent !== window && window.parent.location.hash !== undefined) { window.parent.location.hash = "dash7"; return; } } catch (e) {}
+  location.href = "d7.html";
+}
+function renderRank(rows) {
+  const sub = FILTER.level === "sub";
+  const ranked = [...rows].sort((a, b) => b.rss - a.rss).map((r, i) => ({...r, rank: i + 1}));
+  const shown = FILTER.band ? ranked.filter(r => levelOf(r.rss).key === FILTER.band) : ranked;
+  document.getElementById("rankCap").innerHTML = "คลิกแถวเพื่อเปิดหน้าจอที่ 7 ข้อมูลเชิงลึกรายผลิตภัณฑ์ · แถวสีเหลือง = ผ่านเงื่อนไข Rising Star" +
+    (FILTER.band ? `<button type="button" class="band-chip" id="bandChip" title="ล้างตัวกรองระดับ">ระดับ: ${FILTER.band} ✕</button>` : "");
+  document.getElementById("bandChip")?.addEventListener("click", () => setBand(FILTER.band));
+  document.getElementById("rankHead").innerHTML = `<tr><th class="num">อันดับ</th><th>กลุ่ม</th><th>${sub ? "กลุ่มย่อย / Candidate" : "กลุ่มผลิตภัณฑ์"}</th>
+    <th class="num">RSS</th><th class="num" title="Trade Growth">TG</th><th class="num" title="Export Growth">EG</th>
+    <th class="num" title="Product Growth">PG</th><th class="num" title="Business Growth">BG</th><th>การตีความ</th></tr>`;
+  const body = document.getElementById("rankBody");
+  body.innerHTML = shown.map(r => {
+    const k = checkRow(r);
+    const tip = `${r.name}${sub ? "" : ` (เฉลี่ย ${r.n} กลุ่มย่อย)`}\nRSS ${fmt(r.rss, 1)} = ${COMP.map(c => `${c.code} ${fmt(r[c.k])}`).join(" · ")}` +
+      `\nถึงเกณฑ์ ${FILTER.threshold} ต่อเนื่อง ${k.quarters}/4 ไตรมาส · องค์ประกอบถึงเกณฑ์ ${k.dims}/7 มิติ`;
+    return `<tr class="clickable ${k.pass ? "row-hot" : ""}" title="${tip}">
+      <td class="num">${r.rank}</td><td>${r.g}</td><td class="nm">${r.name}</td><td class="num">${fmt(r.rss, 1)}</td>
+      <td class="num">${fmt(r.tg)}</td><td class="num">${fmt(r.eg)}</td><td class="num">${fmt(r.pg)}</td><td class="num">${fmt(r.bg)}</td>
+      <td>${lvlHtml(levelOf(r.rss))}</td></tr>`;
+  }).join("") || '<tr class="empty-row"><td colspan="9">ไม่มีรายการในระดับนี้</td></tr>';
+  body.onclick = e => { if (e.target.closest("tr.clickable")) goDeepDive(); };
+}
+
+/* ── การกระจายตัวตามระดับ ── */
+function renderDist(rows) {
+  const unit = FILTER.level === "sub" ? "กลุ่มย่อย" : "กลุ่มผลิตภัณฑ์";
+  const counts = LEVELS.map(l => rows.filter(r => levelOf(r.rss) === l).length);
+  document.getElementById("distCap").textContent = `จำนวน${unit}ในแต่ละระดับ (รวม ${fmt(rows.length)}) · คลิกแท่งเพื่อกรองตาราง`;
+  setChart("cDist", {
+    type: "bar",
+    data: {labels: LEVELS.map(l => [l.range, l.key]), datasets: [{label: "จำนวน", data: counts,
+      backgroundColor: LEVELS.map(l => !FILTER.band || FILTER.band === l.key ? l.color : l.color + "40"),
+      borderRadius: 2, categoryPercentage: .7, barPercentage: .9, maxBarThickness: 72}]},
+    options: {responsive: true, maintainAspectRatio: false,
+      onClick: (evt, els) => { if (els && els.length) { const key = LEVELS[els[0].index].key; setTimeout(() => setBand(key), 0); } },
+      plugins: {legend: {display: false},
+        datalabels: {anchor: "end", align: "end", offset: 2, color: "#1A2430", font: {weight: "700", size: 14}, formatter: v => fmt(v)},
+        tooltip: {callbacks: {title: it => `${LEVELS[it[0].dataIndex].key} (RSS ${LEVELS[it[0].dataIndex].range})`, label: c => `${fmt(c.parsed.y)} ${unit}`}}},
+      scales: {y: {beginAtZero: true, ticks: {display: false}, grid: {color: "#EEF2F6"}, border: {display: false}},
+               x: {grid: {display: false}}}}
   });
 }
-function gName(code) { return code === 'ALL' ? 'ทั้งหมด' : (GROUPS.find(g => g.code === code)?.name || code); }
-function gColor(code) { return GROUPS.find(g => g.code === code)?.color || '#1F6FB2'; }
-function syncChips(code) {
-  document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x.dataset.g === code ? 'true' : 'false'));
-}
-function clickGroup(code) { FILTER.group = code; syncChips(code); applyFilters(); }
-/* ── แถบตัวกรองแบบ d1 ── */
-const TH_MONTH_NAME = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-function initD1FilterBar(){
-  const selM = document.getElementById("filterMonth");
-  if (selM && selM.options.length <= 1)
-    selM.innerHTML = '<option value="ALL" selected>ทั้งหมด</option>' +
-      TH_MONTH_NAME.map((n,i) => '<option value="'+String(i+1).padStart(2,"0")+'">'+n+'</option>').join("");
-}
-function resetDashFilters(){
-  if (typeof FILTER !== "undefined") {
-    if ("group" in FILTER) FILTER.group = "ALL";
-    if ("fy" in FILTER) FILTER.fy = 2568;
-    if ("txn" in FILTER) FILTER.txn = "all";
-    if ("prov" in FILTER) FILTER.prov = "ทั่วประเทศ";
-    if ("region" in FILTER) FILTER.region = "ALL";
+
+/* ── พัฒนาการรายไตรมาส ── */
+const thresholdLine = {
+  id: "thresholdLine",
+  afterDatasetsDraw(chart, args, opts) {
+    const y = chart.scales.y;
+    if (!y || opts.value == null) return;
+    const py = y.getPixelForValue(opts.value), {left, right} = chart.chartArea, ctx = chart.ctx;
+    ctx.save();
+    ctx.strokeStyle = "#5B6B7E"; ctx.lineWidth = 1.2; ctx.setLineDash([6, 4]);
+    ctx.beginPath(); ctx.moveTo(left, py); ctx.lineTo(right, py); ctx.stroke();
+    ctx.setLineDash([]); ctx.fillStyle = "#5B6B7E"; ctx.font = "600 12px " + Chart.defaults.font.family;
+    ctx.textAlign = "left"; ctx.textBaseline = "top"; ctx.fillText("เกณฑ์ " + opts.value, left + 4, py + 3);
+    ctx.restore();
   }
-  if (typeof syncChips === "function") syncChips("ALL");
-  document.querySelectorAll(".chip[data-g]").forEach(c =>
-    c.setAttribute("aria-pressed", c.dataset.g === "ALL" ? "true" : "false"));
-  document.querySelectorAll("#regionChips .chip").forEach(c =>
-    c.setAttribute("aria-pressed", c.dataset.r === "ALL" ? "true" : "false"));
-  const fy = document.getElementById("fySel"); if (fy) fy.value = "2568";
-  const txn = document.getElementById("txnSel"); if (txn) txn.value = "all";
-  const prov = document.getElementById("provSel"); if (prov) {
-    prov.value = prov.querySelector('option[value="ทั่วประเทศ"]') ? "ทั่วประเทศ" :
-      (prov.querySelector('option[value="ALL"]') ? "ALL" : prov.options[0]?.value);
-  }
-  const zone = document.getElementById("zoneSel"); if (zone) zone.value = "ALL";
-  const selM = document.getElementById("filterMonth"); if (selM) selM.value = "ALL";  if (typeof applyFilters === "function") applyFilters();
-  else if (typeof renderAll === "function") renderAll();
+};
+function trendPick(rows) {
+  if (FILTER.level === "sub" && FILTER.group === "ALL") return TREND_DEFAULT.map(n => rows.find(r => r.name === n));
+  return [...rows].sort((a, b) => b.rss - a.rss).slice(0, 4);
 }
-document.getElementById("resetFiltersBtn")?.addEventListener("click", resetDashFilters);
-initD1FilterBar();
-window.onGroupFilter = clickGroup;
-document.getElementById('fySel')?.addEventListener('change', e => { FILTER.fy = e.target.value === "ALL" ? 2568 : +e.target.value; applyFilters(); });
-document.getElementById('txnSel')?.addEventListener('change', e => { FILTER.txn = e.target.value; applyFilters(); });
-document.getElementById('provSel')?.addEventListener('change', e => { FILTER.prov = e.target.value; applyFilters(); });
-function bindRowFilter(tbodyId) {
-  const tb = document.getElementById(tbodyId);
-  if (!tb || tb.dataset.bound) return;
-  tb.dataset.bound = '1';
-  tb.addEventListener('click', e => {
-    const tr = e.target.closest('tr.clickable');
-    if (tr && tr.dataset.code) clickGroup(tr.dataset.code);
+function renderTrend(rows) {
+  const pick = trendPick(rows);
+  const n = FILTER.period, T = FILTER.threshold;
+  document.getElementById("trendCap").textContent = `ใช้ตรวจสอบว่าเป็นการเติบโตชั่วคราวหรือแนวโน้มต่อเนื่อง — เกณฑ์: RSS ≥ ${T} ต่อเนื่องอย่างน้อย 4 ไตรมาส`;
+  const status = r => { const k = checkRow(r); return k.cont ? "ต่อเนื่อง" : k.below ? "ต่ำกว่าเกณฑ์" : "ไม่ต่อเนื่อง"; };
+  const vals = pick.flatMap(r => r.hist.slice(-n)).concat(T);
+  const yMin = Math.max(0, Math.floor((Math.min(...vals) - 5) / 10) * 10);
+  setChart("cTrend", {
+    type: "line",
+    data: {labels: QUARTERS.slice(-n), datasets: pick.map((r, i) => ({
+      label: `${r.short} (${status(r)})`, data: r.hist.slice(-n), borderColor: TREND_COLORS[i], backgroundColor: TREND_COLORS[i],
+      borderWidth: 2, pointRadius: 3, pointHoverRadius: 5, tension: 0}))},
+    plugins: [thresholdLine],
+    options: {responsive: true, maintainAspectRatio: false,
+      plugins: {datalabels: false, thresholdLine: {value: T},
+        legend: {position: "top", align: "start", labels: {usePointStyle: true, pointStyle: "line", boxWidth: 22}},
+        tooltip: {callbacks: {label: c => `${c.dataset.label}: ${fmt(c.parsed.y, 1)}`}}},
+      scales: {y: {min: yMin, max: 100, ticks: {stepSize: 10}, grid: {color: "#EEF2F6"}, border: {display: false},
+                   title: {display: true, text: "คะแนน RSS"}},
+               x: {grid: {display: false}}}}
   });
 }
+
+function applyFilters() {
+  const rows = scopeRows();
+  document.getElementById("crumb").innerHTML = "ภาพรวม" +
+    (FILTER.group === "ALL" ? "" : ` <span class="sep">›</span> ${gName(FILTER.group)}`) + ' <span class="sep">›</span> การจัดอันดับ RSS';
+  document.getElementById("condNote").textContent = `เงื่อนไขการจัดเป็น Rising Star: คะแนน RSS ≥ ${FILTER.threshold} ต่อเนื่องไม่น้อยกว่า 4 ไตรมาส ` +
+    "และมีองค์ประกอบที่ถึงเกณฑ์อย่างน้อย 2 มิติร่วมกัน เพื่อลดความคลาดเคลื่อนจากปัจจัยชั่วคราว";
+  renderRank(rows);
+  renderDist(rows);
+  renderTrend(rows);
+  renderProductDrill();
+  if (typeof window.dashLayoutResize === "function") window.dashLayoutResize();
+}
+
+/* ── รายการผลิตภัณฑ์ในกลุ่ม (คงไว้จากหน้าเดิม) ── */
 const DATA = {"rows": [{"code": "HERB", "name": "สมุนไพร", "rss": 90.0, "cagr": 12.300000000632917, "trade": 84.6, "product": 73.5, "app": 68, "biz": 70.3, "innov": 59.8, "reg": 40, "market": 71.8}, {"code": "MDC", "name": "เครื่องมือแพทย์", "rss": 85.9, "cagr": 11.162102325418456, "trade": 82.3, "product": 71.7, "app": 65, "biz": 69.2, "innov": 58.4, "reg": 42, "market": 70.9}, {"code": "CMT", "name": "เครื่องสำอาง", "rss": 72.5, "cagr": 6.279897486285124, "trade": 72.6, "product": 64.4, "app": 62, "biz": 64.3, "innov": 52.5, "reg": 44, "market": 67.0}, {"code": "DRUG", "name": "ยา", "rss": 71.1, "cagr": 6.191085585478451, "trade": 72.4, "product": 64.3, "app": 59, "biz": 64.2, "innov": 52.4, "reg": 46, "market": 67.0}, {"code": "FOOD", "name": "อาหาร", "rss": 67.4, "cagr": 5.19999999988221, "trade": 70.4, "product": 62.8, "app": 56, "biz": 63.2, "innov": 51.2, "reg": 48, "market": 66.2}, {"code": "TXC", "name": "วัตถุอันตราย", "rss": 60.9, "cagr": 3.0999999998514216, "trade": 66.2, "product": 59.6, "app": 53, "biz": 61.1, "innov": 48.7, "reg": 50, "market": 64.5}, {"code": "NCT", "name": "วัตถุเสพติด", "rss": 55.5, "cagr": 1.400000000609336, "trade": 62.8, "product": 57.1, "app": 50, "biz": 59.4, "innov": 46.7, "reg": 52, "market": 63.1}], "components": ["การค้า", "ผลิตภัณฑ์", "คำขอ", "ผู้ประกอบการ", "นวัตกรรม", "กฎระเบียบ", "ตลาด"], "stockAll": 218941.0};
 const PRODUCTS = {
   HERB: ["ฟ้าทะลายโจร แคปซูล", "ขมิ้นชันสกัด แคปซูล", "ยาดมสมุนไพร", "น้ำมันไพลนวด", "ชาชงตะไคร้", "ชาชงใบบัวบก", "ยาหม่องสมุนไพร", "แคปซูลกระชายขาว", "น้ำมันเหลืองสมุนไพร", "ยาแก้ไอมะขามป้อม", "แคปซูลบอระเพ็ด", "ยาธาตุสมุนไพร", "ครีมว่านหางจระเข้", "แชมพูสมุนไพรอัญชัน", "สบู่สมุนไพรมะกรูด", "ยาหอมสมุนไพร", "แคปซูลใบมะรุม", "น้ำมันหอมระเหยตะไคร้หอม", "ยาลูกกลอนสมุนไพร", "ชาชงดอกคำฝอย", "แคปซูลรางจืด", "ยาสีฟันสมุนไพรกานพลู", "น้ำมันนวดสมุนไพรพริก", "ผงขมิ้นชันบรรจุแคปซูล", "สเปรย์สมุนไพรพ่นคอ", "ยาแก้ปวดสมุนไพรไพล", "แคปซูลเห็ดหลินจือ", "ชาชงหญ้าหนวดแมว", "โลชั่นสมุนไพรตะไคร้หอมกันยุง", "ยาระบายสมุนไพรมะขามแขก", "ฟ้าทะลายโจร แคปซูล (แคปซูล 30 แคปซูล/ขวด)", "ฟ้าทะลายโจร แคปซูล (ชนิดผง 100 กรัม)", "ฟ้าทะลายโจร แคปซูล สูตรสารสกัดเข้มข้น", "ฟ้าทะลายโจร แคปซูล (ชนิดชาชง 20 ซอง/กล่อง)", "ฟ้าทะลายโจร แคปซูล (ขนาด 60 มล.)", "ฟ้าทะลายโจร แคปซูล (ขนาด 100 มล.)", "ฟ้าทะลายโจร แคปซูล สูตรผสมน้ำผึ้ง", "ฟ้าทะลายโจร แคปซูล (บรรจุ 60 แคปซูล/ขวด)", "ขมิ้นชันสกัด แคปซูล (แคปซูล 30 แคปซูล/ขวด)", "ขมิ้นชันสกัด แคปซูล (ชนิดผง 100 กรัม)", "ขมิ้นชันสกัด แคปซูล สูตรสารสกัดเข้มข้น", "ขมิ้นชันสกัด แคปซูล (ชนิดชาชง 20 ซอง/กล่อง)", "ขมิ้นชันสกัด แคปซูล (ขนาด 60 มล.)", "ขมิ้นชันสกัด แคปซูล (ขนาด 100 มล.)", "ขมิ้นชันสกัด แคปซูล สูตรผสมน้ำผึ้ง", "ขมิ้นชันสกัด แคปซูล (บรรจุ 60 แคปซูล/ขวด)", "ยาดมสมุนไพร (แคปซูล 30 แคปซูล/ขวด)", "ยาดมสมุนไพร (ชนิดผง 100 กรัม)", "ยาดมสมุนไพร สูตรสารสกัดเข้มข้น", "ยาดมสมุนไพร (ชนิดชาชง 20 ซอง/กล่อง)", "ยาดมสมุนไพร (ขนาด 60 มล.)", "ยาดมสมุนไพร (ขนาด 100 มล.)", "ยาดมสมุนไพร สูตรผสมน้ำผึ้ง", "ยาดมสมุนไพร (บรรจุ 60 แคปซูล/ขวด)", "น้ำมันไพลนวด (แคปซูล 30 แคปซูล/ขวด)", "น้ำมันไพลนวด (ชนิดผง 100 กรัม)", "น้ำมันไพลนวด สูตรสารสกัดเข้มข้น", "น้ำมันไพลนวด (ชนิดชาชง 20 ซอง/กล่อง)", "น้ำมันไพลนวด (ขนาด 60 มล.)", "น้ำมันไพลนวด (ขนาด 100 มล.)", "น้ำมันไพลนวด สูตรผสมน้ำผึ้ง", "น้ำมันไพลนวด (บรรจุ 60 แคปซูล/ขวด)", "ชาชงตะไคร้ (แคปซูล 30 แคปซูล/ขวด)", "ชาชงตะไคร้ (ชนิดผง 100 กรัม)", "ชาชงตะไคร้ สูตรสารสกัดเข้มข้น", "ชาชงตะไคร้ (ชนิดชาชง 20 ซอง/กล่อง)", "ชาชงตะไคร้ (ขนาด 60 มล.)", "ชาชงตะไคร้ (ขนาด 100 มล.)", "ชาชงตะไคร้ สูตรผสมน้ำผึ้ง", "ชาชงตะไคร้ (บรรจุ 60 แคปซูล/ขวด)", "ชาชงใบบัวบก (แคปซูล 30 แคปซูล/ขวด)", "ชาชงใบบัวบก (ชนิดผง 100 กรัม)", "ชาชงใบบัวบก สูตรสารสกัดเข้มข้น", "ชาชงใบบัวบก (ชนิดชาชง 20 ซอง/กล่อง)", "ชาชงใบบัวบก (ขนาด 60 มล.)", "ชาชงใบบัวบก (ขนาด 100 มล.)", "ชาชงใบบัวบก สูตรผสมน้ำผึ้ง", "ชาชงใบบัวบก (บรรจุ 60 แคปซูล/ขวด)", "ยาหม่องสมุนไพร (แคปซูล 30 แคปซูล/ขวด)", "ยาหม่องสมุนไพร (ชนิดผง 100 กรัม)", "ยาหม่องสมุนไพร สูตรสารสกัดเข้มข้น", "ยาหม่องสมุนไพร (ชนิดชาชง 20 ซอง/กล่อง)", "ยาหม่องสมุนไพร (ขนาด 60 มล.)", "ยาหม่องสมุนไพร (ขนาด 100 มล.)", "ยาหม่องสมุนไพร สูตรผสมน้ำผึ้ง", "ยาหม่องสมุนไพร (บรรจุ 60 แคปซูล/ขวด)", "แคปซูลกระชายขาว (แคปซูล 30 แคปซูล/ขวด)", "แคปซูลกระชายขาว (ชนิดผง 100 กรัม)"],
@@ -320,87 +538,10 @@ function renderProductDrill() {
     `<div class="kpi"><div class="bar" style="background:#B7922E"></div><div class="body"><div class="name">มูลค่าการผลิต</div><div class="val">${fmtTHB(t.prod)}</div><div class="unit">ล้านบาท</div></div></div>` +
     `<div class="kpi"><div class="bar" style="background:#7E57C2"></div><div class="body"><div class="name">มูลค่าการขาย</div><div class="val">${fmtTHB(t.sale)}</div><div class="unit">ล้านบาท</div></div></div>`;
 }
-function badge(r) { return r.rss>=80?'<span class="badge badge-star">ดาวรุ่ง</span>':r.rss>=65?'<span class="badge badge-rise">มีศักยภาพ</span>':'<span class="badge badge-stable">ติดตาม</span>'; }
-function renderRadarLegend(items) {
-  const el = document.getElementById('radarLegend');
-  if (!el) return;
-  if (!items || !items.length) {
-    el.innerHTML = '';
-    el.hidden = true;
-    return;
-  }
-  el.hidden = false;
-  el.innerHTML = items.map(r =>
-    `<span class="dash-chart-legend-item"><i style="background:${gColor(r.code)}"></i><span>${r.name}</span></span>`
-  ).join('');
-}
-function applyFilters() {
-  const g = FILTER.group;
-  const fyM = window.dashFyFactor ? dashFyFactor(FILTER.fy) : 1;
-  let rows = g==='ALL' ? [...DATA.rows] : DATA.rows.filter(r=>r.code===g);
-  rows = rows.map(r => ({ ...r, rss: +(r.rss * fyM).toFixed(1) }));
-  rows.sort((a,b)=>b.rss-a.rss);
-  const stars = DATA.rows.filter(r=>r.rss>=80).length;
-  const avg = (rows.reduce((s,r)=>s+r.rss,0)/Math.max(rows.length,1)).toFixed(1);
-  const gm = DATA.rows.find(r=>r.code===g) || rows[0];
-  document.getElementById('kpiRow').innerHTML =
-    `<div class="kpi"><div class="bar" style="background:#1F6FB2"></div><div class="body"><div class="name">ผลิตภัณฑ์อนุญาต</div><div class="val">${DATA.stockAll.toLocaleString('th-TH')}</div><div class="unit">รายการ</div></div></div>`+
-    `<div class="kpi"><div class="bar" style="background:#12A594"></div><div class="body"><div class="name">ดาวรุ่ง คะแนน≥80</div><div class="val">${stars}</div><div class="unit">กลุ่ม</div></div></div>`+
-    `<div class="kpi"><div class="bar" style="background:#7E57C2"></div><div class="body"><div class="name">คะแนนดาวรุ่งเฉลี่ย</div><div class="val">${avg}</div><div class="unit">คะแนน</div></div></div>`+
-    `<div class="kpi"><div class="bar" style="background:#E8A317"></div><div class="body"><div class="name">กลุ่มที่เลือก</div><div class="val">${gName(g)}</div><div class="unit">คะแนน ${gm?.rss||'—'}</div></div></div>`;
 
-  document.getElementById('rssBody').innerHTML = rows.map((r,i)=>{
-    const t = groupTotals(r.code);
-    return `<tr class="clickable ${r.code===g?'active-row':''}" data-code="${r.code}">
-    <td class="num">${i+1}</td><td>${r.name}</td><td class="num">${r.rss}</td>
-    <td class="num">${r.trade}</td><td class="num">${r.product}</td><td class="num">${r.app}</td>
-    <td class="num">${r.biz}</td><td class="num">${r.innov}</td><td class="num">${r.reg}</td><td class="num">${r.market}</td>
-    <td class="num">${fmtTHB(t.imp)}</td><td class="num">${fmtTHB(t.exp)}</td><td class="num">${fmtTHB(t.prod)}</td><td class="num">${fmtTHB(t.sale)}</td>
-    <td class="cen">${badge(r)}</td></tr>`;
-  }).join('');
-  bindRowFilter('rssBody');
-
-  const labels = rows.map(r=>r.name);
-  const cRss = setChart('cRss', {type:'bar', data:{labels, datasets:[{label:'คะแนนดาวรุ่ง', data:rows.map(r=>r.rss), backgroundColor:rows.map(r=>gColor(r.code))}]}, options:{indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}, scales:{x:{min:0, max:100, ticks:{stepSize:10}}, y:{ticks:{autoSkip:false, padding:2}}}}});
-  chartClickGroup(cRss, labels, rows.map(r=>r.code));
-
-  // เลือก "ทั้งหมด" = ซ้อนทุกกลุ่มให้เทียบกัน (เส้นล้วน ไม่ถมสี เพราะ 7 ชั้นทับกันจะอ่านไม่ออก)
-  // เลือกกลุ่มเดียว = ถมสีตามเดิม  •  แกนต้องเริ่มที่ 0 ไม่ใช่ 30 ไม่งั้นค่าที่ต่ำกว่า 30
-  // (เช่น 0) จะถูกวาดทะลุไปอีกฝั่งของจุดศูนย์กลาง กลายเป็นรูปทรงประหลาด
-  const radarRows = (g==='ALL') ? rows : [gm];
-  const radarFill = radarRows.length === 1;
-  // แสดงเฉพาะแกนที่มีข้อมูลจริง: Innovation/Regulatory/Market ยังไม่มีตารางต้นทาง ค่าจึงเป็น 0
-  // ทุกกลุ่ม ถ้าวาดด้วยจะดึงทุกเส้นเข้าหาจุดศูนย์กลางบน 3 แกนนั้นจนกราฟอ่านไม่ออก
-  // เช็คจาก DATA.rows (ทุกกลุ่ม) ไม่ใช่ rows ที่กรองแล้ว แกนจะได้ไม่เปลี่ยนตอนสลับกลุ่ม
-  // และแกนจะกลับมาเองอัตโนมัติเมื่อมีข้อมูลจริงเข้ามา
-  const RKEY = ['trade','product','app','biz','innov','reg','market'];
-  const rIdx = RKEY.map((k,i)=>i).filter(i=>DATA.rows.some(r=>r[RKEY[i]]>0));
-  const rSkip = RKEY.map((k,i)=>i).filter(i=>!rIdx.includes(i)).map(i=>DATA.components[i]);
-  document.getElementById('radarNote').textContent =
-    rSkip.length ? `แสดง ${rIdx.length} จาก ${RKEY.length} องค์ประกอบ · ${rSkip.join(' / ')} ยังไม่มีข้อมูล` : '';
-  // ทุกกลุ่มถมสีโปร่งแสงให้เห็นพื้นที่ซ้อนกัน — หลายกลุ่มใช้ความทึบต่ำกว่า (15%) ไม่งั้น
-  // 7 ชั้นทับกันตรงกลางจะกลายเป็นก้อนสีเข้ม • รูปที่พื้นที่ใหญ่วาดไว้ด้านหลัง รูปเล็กอยู่หน้า
-  // (Chart.js วาดชุดที่ order น้อยไว้บนสุด) กลุ่มที่คะแนนน้อยจะได้ไม่ถูกรูปใหญ่บังมิด
-  const rArea = r => { const v = rIdx.map(i=>r[RKEY[i]]);
-    return v.reduce((s,x,i)=>s + x*v[(i+1)%v.length], 0); };
-  const byArea = [...radarRows].sort((a,b)=>rArea(a)-rArea(b)).map(r=>r.code);
-  const alpha = radarFill ? '33' : '26';
-  renderRadarLegend(radarRows);
-  const cRadar = setChart('cRadar', {type:'radar', data:{labels:rIdx.map(i=>DATA.components[i]), datasets:radarRows.map(r=>({label:r.name, data:rIdx.map(i=>r[RKEY[i]]), borderColor:gColor(r.code), backgroundColor:gColor(r.code)+alpha, fill:true, order:byArea.indexOf(r.code), borderWidth:2, pointRadius:3, pointBackgroundColor:gColor(r.code)}))}, options:{responsive:true, maintainAspectRatio:false, layout:{padding:{top:8, bottom:4, left:4, right:4}}, plugins:{legend:{display:false}, tooltip:{callbacks:{label:c=>`${c.dataset.label}: ${c.formattedValue}`}}}, scales:{r:{min:0, max:100, pointLabels:{padding:6}, ticks:{stepSize:20}}}}});
-  if (g === 'ALL' && radarRows.length > 1) chartClickGroup(cRadar, null, radarRows.map(r => r.code));
-  renderProductDrill();
-}
-// วันที่ข้อมูลล่าสุดและรายการปี เอามาจากข้อมูลจริง (DATA.asOf / DATA.years) ไม่ฝังค่า
-// ตายตัวไว้ในหน้าเว็บ เพื่อไม่ให้หัวเรื่องบอกวันที่ที่ไม่ตรงกับข้อมูลที่แสดงอยู่จริง
-// ต้องวางหลัง const DATA เพราะถ้าอ่านก่อนถูกประกาศ JS จะโยน ReferenceError
-{
-  const years = (DATA.years && DATA.years.length) ? DATA.years : [2568];
-  FILTER.fy = years[years.length - 1];
-const sel = document.getElementById('fySel');
-  if (sel) sel.innerHTML = years.map(y =>
-    `<option value="${y}"${y === FILTER.fy ? ' selected' : ''}>${y}</option>`).join('');
-}
-bootDash();
+renderFormula();
+applyFilters();
+window.addEventListener("load", () => { if (typeof window.dashLayoutResize === "function") setTimeout(window.dashLayoutResize, 300); });
 
 /* วันที่หัวข้อ — วันเปิดดู (พ.ศ.) */
 const TH_MONTH_ABBR = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];

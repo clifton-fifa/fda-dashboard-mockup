@@ -154,6 +154,14 @@ function setChart(id, cfg) {
   }
   return charts[id];
 }
+function wireChartClick(chart, labels, codes) {
+  if (!chart || typeof chartClickGroup !== 'function') return;
+  try {
+    chartClickGroup(chart, labels, codes);
+  } catch (err) {
+    console.error('[d2] chartClickGroup', err);
+  }
+}
 function bootDash() {
   applyFilters();
   function resizeLater() {
@@ -324,7 +332,7 @@ function applyFilters() {
     else { sl=[gName(g)]; sv=[100]; sc=[gColor(g)]; }
   }
   const cShare = setChart('cShare', {type:'doughnut', data:{labels:sl, datasets:[{data:sv, backgroundColor:sc}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}}}});
-  chartClickGroup(cShare, sl, g === 'ALL' ? DATA.share.codes : [g]);
+  wireChartClick(cShare, sl, g === 'ALL' ? DATA.share.codes : [g]);
 
   let cl, cv, cc;
   if (g==='ALL') { cl=DATA.cagr.labels; cv=DATA.cagr.values; cc=DATA.cagr.colors; }
@@ -333,7 +341,7 @@ function applyFilters() {
     cl=[DATA.cagr.labels[i]||gName(g)]; cv=[DATA.cagr.values[i]||0]; cc=[gColor(g)];
   }
   const cCagr = setChart('cCagr', {type:'bar', data:{labels:cl, datasets:[{data:cv, backgroundColor:cc}]}, options:{indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}});
-  chartClickGroup(cCagr, cl, g==='ALL'?DATA.cagr.codes:[g]);
+  wireChartClick(cCagr, cl, g==='ALL'?DATA.cagr.codes:[g]);
 
   const ct = DATA.countryBG[g] || DATA.countryBG.ALL || [];
   setChart('cCountry', {type:'bar', data:{labels:ct.map(x=>x.name), datasets:[{data:ct.map(x=>x.val), backgroundColor:gColor(g)}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}});

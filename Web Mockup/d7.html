@@ -95,6 +95,36 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
   <link rel="stylesheet" href="shared/dash-sidebar.css">
   <link rel="stylesheet" href="shared/dash-layout.css">
 <link rel="stylesheet" href="shared/dash-filters.css">
+<style>
+/* d7 — ตามรูปที่ 7 (ต้นแบบหน้าจอที่ 7) ในเอกสาร 4.3.4 */
+.filters .crumb{color:#0F7F86;font-weight:600;white-space:nowrap}
+.filters .crumb .sep{color:var(--muted);margin:0 2px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.stat{border:1px solid var(--line);border-radius:6px;padding:9px 12px 10px;background:#fff;min-width:0}
+.stat .n{color:var(--muted);font-size:var(--fs-ui-sm);line-height:1.3}
+.stat .v{font-size:clamp(16px,1.4vw,22px);font-weight:700;line-height:1.25;margin-top:4px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.stat--cls .v{font-size:clamp(16px,1.35vw,21px)}
+.law-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.law-list li{border-left:4px solid var(--law);border-radius:2px;padding:1px 0 1px 10px}
+.law-list .t{font-size:var(--fs-ui-md);color:var(--ink);line-height:1.35}
+.law-list .k{font-size:var(--fs-ui-sm);color:var(--muted);line-height:1.3}
+.card>h2 .rls-badge{margin-left:auto;background:#E3F5F3;color:#0F7F86;border-radius:999px;padding:2px 12px;font-size:var(--fs-ui-sm);font-weight:700;white-space:nowrap}
+body[data-dash="7"] table.data.app-table{font-size:14px}
+body[data-dash="7"] table.data.app-table thead th{padding:6px 6px;vertical-align:bottom;line-height:1.22}
+body[data-dash="7"] table.data.app-table td{padding:7px 6px;white-space:nowrap}
+table.app-table .clip{display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
+table.app-table .clip-no{max-width:clamp(80px,6.2vw,120px)}
+table.app-table .clip-name{max-width:clamp(120px,11vw,230px)}
+@media(min-width:1025px) and (max-width:1440px){
+  body[data-dash="7"] main .card.trend-card{grid-column:span 4}
+  body[data-dash="7"] main .card.app-card{grid-column:span 8}
+}
+table.data tr.row-pending{background:#FFF7E6}
+td.st-pending{color:#D98A00;font-weight:600}td.st-return{color:#C0392B;font-weight:600}td.st-ok{color:var(--ink)}
+tr.empty-row td{text-align:center;color:var(--muted);padding:22px}
+footer .note{color:var(--muted)}
+@media(max-width:1100px){.stat-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
 </head><body data-dash="7">
 <div id="dashPage"><script src="shared/dash-sidebar.js"></script>
 <header><div class="brand"><span class="dash-header-logo"><img class="brandLogo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJiIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNDAiIGhlaWdodD0iMjQwIiB2aWV3Qm94PSIwIDAgMjQwIDI0MCI+PGRlZnM+PHN0eWxlPi5ke2ZpbGw6IzAwNGNhZjt9PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImMiPjxwYXRoIGNsYXNzPSJkIiBkPSJtMTE5LjE1LDBjLTIzLjcuMTctNDYuODEsNy4zNS02Ni40MywyMC42NC0xOS42MiwxMy4yOS0zNC44NywzMi4wOS00My44Miw1NC4wM0MtLjA2LDk2LjYxLTIuMzIsMTIwLjcxLDIuNDEsMTQzLjkzYzQuNzMsMjMuMjIsMTYuMjIsNDQuNTIsMzMuMDQsNjEuMjIsMTYuODIsMTYuNywzOC4yLDI4LjA0LDYxLjQ1LDMyLjYsMjMuMjUsNC41Niw0Ny4zNCwyLjEzLDY5LjIyLTYuOTcsMjEuODgtOS4xMSw0MC41Ny0yNC40OSw1My43Mi00NC4yLDEzLjE1LTE5LjcyLDIwLjE2LTQyLjg4LDIwLjE2LTY2LjU4LS4xMS0zMS45NC0xMi45MS02Mi41Mi0zNS41OC04NS4wM0MxODEuNzYsMTIuNDcsMTUxLjA5LS4xMSwxMTkuMTUsMFptMCwyMjQuN2MtMTQuOS4xLTI5LjY0LTIuOTctNDMuMjYtOS4wMi0xMy42MS02LjA1LTI1Ljc4LTE0LjkzLTM1LjY5LTI2LjA2LTkuOTEtMTEuMTItMTcuMzMtMjQuMjMtMjEuNzYtMzguNDUtNC40NC0xNC4yMi01Ljc5LTI5LjIyLTMuOTctNDQuMDFoNzAuNTljMS44LDAsMi4zNS41OCwyLjM1LDIuNDUtLjA1LDIxLjMxLS4wNiw0Mi42MS0uMDQsNjMuOTIsMCwuNTUuMjEsMS4xNi0uMzgsMS43OGwtMjYuNTItMjkuNTNoOC44OHEzLjEsMCwzLjExLTMuMTljMC0zLjEyLS4wNS02LjI0LDAtOS4zNS4wMy0xLjU1LS40OC0yLjI1LTIuMDQtMi4yNS0xMy4wOS4wMy0yNi4xOCwwLTM5LjI2LjAyLS41NCwwLTEuMjktLjE1LTEuNDcuNTEtLjE5LjY2LjQ4LDEuMTQuOSwxLjYsNi45Miw3LjY1LDEzLjg1LDE1LjMsMjAuNzgsMjIuOTUsMTMuNjcsMTUuMTIsMjcuMzQsMzAuMjUsNDEsNDUuMzcsMi43MSwyLjk5LDIuMDQsMi45NCw0LjY2LDAsMTMuNDItMTUuMTgsMjYuODItMzAuMzksNDAuMTktNDUuNjMsOS4xOS0xMC40MiwxOC4zOS0yMC44MywyNy42LTMxLjIzLDguOTUtMTAuMTMsMTcuODktMjAuMjYsMjYuODMtMzAuMzkuMTgtLjE5LjMzLS4zOS40Ny0uNi4yNS0uNDIuODgtLjcyLjY3LTEuMjlzLS44Ny0uMzgtMS4zMy0uMzhjLTQuNDksMC04Ljk3LDAtMTMuNDYtLjAyLS40Ny0uMDEtLjk0LjA4LTEuMzYuMjgtLjQzLjItLjguNDktMS4wOS44Ni04LjI4LDkuMzUtMTYuNTcsMTguNjktMjQuODcsMjguMDQtNS4wNyw1LjcyLTEwLjE0LDExLjQ1LTE1LjIsMTcuMTgtMTAuNTcsMTEuOTItMjEuMTUsMjMuODQtMzEuNzIsMzUuNzUtLjMuNDItLjU3Ljg2LS44LDEuMzMtLjI2LS4zMy0uNDUtLjcxLS41Ni0xLjEyLS4xMS0uNDEtLjEzLS44My0uMDYtMS4yNS0uMDItOC4xOC0uMDItMTYuMzcsMC0yNC41NSwwLTIuNTEuMDgtMi41OSwyLjU2LTIuNiw0LjExLDAsOC4yMy0uMDQsMTIuMzQsMCwxLjUyLjAyLDIuMTEtLjUzLDIuMDgtMi4xNi0uMDktMy41MS0uMDktNy4wMSwwLTEwLjUyLjA0LTEuNjQtLjU5LTIuMTYtMi4wOC0yLjE0LTQuMTcuMDYtOC4zNC0uMDUtMTIuNTMuMDUtMS43Ny4wNC0yLjQyLS41OS0yLjM5LTIuNDYuMDgtNi4zLjA4LTEyLjYsMC0xOC45LS4wMi0xLjgzLjUyLTIuNTQsMi4zNC0yLjUsNC4yNC4xMSw4LjQ4LDAsMTIuNzEuMDYsMS42My4wMywyLjIyLS42NCwyLjE5LTIuMy0uMDYtMy40NCwwLTYuODksMC0xMC4zMywwLTIuNjgtLjAzLTIuNy0yLjYzLTIuN0gxNy41M2M1LjEyLTE4Ljk4LDE1LjQ1LTM2LjE0LDI5LjgyLTQ5LjU2LDE0LjM3LTEzLjQxLDMyLjIxLTIyLjU0LDUxLjQ5LTI2LjM0LDE5LjI4LTMuOCwzOS4yNS0yLjE0LDU3LjY0LDQuODEsMTguMzksNi45NSwzNC40NiwxOC45MSw0Ni40MSwzNC41MiwxMS45NSwxNS42MSwxOS4yOSwzNC4yNSwyMS4xOSw1My44MiwxLjksMTkuNTYtMS43MSwzOS4yNy0xMC40Miw1Ni44OS04LjcxLDE3LjYyLTIyLjE4LDMyLjQ1LTM4Ljg4LDQyLjgyLTE2LjcsMTAuMzYtMzUuOTcsMTUuODUtNTUuNjMsMTUuODNaIi8+PC9nPjwvc3ZnPg==" alt="อย."></span><div>
@@ -104,273 +134,237 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 <div class="filters">
   <div class="static-filters">
     <button type="button" class="dash-menu-btn" aria-label="แสดงเมนู" title="แสดงเมนู" aria-expanded="false"><i class="dash-menu-icon" aria-hidden="true"></i></button>
-    <span>ปี: <select id="fySel"><option value="2562">2562</option><option value="2563">2563</option><option value="2564">2564</option><option value="2565">2565</option><option value="2566">2566</option><option value="2567">2567</option><option value="2568" selected>2568</option><option value="2569">2569</option></select></span>
-    <span>เดือน: <select id="filterMonth"><option value="ALL" selected>ทั้งหมด</option></select></span><span>ธุรกรรม <select id="txnSel"><option value="all">ทั้งหมด</option><option value="import">นำเข้า</option><option value="export">ส่งออก</option></select></span>
-    <span>จังหวัด <select id="provSel"><option value="ทั่วประเทศ">ทั่วประเทศ</option><option value="กรุงเทพฯ">กรุงเทพฯ</option><option value="นนทบุรี">นนทบุรี</option><option value="สมุทรปราการ">สมุทรปราการ</option><option value="เชียงใหม่">เชียงใหม่</option><option value="ชลบุรี">ชลบุรี</option><option value="ขอนแก่น">ขอนแก่น</option></select></span>
+    <span>ผลิตภัณฑ์: <select id="prodSel" aria-label="เลือกผลิตภัณฑ์"></select></span>
+    <span>ระดับความเสี่ยง: <select id="riskSel" aria-label="ระดับความเสี่ยง"></select></span>
+    <span>ช่วงเวลา: <select id="periodSel" aria-label="ช่วงเวลา"><option value="2564" selected>2564–2569</option><option value="2566">2566–2569</option><option value="2568">2568–2569</option></select></span>
     <span><button type="button" class="reset-btn" id="resetFiltersBtn">คืนค่า</button></span>
-    
-  </div>
-  <div class="filterGroups">
-    <span class="lbl">กลุ่มผลิตภัณฑ์:</span>
-    <span id="chips"><button type="button" class="chip" aria-pressed="true" data-g="ALL"><span class="dot" style="background:#12305B"></span>ทั้งหมด</button>
-<button type="button" class="chip" aria-pressed="false" data-g="DRUG"><span class="dot" style="background:#1F6FB2"></span>ยา</button>
-<button type="button" class="chip" aria-pressed="false" data-g="MDC"><span class="dot" style="background:#12A594"></span>เครื่องมือแพทย์</button>
-<button type="button" class="chip" aria-pressed="false" data-g="FOOD"><span class="dot" style="background:#3E9F55"></span>อาหาร</button>
-<button type="button" class="chip" aria-pressed="false" data-g="CMT"><span class="dot" style="background:#E8A317"></span>เครื่องสำอาง</button>
-<button type="button" class="chip" aria-pressed="false" data-g="HERB"><span class="dot" style="background:#7E57C2"></span>สมุนไพร</button>
-<button type="button" class="chip" aria-pressed="false" data-g="TXC"><span class="dot" style="background:#C0392B"></span>วัตถุอันตราย</button>
-<button type="button" class="chip" aria-pressed="false" data-g="NCT"><span class="dot" style="background:#7F8C8D"></span>วัตถุเสพติด</button></span>
+    <span class="crumb" id="crumb"></span>
   </div>
 </div>
 
 <main>
-<section class="card span12"><h2>เลือกผลิตภัณฑ์</h2>
-<div class="prod-picker">
-  <div class="prod-search-wrap">
-    <input type="search" class="prod-search" id="prodSearch" placeholder="พิมพ์รหัสหรือชื่อผลิตภัณฑ์เพื่อค้นหา" autocomplete="off" aria-label="ค้นหาผลิตภัณฑ์" aria-controls="prodSuggest" aria-expanded="false" aria-autocomplete="list">
-    <div class="prod-suggest" id="prodSuggest" role="listbox" aria-label="ผลลัพธ์การค้นหา" hidden></div>
-  </div>
-  <select class="prod-select" id="prodSel" aria-label="เลือกผลิตภัณฑ์"></select>
-</div></section>
-<section class="kpis" id="prodKpi"></section>
-<section class="card span6 card--row-stretch card--chart-grow"><h2>มิติเศรษฐกิจ</h2><div class="chart-box"><canvas id="cEcon"></canvas></div></section>
-<section class="card span6 card--row-stretch card--chart-grow"><h2>มิติการกำกับดูแล</h2><div class="chart-box"><canvas id="cReg"></canvas></div></section>
-<section class="card span12"><h2>ประวัติคำขอ (Application Timeline)</h2>
-<div class="table-scroll"><table class="data"><thead><tr><th>เลขรับ</th><th>ประเภท</th><th>ยื่น</th><th>อนุมัติ</th><th class="num">วันทำการ</th><th class="cen">สถานะ</th></tr></thead>
-<tbody id="appBody"></tbody></table></div></section></main>
-<script>
-const GROUPS = [{"code": "DRUG", "name": "ยา", "color": "#1F6FB2"}, {"code": "MDC", "name": "เครื่องมือแพทย์", "color": "#12A594"}, {"code": "FOOD", "name": "อาหาร", "color": "#3E9F55"}, {"code": "CMT", "name": "เครื่องสำอาง", "color": "#E8A317"}, {"code": "HERB", "name": "สมุนไพร", "color": "#7E57C2"}, {"code": "TXC", "name": "วัตถุอันตราย", "color": "#C0392B"}, {"code": "NCT", "name": "วัตถุเสพติด", "color": "#7F8C8D"}];
-document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => clickGroup(c.dataset.g)));
+<section class="card span8 card--row-stretch"><h2>สรุปสถานะผลิตภัณฑ์ที่เลือก</h2>
+<div class="cap">ข้อมูลเศรษฐกิจ ผลิตภัณฑ์ ผู้ประกอบการ และการกำกับดูแลในหน้าจอเดียว</div>
+<div class="stat-grid" id="statGrid"></div></section>
 
-const FILTER = { group: 'ALL', fy: 2568, txn: 'all', prov: 'ทั่วประเทศ' };
+<section class="card span4 card--row-stretch"><h2>กฎหมายและกระบวนงานที่เกี่ยวข้อง</h2>
+<div class="cap">เชื่อมโยงกับฐานข้อมูลกฎหมายของสำนักงานคณะกรรมการอาหารและยา</div>
+<ul class="law-list" id="lawList"></ul></section>
+
+<section class="card span5 card--row-stretch card--chart-grow trend-card"><h2>แนวโน้มตัวชี้วัดหลักของผลิตภัณฑ์</h2>
+<div class="cap">มูลค่าการค้า จำนวนคำขอ และจำนวนผลิตภัณฑ์ใหม่</div>
+<div class="chart-box lg"><canvas id="cTrend"></canvas></div></section>
+
+<section class="card span7 card--row-stretch app-card"><h2>รายการคำขอของผลิตภัณฑ์นี้ (ระดับที่ 5 : ข้อมูลรายธุรกรรม)<span class="rls-badge" title="แสดงเฉพาะแถวที่ผู้ใช้มีสิทธิ์เข้าถึง">Row-level Security</span></h2>
+<div class="cap">ข้อมูลระดับล่างสุดของเส้นทาง Drill-down | สิทธิ์การเข้าถึงจำกัดเฉพาะผู้ใช้ระดับปฏิบัติการ</div>
+<div class="table-scroll"><table class="data app-table"><thead><tr>
+<th>เลขรับ</th><th>ผู้ประกอบการ</th><th>ประเภทคำขอ</th><th>วันที่ยื่น</th><th>วันที่อนุมัติ</th>
+<th class="num">วันทำการ</th><th class="num">Stop Clock</th><th class="num">รอบแก้ไข</th><th>สถานะ</th>
+</tr></thead><tbody id="appBody"></tbody></table></div></section>
+</main>
+<footer><span class="note">หน้าจอนี้เป็นระดับที่ 4–5 ของเส้นทาง Drill-down โดยระดับที่ 5 (ข้อมูลรายธุรกรรม) ต้องผ่านการควบคุมสิทธิ์ตามบทบาทผู้ใช้ (Role-based Access Control) และบันทึก Audit Log ทุกครั้งที่มีการเรียกดู</span></footer>
+
+<script>
+/* ข้อมูลจำลอง — ผลิตภัณฑ์ SaMD / AI · Class C · 2564–2569 ตรงกับรูปที่ 7 ในเอกสาร 4.3.4 */
+const YEARS = ["2564", "2565", "2566", "2567", "2568", "2569F"];
+const LAW_COLOR = {"กฎหมายหลัก": "#0E2A4F", "กฎหมายลำดับรอง": "#12A594", "แนวปฏิบัติ": "#8A96A3", "กระบวนงาน": "#8A96A3"};
+const PRODUCTS = [
+  {
+    id: "SAMD", label: "SaMD / AI", grp: "MDC", groupName: "เครื่องมือแพทย์",
+    path: ["ภาพรวม", "MDC", "SaMD / AI", "ซอฟต์แวร์วินิจฉัยภาพทางการแพทย์"],
+    risks: [{v: "Class A", count: 2.1, days: 0.35}, {v: "Class B", count: 1.5, days: 0.62}, {v: "Class C", count: 1, days: 1}, {v: "Class D", count: 0.38, days: 1.32}],
+    defaultRisk: "Class C",
+    stat: {imp: 24180, exp: 6420, cagr: 22.6, products: 842, newProducts: 318, entities: 164, requests: 1246, days: 148, rework: 34.2, rss: 86.4, rbi: 71.3},
+    laws: [["พ.ร.บ. เครื่องมือแพทย์ พ.ศ. 2551", "กฎหมายหลัก"], ["พ.ร.บ. เครื่องมือแพทย์ (ฉบับที่ 2) พ.ศ. 2562", "กฎหมายหลัก"],
+           ["ประกาศหลักเกณฑ์การจัดระดับความเสี่ยง", "กฎหมายลำดับรอง"], ["แนวทางกำกับซอฟต์แวร์ที่เป็นเครื่องมือแพทย์", "แนวปฏิบัติ"],
+           ["กระบวนงาน: การขึ้นทะเบียนเครื่องมือแพทย์ Class C", "กระบวนงาน"], ["กระบวนงาน: การแก้ไขเปลี่ยนแปลงรายการ", "กระบวนงาน"]],
+    trend: {imp: [86, 112, 149, 187, 242, 309], req: [42, 58, 76, 94, 125, 158], newP: [28, 41, 56, 74, 106, 138]},
+    apps: [
+      ["MD-68-04812", "บจก. เมดิเทค อินโนเวชั่น", "ยื่นใหม่", "02/10/2567", "อยู่ระหว่างพิจารณา", 112, 22, 2, "ค้างพิจารณา"],
+      ["MD-68-04907", "บมจ. ไทยไบโอเมด", "แก้ไข Version", "18/10/2567", "อยู่ระหว่างพิจารณา", 86, 14, 3, "ค้างพิจารณา"],
+      ["MD-68-03255", "บจก. เอไอ เฮลท์", "ยื่นใหม่", "14/05/2567", "28/11/2567", 142, 18, 1, "อนุมัติ"],
+      ["MD-68-02841", "บจก. สมาร์ทแคร์ เทค", "ยื่นใหม่", "02/04/2567", "19/10/2567", 156, 31, 2, "อนุมัติ"],
+      ["MD-67-09163", "บมจ. ไทยไบโอเมด", "ยื่นใหม่", "11/12/2566", "24/06/2567", 138, 9, 1, "อนุมัติ"],
+      ["MD-67-08620", "บจก. เมดิเทค อินโนเวชั่น", "แก้ไขทะเบียน", "20/11/2566", "02/03/2567", 72, 6, 0, "อนุมัติ"],
+      ["MD-67-07938", "บจก. ดิจิทัลเมด", "ยื่นใหม่", "02/10/2566", "คืนคำขอ", 96, 28, 4, "คืนคำขอ"],
+      ["MD-67-07314", "บจก. เฮลท์เอไอ", "ยื่นใหม่", "15/08/2566", "12/02/2567", 124, 11, 1, "อนุมัติ"]
+    ]
+  },
+  {
+    id: "BIO", label: "ยาชีววัตถุ", grp: "DRUG", groupName: "ยา",
+    path: ["ภาพรวม", "DRUG", "ยาชีววัตถุ", "ยาชีววัตถุคล้ายคลึง (Biosimilar)"],
+    risks: [{v: "ยาควบคุมพิเศษ", count: 1, days: 1}, {v: "ยาอันตราย", count: 1.9, days: 0.72}, {v: "ยาสามัญประจำบ้าน", count: 3.4, days: 0.41}],
+    defaultRisk: "ยาควบคุมพิเศษ",
+    stat: {imp: 38460, exp: 2140, cagr: 14.8, products: 316, newProducts: 84, entities: 58, requests: 412, days: 212, rework: 41.6, rss: 72.8, rbi: 78.4},
+    laws: [["พ.ร.บ. ยา พ.ศ. 2510", "กฎหมายหลัก"], ["พ.ร.บ. ยา (ฉบับที่ 6) พ.ศ. 2562", "กฎหมายหลัก"],
+           ["ประกาศหลักเกณฑ์การขึ้นทะเบียนตำรับยาชีววัตถุ", "กฎหมายลำดับรอง"], ["แนวทางการยื่นข้อมูลยาชีววัตถุคล้ายคลึง", "แนวปฏิบัติ"],
+           ["กระบวนงาน: การขึ้นทะเบียนตำรับยาใหม่", "กระบวนงาน"], ["กระบวนงาน: การแก้ไขทะเบียนตำรับยา", "กระบวนงาน"]],
+    trend: {imp: [248, 266, 291, 322, 385, 431], req: [28, 31, 34, 37, 41, 46], newP: [18, 21, 24, 26, 28, 30]},
+    apps: [
+      ["DR-68-01127", "บมจ. ไทยไบโอเมด อินดัสตรี", "ยื่นใหม่", "08/09/2567", "อยู่ระหว่างพิจารณา", 188, 34, 3, "ค้างพิจารณา"],
+      ["DR-68-00964", "บมจ. ฟาร์มาไทย แมนูแฟคเจอริ่ง", "แก้ไขทะเบียน", "21/08/2567", "อยู่ระหว่างพิจารณา", 142, 21, 2, "ค้างพิจารณา"],
+      ["DR-67-02218", "บมจ. ไทยไบโอเมด อินดัสตรี", "ยื่นใหม่", "13/12/2566", "04/10/2567", 204, 26, 2, "อนุมัติ"],
+      ["DR-67-01876", "บจก. ไบโอซิมิลาร์ ไทย", "ยื่นใหม่", "02/10/2566", "คืนคำขอ", 176, 42, 4, "คืนคำขอ"],
+      ["DR-66-03341", "บมจ. ฟาร์มาไทย แมนูแฟคเจอริ่ง", "ยื่นใหม่", "15/03/2565", "21/02/2566", 231, 18, 1, "อนุมัติ"]
+    ]
+  },
+  {
+    id: "PROBIO", label: "โพรไบโอติก", grp: "FOOD", groupName: "อาหาร",
+    path: ["ภาพรวม", "FOOD", "ผลิตภัณฑ์เสริมอาหาร", "โพรไบโอติก"],
+    risks: [{v: "อาหารควบคุมเฉพาะ", count: 1, days: 1}, {v: "อาหารที่ต้องมีฉลาก", count: 2.6, days: 0.55}],
+    defaultRisk: "อาหารควบคุมเฉพาะ",
+    stat: {imp: 3840, exp: 5260, cagr: 18.2, products: 1284, newProducts: 412, entities: 236, requests: 968, days: 46, rework: 18.4, rss: 81.2, rbi: 38.6},
+    laws: [["พ.ร.บ. อาหาร พ.ศ. 2522", "กฎหมายหลัก"], ["ประกาศกระทรวงสาธารณสุข เรื่อง ผลิตภัณฑ์เสริมอาหาร", "กฎหมายลำดับรอง"],
+           ["ประกาศกระทรวงสาธารณสุข เรื่อง การใช้จุลินทรีย์โพรไบโอติกในอาหาร", "กฎหมายลำดับรอง"], ["แนวทางการกล่าวอ้างทางสุขภาพ (Health Claim)", "แนวปฏิบัติ"],
+           ["กระบวนงาน: การขออนุญาตใช้ฉลากอาหาร", "กระบวนงาน"], ["กระบวนงาน: การแก้ไขรายการผลิตภัณฑ์อาหาร", "กระบวนงาน"]],
+    trend: {imp: [21, 24, 28, 32, 38, 44], req: [52, 61, 72, 84, 97, 112], newP: [96, 112, 126, 138, 148, 161]},
+    apps: [
+      ["FD-68-12044", "บจก. ไทยฟู้ด ซัพพลีเมนต์", "ยื่นใหม่", "25/10/2567", "อยู่ระหว่างพิจารณา", 31, 4, 1, "ค้างพิจารณา"],
+      ["FD-68-11620", "หจก. กรีนฟาร์ม ฟู้ดส์", "ยื่นใหม่", "02/09/2567", "18/11/2567", 52, 8, 1, "อนุมัติ"],
+      ["FD-68-10987", "บจก. ไทยฟู้ด ซัพพลีเมนต์", "แก้ไขฉลาก", "14/08/2567", "20/09/2567", 26, 2, 0, "อนุมัติ"],
+      ["FD-67-08812", "บจก. สยามโภชนา ฟู้ด", "ยื่นใหม่", "06/11/2566", "คืนคำขอ", 44, 12, 3, "คืนคำขอ"],
+      ["FD-66-06573", "บจก. โพรไบโอ เฮลท์", "ยื่นใหม่", "19/05/2565", "08/07/2565", 34, 3, 1, "อนุมัติ"]
+    ]
+  },
+  {
+    id: "COSME", label: "เวชสำอาง", grp: "CMT", groupName: "เครื่องสำอาง",
+    path: ["ภาพรวม", "CMT", "เครื่องสำอางบำรุงผิว", "เวชสำอางลดริ้วรอย"],
+    risks: [{v: "มีสารควบคุม", count: 1, days: 1}, {v: "ทั่วไป", count: 4.2, days: 0.45}],
+    defaultRisk: "มีสารควบคุม",
+    stat: {imp: 12640, exp: 18920, cagr: 16.4, products: 3418, newProducts: 1126, entities: 412, requests: 2864, days: 12, rework: 9.8, rss: 78.6, rbi: 24.2},
+    laws: [["พ.ร.บ. เครื่องสำอาง พ.ศ. 2558", "กฎหมายหลัก"], ["พ.ร.บ. เครื่องสำอาง (ฉบับที่ 2) พ.ศ. 2565", "กฎหมายหลัก"],
+           ["ประกาศกระทรวงสาธารณสุข เรื่อง สารที่อาจใช้เป็นส่วนผสมในการผลิตเครื่องสำอาง", "กฎหมายลำดับรอง"], ["แนวทางการแสดงฉลากและการโฆษณาเครื่องสำอาง", "แนวปฏิบัติ"],
+           ["กระบวนงาน: การจดแจ้งเครื่องสำอาง", "กระบวนงาน"], ["กระบวนงาน: การแก้ไขรายการจดแจ้ง", "กระบวนงาน"]],
+    trend: {imp: [84, 92, 101, 112, 126, 141], req: [196, 214, 238, 262, 286, 312], newP: [288, 312, 341, 362, 384, 406]},
+    apps: [
+      ["CM-68-20418", "บมจ. สยามคอสเมติกส์ กรุ๊ป", "จดแจ้งใหม่", "30/10/2567", "อยู่ระหว่างพิจารณา", 9, 1, 0, "ค้างพิจารณา"],
+      ["CM-68-19862", "บจก. เนเชอรัล บิวตี้ แล็บ", "จดแจ้งใหม่", "11/10/2567", "22/10/2567", 8, 0, 0, "อนุมัติ"],
+      ["CM-68-18350", "บมจ. สยามคอสเมติกส์ กรุ๊ป", "แก้ไขรายการ", "02/09/2567", "16/09/2567", 10, 2, 1, "อนุมัติ"],
+      ["CM-67-15521", "บจก. สกินแคร์ อินโนเวชั่น", "จดแจ้งใหม่", "12/12/2566", "คืนคำขอ", 14, 5, 2, "คืนคำขอ"],
+      ["CM-66-10277", "บจก. เนเชอรัล บิวตี้ แล็บ", "จดแจ้งใหม่", "04/07/2565", "15/07/2565", 9, 0, 0, "อนุมัติ"]
+    ]
+  }
+];
+
+const FILTER = { prod: "SAMD", risk: "Class C", from: 2564 };
 const charts = {};
 function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
 function setChart(id, cfg) {
   const el = document.getElementById(id);
-  if (!el || typeof Chart === 'undefined') return null;
+  if (!el || typeof Chart === "undefined") return null;
   destroyChart(id);
   charts[id] = new Chart(el, window.dashPrepareChart ? dashPrepareChart(cfg) : cfg);
   return charts[id];
 }
-function gName(code) { return code === 'ALL' ? 'ทั้งหมด' : (GROUPS.find(g => g.code === code)?.name || code); }
-function gColor(code) { return GROUPS.find(g => g.code === code)?.color || '#1F6FB2'; }
+const fmt = (n, d = 0) => Number(n).toLocaleString("th-TH", {minimumFractionDigits: d, maximumFractionDigits: d});
+const curProduct = () => PRODUCTS.find(p => p.id === FILTER.prod);
+const curRisk = () => curProduct().risks.find(r => r.v === FILTER.risk) || curProduct().risks[0];
 
-function syncChips(code) {
-  document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x.dataset.g === code ? 'true' : 'false'));
+/* ── ตัวกรอง ── */
+const prodSel = document.getElementById("prodSel");
+const riskSel = document.getElementById("riskSel");
+const periodSel = document.getElementById("periodSel");
+prodSel.innerHTML = [...new Set(PRODUCTS.map(p => p.groupName))].map(gn =>
+  `<optgroup label="${gn}">` + PRODUCTS.filter(p => p.groupName === gn).map(p => `<option value="${p.id}">${p.label}</option>`).join("") + "</optgroup>").join("");
+function fillRiskOptions() {
+  const p = curProduct();
+  riskSel.innerHTML = p.risks.map(r => `<option value="${r.v}">${r.v}</option>`).join("");
+  if (!p.risks.some(r => r.v === FILTER.risk)) FILTER.risk = p.defaultRisk;
+  riskSel.value = FILTER.risk;
 }
-function clickGroup(code) { FILTER.group = code; syncChips(code); applyFilters(); }
-/* ── แถบตัวกรองแบบ d1 ── */
-const TH_MONTH_NAME = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-function initD1FilterBar(){
-  const selM = document.getElementById("filterMonth");
-  if (selM && selM.options.length <= 1)
-    selM.innerHTML = '<option value="ALL" selected>ทั้งหมด</option>' +
-      TH_MONTH_NAME.map((n,i) => '<option value="'+String(i+1).padStart(2,"0")+'">'+n+'</option>').join("");
+prodSel.addEventListener("change", e => { FILTER.prod = e.target.value; FILTER.risk = curProduct().defaultRisk; applyFilters(); });
+riskSel.addEventListener("change", e => { FILTER.risk = e.target.value; applyFilters(); });
+periodSel.addEventListener("change", e => { FILTER.from = +e.target.value; applyFilters(); });
+function resetDashFilters() {
+  Object.assign(FILTER, { prod: "SAMD", risk: "Class C", from: 2564 });
+  prodSel.value = "SAMD"; periodSel.value = "2564";
+  applyFilters();
 }
-function resetDashFilters(){
-  if (typeof FILTER !== "undefined") {
-    if ("group" in FILTER) FILTER.group = "ALL";
-    if ("fy" in FILTER) FILTER.fy = 2568;
-    if ("txn" in FILTER) FILTER.txn = "all";
-    if ("prov" in FILTER) FILTER.prov = "ทั่วประเทศ";
-    if ("region" in FILTER) FILTER.region = "ALL";
-  }
-  if (typeof syncChips === "function") syncChips("ALL");
-  document.querySelectorAll(".chip[data-g]").forEach(c =>
-    c.setAttribute("aria-pressed", c.dataset.g === "ALL" ? "true" : "false"));
-  document.querySelectorAll("#regionChips .chip").forEach(c =>
-    c.setAttribute("aria-pressed", c.dataset.r === "ALL" ? "true" : "false"));
-  const fy = document.getElementById("fySel"); if (fy) fy.value = "2568";
-  const txn = document.getElementById("txnSel"); if (txn) txn.value = "all";
-  const prov = document.getElementById("provSel"); if (prov) {
-    prov.value = prov.querySelector('option[value="ทั่วประเทศ"]') ? "ทั่วประเทศ" :
-      (prov.querySelector('option[value="ALL"]') ? "ALL" : prov.options[0]?.value);
-  }
-  const zone = document.getElementById("zoneSel"); if (zone) zone.value = "ALL";
-  const selM = document.getElementById("filterMonth"); if (selM) selM.value = "ALL";  if (typeof applyFilters === "function") applyFilters();
-  else if (typeof renderAll === "function") renderAll();
+document.getElementById("resetFiltersBtn").addEventListener("click", resetDashFilters);
+
+/* ── สรุปสถานะผลิตภัณฑ์ ── */
+function rssLabel(v) { return v >= 80 ? ["Mega Trend", "#1F7A45"] : v >= 60 ? ["Rising Star", "#12A594"] : ["ปกติ", "#5B6B7E"]; }
+function rbiLabel(v) { return v > 60 ? ["ภาระสูง", "#C0392B"] : v >= 40 ? ["ภาระปานกลาง", "#A66A00"] : ["ภาระต่ำ", "#1F7A45"]; }
+function renderStats() {
+  const s = curProduct().stat, r = curRisk();
+  const days = Math.round(s.days * r.days);
+  const rework = Math.min(95, s.rework * (0.6 + 0.4 * r.days));
+  const rbi = Math.min(99, s.rbi * (0.55 + 0.45 * r.days));
+  const [rssT, rssC] = rssLabel(s.rss), [rbiT, rbiC] = rbiLabel(rbi);
+  const cls = rbi > 60 ? (s.rss >= 60 ? "ดาวรุ่งติดคอขวด" : "ติดคอขวด") : (s.rss >= 60 ? "ดาวรุ่ง" : "ติดตาม");
+  const tiles = [
+    ["มูลค่านำเข้า (2568)", fmt(s.imp) + " ลบ.", "#1F6FB2"],
+    ["มูลค่าส่งออก (2568)", fmt(s.exp) + " ลบ.", "#12A594"],
+    ["CAGR 3 ปี", fmt(s.cagr, 1) + "%", "#1F7A45"],
+    ["จำนวนผลิตภัณฑ์สะสม", fmt(s.products * r.count) + " รายการ", "#7E57C2"],
+    ["ผลิตภัณฑ์ใหม่ (3 ปี)", fmt(s.newProducts * r.count) + " รายการ", "#7E57C2"],
+    ["จำนวนผู้ประกอบการ", fmt(s.entities * r.count) + " ราย", "#1F6FB2"],
+    ["คำขอ (2568)", fmt(s.requests * r.count) + " คำขอ", "#E8A317"],
+    ["ระยะเวลาพิจารณาเฉลี่ย", fmt(days) + " วันทำการ", days > 90 ? "#C0392B" : "#1F7A45"],
+    ["อัตราการแก้ไขคำขอ", fmt(rework, 1) + "%", rework > 25 ? "#C0392B" : "#1F7A45"],
+    ["คะแนน RSS", `${fmt(s.rss, 1)} (${rssT})`, rssC],
+    ["คะแนน RBI", `${fmt(rbi, 1)} (${rbiT})`, rbiC],
+    ["การจัดกลุ่ม", cls, cls.includes("คอขวด") ? "#C0392B" : "#1F7A45"]
+  ];
+  document.getElementById("statGrid").innerHTML = tiles.map(([n, v, c], i) =>
+    `<div class="stat${i === tiles.length - 1 ? " stat--cls" : ""}"><div class="n">${n}</div><div class="v" style="color:${c}">${v}</div></div>`).join("");
 }
-document.getElementById("resetFiltersBtn")?.addEventListener("click", resetDashFilters);
-initD1FilterBar();
-window.onGroupFilter = clickGroup;
-document.getElementById('fySel')?.addEventListener('change', e => { FILTER.fy = e.target.value === "ALL" ? 2568 : +e.target.value; applyFilters(); });
-document.getElementById('txnSel')?.addEventListener('change', e => { FILTER.txn = e.target.value; applyFilters(); });
-document.getElementById('provSel')?.addEventListener('change', e => { FILTER.prov = e.target.value; applyFilters(); });
-function bindRowFilter(tbodyId) {
-  const tb = document.getElementById(tbodyId);
-  if (!tb || tb.dataset.bound) return;
-  tb.dataset.bound = '1';
-  tb.addEventListener('click', e => {
-    const tr = e.target.closest('tr.clickable');
-    if (tr && tr.dataset.code) clickGroup(tr.dataset.code);
+
+/* ── กฎหมายและกระบวนงาน ── */
+function renderLaws() {
+  document.getElementById("lawList").innerHTML = curProduct().laws.map(([t, k]) =>
+    `<li style="--law:${LAW_COLOR[k]}"><div class="t">${t}</div><div class="k">${k}</div></li>`).join("");
+}
+
+/* ── แนวโน้ม ── */
+function renderTrend() {
+  const tr = curProduct().trend, r = curRisk();
+  const start = YEARS.findIndex(y => parseInt(y, 10) >= FILTER.from);
+  const labels = YEARS.slice(start);
+  const ds = (label, data, color, unit, k = 1) => ({ label, unit, data: data.slice(start).map(v => Math.round(v * k)),
+    borderColor: color, backgroundColor: color, pointBackgroundColor: "#fff", pointBorderColor: color,
+    pointRadius: 3.5, pointBorderWidth: 2, borderWidth: 2.2, tension: 0.25, fill: false });
+  setChart("cTrend", {
+    type: "line",
+    data: { labels, datasets: [
+      ds("มูลค่านำเข้า (ร้อยล้านบาท)", tr.imp, "#1F6FB2", "ร้อยล้านบาท"),
+      ds("จำนวนคำขอ (สิบคำขอ)", tr.req, "#12A594", "สิบคำขอ", r.count),
+      ds("ผลิตภัณฑ์ใหม่ (รายการ)", tr.newP, "#3E9F55", "รายการ", r.count)] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { datalabels: false, legend: { position: "top", align: "start" },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label.replace(/ \(.*\)$/, "")}: ${fmt(ctx.parsed.y)} ${ctx.dataset.unit}` } } },
+      scales: { y: { beginAtZero: true, ticks: { display: false }, grid: { color: "#EEF2F6" }, border: { display: false } },
+                x: { grid: { display: false } } } }
   });
 }
-const DATA = {"products": [{"id": "P0003", "name": "Paracetamol 500 mg Tablet", "grp": "DRUG", "status": "Active", "days": 128, "co": "สยาม ฟาร์มาซูติคอล"}, {"id": "P0018", "name": "Amoxicillin 500 mg Capsule", "grp": "DRUG", "status": "Active", "days": 112, "co": "ไทยเมด ฟาร์มา"}, {"id": "P0041", "name": "Metformin 850 mg Tablet", "grp": "DRUG", "status": "Active", "days": 95, "co": "บีเอส ฟาร์มา"}, {"id": "P0142", "name": "Digital Blood Pressure Monitor", "grp": "MDC", "status": "Active", "days": 99, "co": "กรุงเทพ เฮลท์แคร์"}, {"id": "P0288", "name": "Vitamin C 1000 mg", "grp": "FOOD", "status": "Active", "days": 76, "co": "เอเชียแปซิฟิก ไบโอเทค"}, {"id": "P0311", "name": "Sunscreen SPF50+", "grp": "CMT", "status": "Active", "days": 82, "co": "สกาย คอสเมติกส์"}, {"id": "P0330", "name": "Herbal Ginger Extract", "grp": "HERB", "status": "Active", "days": 88, "co": "สมุนไพรไทย"}]};
-const APPS = {
-  P0003:[['DR-2569-001842','ขึ้นทะเบียน','15/01/2569','20/06/2569',128,'อนุมัติ'],['DR-2568-009921','ต่ออายุ','03/11/2568','10/02/2569',99,'อนุมัติ']],
-  P0142:[['MD-2569-000412','ขึ้นทะเบียน','20/02/2569','28/05/2569',99,'อนุมัติ']],
-  P0288:[['FD-2568-008801','แจ้งรายละเอียด','10/09/2568','25/11/2568',76,'อนุมัติ']],
-  P0311:[['CM-2569-002104','ขึ้นทะเบียน','05/03/2569','26/05/2569',82,'อนุมัติ']],
-};
-let prodCharts = [];
-function sel(p) {
-  document.getElementById('prodKpi').innerHTML =
-    kpi('รหัส Master',p.id,'','#1F6FB2')+kpi('สถานะ อย.',p.status,'','#1F7A45')+kpi('วันทำการ',p.days,'วัน','#F5A623')+kpi('ผู้ประกอบการ',p.co,'','#7E57C2');
-  document.getElementById('appBody').innerHTML = (APPS[p.id]||[]).map(a=>`<tr><td>${a[0]}</td><td>${a[1]}</td><td>${a[2]}</td><td>${a[3]}</td><td class="num">${a[4]}</td><td class="cen"><span class="badge badge-pass">${a[5]}</span></td></tr>`).join('');
-  prodCharts.forEach(c=>c&&c.destroy()); prodCharts=[];
-  const mult = FILTER.fy>=2568?1:1.05;
-  prodCharts.push(setChart('cEcon', {type:'bar', data:{labels:['Import','Export','Share'], datasets:[{data:[42,28,8].map(v=>Math.round(v*mult)), backgroundColor:['#1F6FB2','#12A594','#E8A317']}]}, options:{responsive:true,maintainAspectRatio:false, plugins:{legend:{display:false}}}}));
-  prodCharts.push(setChart('cReg', {type:'bar', data:{labels:['ดัชนีคอขวด','งานทำซ้ำ','การปฏิบัติตาม'], datasets:[{data:[68,14,96], backgroundColor:['#C0392B','#F5A623','#1F7A45']}]}, options:{responsive:true,maintainAspectRatio:false, plugins:{legend:{display:false}}}}));
-}
-function kpi(n,v,u='',bar='#1F6FB2'){ return `<div class="kpi"><div class="bar" style="background:${bar}"></div><div class="body"><div class="name">${n}</div><div class="val">${v}</div>${u?`<div class="unit">${u}</div>`:''}</div></div>`; }
-let selectedProdId = null;
-let prodSuggestActive = -1;
-function productLabel(p) { return p.id + ' — ' + p.name; }
-function productsForFilter() {
-  const g = FILTER.group;
-  return g === 'ALL' ? DATA.products : DATA.products.filter(p => p.grp === g);
-}
-function productsMatchingQuery(list, rawQ) {
-  const q = (rawQ || '').trim().toLowerCase();
-  if (!q) return list.slice();
-  return list.filter(p =>
-    (p.id + ' ' + p.name + ' ' + (p.co || '')).toLowerCase().includes(q)
-  );
-}
-function positionProdSuggest() {
-  const box = document.getElementById('prodSuggest');
-  const searchEl = document.getElementById('prodSearch');
-  if (!box || box.hidden || !searchEl) return;
-  const r = searchEl.getBoundingClientRect();
-  const gap = 4;
-  const pad = 8;
-  const w = Math.max(220, r.width);
-  let left = r.left;
-  if (left + w > window.innerWidth - pad) left = window.innerWidth - pad - w;
-  if (left < pad) left = pad;
-  box.style.width = w + 'px';
-  box.style.left = left + 'px';
-  box.style.top = r.bottom + gap + 'px';
-}
-function hideProdSuggest() {
-  const box = document.getElementById('prodSuggest');
-  const searchEl = document.getElementById('prodSearch');
-  if (box) { box.hidden = true; box.innerHTML = ''; }
-  if (searchEl) searchEl.setAttribute('aria-expanded', 'false');
-  prodSuggestActive = -1;
-}
-function renderProdSuggest(filtered, showPanel) {
-  const box = document.getElementById('prodSuggest');
-  const searchEl = document.getElementById('prodSearch');
-  if (!box || !searchEl) return;
-  if (!showPanel) { hideProdSuggest(); return; }
-  prodSuggestActive = -1;
-  if (!filtered.length) {
-    box.hidden = false;
-    searchEl.setAttribute('aria-expanded', 'true');
-    box.innerHTML = '<div class="prod-suggest-empty">ไม่พบผลิตภัณฑ์ตามคำค้นหา</div>';
-    requestAnimationFrame(positionProdSuggest);
+
+/* ── รายการคำขอ (ระดับที่ 5) ── */
+/* ปีงบประมาณ พ.ศ. — ต.ค. เริ่มปีงบถัดไป (เลขรับ MD-68-… = ปีงบ 2568) */
+function fiscalYear(ddmmyyyy) { const [, m, y] = ddmmyyyy.split("/").map(Number); return m >= 10 ? y + 1 : y; }
+function renderApps() {
+  const rows = curProduct().apps.filter(a => fiscalYear(a[3]) >= FILTER.from);
+  const tb = document.getElementById("appBody");
+  if (!rows.length) {
+    tb.innerHTML = '<tr class="empty-row"><td colspan="9">ไม่มีคำขอในช่วงเวลาที่เลือก</td></tr>';
     return;
   }
-  const slice = filtered.slice(0, 15);
-  box.hidden = false;
-  searchEl.setAttribute('aria-expanded', 'true');
-  box.innerHTML = slice.map((p, i) =>
-    `<button type="button" class="prod-suggest-item" role="option" data-id="${p.id}" data-i="${i}"><span class="pid">${p.id}</span>${p.name}</button>`
-  ).join('');
-  box.querySelectorAll('.prod-suggest-item').forEach(btn => {
-    btn.addEventListener('mousedown', e => {
-      e.preventDefault();
-      pickProduct(btn.dataset.id, { syncSearch: true, closeSuggest: true });
-    });
-  });
-  requestAnimationFrame(positionProdSuggest);
+  tb.innerHTML = rows.map(a => {
+    const st = a[8] === "ค้างพิจารณา" ? "st-pending" : a[8] === "คืนคำขอ" ? "st-return" : "st-ok";
+    return `<tr class="${a[8] === "ค้างพิจารณา" ? "row-pending" : ""}"><td><span class="clip clip-no" title="${a[0]}">${a[0]}</span></td><td><span class="clip clip-name" title="${a[1]}">${a[1]}</span></td><td>${a[2]}</td><td>${a[3]}</td><td>${a[4]}</td>
+      <td class="num">${a[5]}</td><td class="num">${a[6]}</td><td class="num">${a[7]}</td><td class="${st}">${a[8]}</td></tr>`;
+  }).join("");
 }
-function pickProduct(id, opts) {
-  opts = opts || {};
-  const p = DATA.products.find(x => x.id === id);
-  if (!p) return;
-  selectedProdId = id;
-  const selEl = document.getElementById('prodSel');
-  if (selEl) selEl.value = id;
-  const searchEl = document.getElementById('prodSearch');
-  if (opts.syncSearch && searchEl) searchEl.value = productLabel(p);
-  if (opts.closeSuggest) hideProdSuggest();
-  sel(p);
-}
-function fillProductSelect(opts) {
-  opts = opts || {};
-  const list = productsForFilter();
-  const selEl = document.getElementById('prodSel');
-  const searchEl = document.getElementById('prodSearch');
-  const rawQ = searchEl?.value || '';
-  const qTrim = rawQ.trim();
-  const filtered = productsMatchingQuery(list, rawQ);
-  if (opts.showSuggest) renderProdSuggest(filtered, !!qTrim);
-  const prev = selectedProdId || selEl.value;
-  selEl.innerHTML = '';
-  filtered.forEach(p => {
-    const o = document.createElement('option');
-    o.value = p.id;
-    o.textContent = productLabel(p);
-    selEl.appendChild(o);
-  });
-  if (!filtered.length) {
-    if (!qTrim) {
-      document.getElementById('prodKpi').innerHTML = '<p>ไม่มี SKU ในกลุ่มนี้</p>';
-    }
-    return;
-  }
-  const pick = filtered.find(p => p.id === prev) || filtered[0];
-  selEl.value = pick.id;
-  selectedProdId = pick.id;
-  if (!opts.skipSel) sel(pick);
-}
+
 function applyFilters() {
-  const searchEl = document.getElementById('prodSearch');
-  if (searchEl) searchEl.value = '';
-  hideProdSuggest();
-  fillProductSelect();
+  const p = curProduct();
+  prodSel.value = p.id;
+  fillRiskOptions();
+  document.getElementById("crumb").innerHTML = p.path.join(' <span class="sep">›</span> ');
+  renderStats();
+  renderLaws();
+  renderTrend();
+  renderApps();
 }
-const selEl = document.getElementById('prodSel');
-const searchEl = document.getElementById('prodSearch');
-selEl.addEventListener('change', () => {
-  pickProduct(selEl.value, { syncSearch: true, closeSuggest: true });
-});
-searchEl?.addEventListener('input', () => fillProductSelect({ showSuggest: true, skipSel: false }));
-searchEl?.addEventListener('focus', () => {
-  const q = searchEl.value.trim();
-  const list = productsForFilter();
-  const filtered = q ? productsMatchingQuery(list, q) : list;
-  renderProdSuggest(filtered, true);
-});
-searchEl?.addEventListener('blur', () => {
-  setTimeout(hideProdSuggest, 160);
-});
-window.addEventListener('resize', () => { if (!document.getElementById('prodSuggest')?.hidden) positionProdSuggest(); });
-window.addEventListener('scroll', () => { if (!document.getElementById('prodSuggest')?.hidden) positionProdSuggest(); }, true);
-searchEl?.addEventListener('keydown', e => {
-  const box = document.getElementById('prodSuggest');
-  if (!box || box.hidden) return;
-  const items = [...box.querySelectorAll('.prod-suggest-item')];
-  if (!items.length) return;
-  if (e.key === 'ArrowDown') {
-    e.preventDefault();
-    prodSuggestActive = Math.min(prodSuggestActive + 1, items.length - 1);
-  } else if (e.key === 'ArrowUp') {
-    e.preventDefault();
-    prodSuggestActive = Math.max(prodSuggestActive - 1, 0);
-  } else if (e.key === 'Enter' && prodSuggestActive >= 0) {
-    e.preventDefault();
-    pickProduct(items[prodSuggestActive].dataset.id, { syncSearch: true, closeSuggest: true });
-    return;
-  } else if (e.key === 'Escape') {
-    hideProdSuggest();
-    return;
-  } else return;
-  items.forEach((el, i) => el.classList.toggle('active', i === prodSuggestActive));
-  items[prodSuggestActive]?.scrollIntoView({ block: 'nearest' });
-});
 applyFilters();
 
 /* วันที่หัวข้อ — วันเปิดดู (พ.ศ.) */

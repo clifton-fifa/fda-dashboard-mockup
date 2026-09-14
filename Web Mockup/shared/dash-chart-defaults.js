@@ -171,14 +171,15 @@
     var indexAxis = ctx.chart.options.indexAxis;
     var horizontal = ctx.chart.config.type === "bar" && indexAxis === "y";
     if (horizontal) return "end";
-    return barValueNearMax(ctx) ? "start" : "top";
+    /* anchor=end = ขอบบนแท่ง — align bottom วางตัวเลขลงในแท่ง ไม่ล้นขอบกราฟ */
+    return barValueNearMax(ctx) ? "bottom" : "top";
   }
 
   function barLabelOffset(ctx) {
     var indexAxis = ctx.chart.options.indexAxis;
     var horizontal = ctx.chart.config.type === "bar" && indexAxis === "y";
     if (horizontal) return 3;
-    return barValueNearMax(ctx) ? 8 : 5;
+    return barValueNearMax(ctx) ? 6 : 4;
   }
 
   function defaultDataLabelsFor(cfg) {
@@ -417,10 +418,16 @@
     }
     if (cfg.type === "bar" && cfg.options.indexAxis !== "y") {
       cfg.options.layout = Object.assign(
-        { padding: { top: 36, bottom: 6, left: 4, right: 12 } },
+        { padding: { top: 44, bottom: 6, left: 4, right: 12 } },
         cfg.options.layout || {}
       );
       cfg.options.scales = cfg.options.scales || {};
+      var yScBar = cfg.options.scales.y;
+      if (yScBar !== false) {
+        yScBar = yScBar || {};
+        if (yScBar.grace == null) yScBar.grace = "8%";
+        cfg.options.scales.y = Object.assign({}, yScBar);
+      }
       var xSc = cfg.options.scales.x;
       if (xSc !== false) {
         xSc = xSc || {};

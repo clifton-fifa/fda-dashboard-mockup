@@ -82,6 +82,38 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
   <link rel="stylesheet" href="shared/dash-sidebar.css">
   <link rel="stylesheet" href="shared/dash-layout.css">
 <link rel="stylesheet" href="shared/dash-filters.css">
+<style>
+/* d6 — ตามรูปที่ 6 (ต้นแบบหน้าจอที่ 6) ในเอกสาร 4.3.4 */
+.filters .crumb{color:#0F7F86;font-weight:600;white-space:nowrap}
+body[data-dash="6"] .kpi{position:relative}
+body[data-dash="6"] .kpi .val{white-space:nowrap;overflow-wrap:normal;word-break:normal}
+body[data-dash="6"] .kpi .foot-row{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;margin-top:4px}
+body[data-dash="6"] .kpi .spark{flex:0 1 104px;min-width:60px;height:36px}
+body[data-dash="6"] .kpi .delta{font-size:var(--fs-ui-sm);font-weight:700;color:var(--good);white-space:nowrap}
+body[data-dash="6"] .kpi .delta.down{color:var(--bad)}
+body[data-dash="6"] table.data.co-table{font-size:14px}
+body[data-dash="6"] table.data.co-table thead th{padding:6px 7px;vertical-align:bottom;line-height:1.22}
+body[data-dash="6"] table.data.co-table td{padding:7px 7px;white-space:nowrap}
+body[data-dash="6"] table.data.co-table td:nth-child(2){white-space:normal;min-width:150px}
+table.data tr.row-mega{background:#FFF7E6}
+table.data tr.row-mega:hover{background:#FFEFD0}
+td.cls{font-weight:600}
+.cls-mega{color:#C0392B}.cls-rising{color:#1F7A45}.cls-steady{color:#1F6FB2}.cls-stable{color:#A66A00}.cls-declining{color:#7E57C2}
+tr.empty-row td{text-align:center;color:var(--muted);padding:22px}
+.donut-wrap{display:flex;align-items:center;justify-content:center;gap:14px 22px;flex-wrap:wrap;flex:1}
+.donut-box{position:relative;width:min(100%,280px);height:280px;flex:0 0 auto}
+.donut-center{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;pointer-events:none}
+.donut-center .n{font-size:30px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.donut-center .t{font-size:var(--fs-ui-sm);color:var(--muted)}
+.cls-legend{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:var(--fs-ui-md)}
+.cls-legend li{display:flex;align-items:center;gap:8px;cursor:pointer;border-radius:6px;padding:3px 8px;white-space:nowrap}
+.cls-legend li i{width:12px;height:12px;border-radius:2px;flex:none}
+.cls-legend li b{margin-left:auto;padding-left:10px;font-variant-numeric:tabular-nums}
+.cls-legend li:hover{background:var(--line2)}
+.cls-legend li.active{background:#EAF4FD}
+.cls-legend li.dim{opacity:.45}
+footer .note{color:var(--muted)}
+</style>
 </head><body data-dash="6">
 <div id="dashPage"><script src="shared/dash-sidebar.js"></script>
 <header><div class="brand"><span class="dash-header-logo"><img class="brandLogo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJiIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNDAiIGhlaWdodD0iMjQwIiB2aWV3Qm94PSIwIDAgMjQwIDI0MCI+PGRlZnM+PHN0eWxlPi5ke2ZpbGw6IzAwNGNhZjt9PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImMiPjxwYXRoIGNsYXNzPSJkIiBkPSJtMTE5LjE1LDBjLTIzLjcuMTctNDYuODEsNy4zNS02Ni40MywyMC42NC0xOS42MiwxMy4yOS0zNC44NywzMi4wOS00My44Miw1NC4wM0MtLjA2LDk2LjYxLTIuMzIsMTIwLjcxLDIuNDEsMTQzLjkzYzQuNzMsMjMuMjIsMTYuMjIsNDQuNTIsMzMuMDQsNjEuMjIsMTYuODIsMTYuNywzOC4yLDI4LjA0LDYxLjQ1LDMyLjYsMjMuMjUsNC41Niw0Ny4zNCwyLjEzLDY5LjIyLTYuOTcsMjEuODgtOS4xMSw0MC41Ny0yNC40OSw1My43Mi00NC4yLDEzLjE1LTE5LjcyLDIwLjE2LTQyLjg4LDIwLjE2LTY2LjU4LS4xMS0zMS45NC0xMi45MS02Mi41Mi0zNS41OC04NS4wM0MxODEuNzYsMTIuNDcsMTUxLjA5LS4xMSwxMTkuMTUsMFptMCwyMjQuN2MtMTQuOS4xLTI5LjY0LTIuOTctNDMuMjYtOS4wMi0xMy42MS02LjA1LTI1Ljc4LTE0LjkzLTM1LjY5LTI2LjA2LTkuOTEtMTEuMTItMTcuMzMtMjQuMjMtMjEuNzYtMzguNDUtNC40NC0xNC4yMi01Ljc5LTI5LjIyLTMuOTctNDQuMDFoNzAuNTljMS44LDAsMi4zNS41OCwyLjM1LDIuNDUtLjA1LDIxLjMxLS4wNiw0Mi42MS0uMDQsNjMuOTIsMCwuNTUuMjEsMS4xNi0uMzgsMS43OGwtMjYuNTItMjkuNTNoOC44OHEzLjEsMCwzLjExLTMuMTljMC0zLjEyLS4wNS02LjI0LDAtOS4zNS4wMy0xLjU1LS40OC0yLjI1LTIuMDQtMi4yNS0xMy4wOS4wMy0yNi4xOCwwLTM5LjI2LjAyLS41NCwwLTEuMjktLjE1LTEuNDcuNTEtLjE5LjY2LjQ4LDEuMTQuOSwxLjYsNi45Miw3LjY1LDEzLjg1LDE1LjMsMjAuNzgsMjIuOTUsMTMuNjcsMTUuMTIsMjcuMzQsMzAuMjUsNDEsNDUuMzcsMi43MSwyLjk5LDIuMDQsMi45NCw0LjY2LDAsMTMuNDItMTUuMTgsMjYuODItMzAuMzksNDAuMTktNDUuNjMsOS4xOS0xMC40MiwxOC4zOS0yMC44MywyNy42LTMxLjIzLDguOTUtMTAuMTMsMTcuODktMjAuMjYsMjYuODMtMzAuMzkuMTgtLjE5LjMzLS4zOS40Ny0uNi4yNS0uNDIuODgtLjcyLjY3LTEuMjlzLS44Ny0uMzgtMS4zMy0uMzhjLTQuNDksMC04Ljk3LDAtMTMuNDYtLjAyLS40Ny0uMDEtLjk0LjA4LTEuMzYuMjgtLjQzLjItLjguNDktMS4wOS44Ni04LjI4LDkuMzUtMTYuNTcsMTguNjktMjQuODcsMjguMDQtNS4wNyw1LjcyLTEwLjE0LDExLjQ1LTE1LjIsMTcuMTgtMTAuNTcsMTEuOTItMjEuMTUsMjMuODQtMzEuNzIsMzUuNzUtLjMuNDItLjU3Ljg2LS44LDEuMzMtLjI2LS4zMy0uNDUtLjcxLS41Ni0xLjEyLS4xMS0uNDEtLjEzLS44My0uMDYtMS4yNS0uMDItOC4xOC0uMDItMTYuMzcsMC0yNC41NSwwLTIuNTEuMDgtMi41OSwyLjU2LTIuNiw0LjExLDAsOC4yMy0uMDQsMTIuMzQsMCwxLjUyLjAyLDIuMTEtLjUzLDIuMDgtMi4xNi0uMDktMy41MS0uMDktNy4wMSwwLTEwLjUyLjA0LTEuNjQtLjU5LTIuMTYtMi4wOC0yLjE0LTQuMTcuMDYtOC4zNC0uMDUtMTIuNTMuMDUtMS43Ny4wNC0yLjQyLS41OS0yLjM5LTIuNDYuMDgtNi4zLjA4LTEyLjYsMC0xOC45LS4wMi0xLjgzLjUyLTIuNTQsMi4zNC0yLjUsNC4yNC4xMSw4LjQ4LDAsMTIuNzEuMDYsMS42My4wMywyLjIyLS42NCwyLjE5LTIuMy0uMDYtMy40NCwwLTYuODksMC0xMC4zMywwLTIuNjgtLjAzLTIuNy0yLjYzLTIuN0gxNy41M2M1LjEyLTE4Ljk4LDE1LjQ1LTM2LjE0LDI5LjgyLTQ5LjU2LDE0LjM3LTEzLjQxLDMyLjIxLTIyLjU0LDUxLjQ5LTI2LjM0LDE5LjI4LTMuOCwzOS4yNS0yLjE0LDU3LjY0LDQuODEsMTguMzksNi45NSwzNC40NiwxOC45MSw0Ni40MSwzNC41MiwxMS45NSwxNS42MSwxOS4yOSwzNC4yNSwyMS4xOSw1My44MiwxLjksMTkuNTYtMS43MSwzOS4yNy0xMC40Miw1Ni44OS04LjcxLDE3LjYyLTIyLjE4LDMyLjQ1LTM4Ljg4LDQyLjgyLTE2LjcsMTAuMzYtMzUuOTcsMTUuODUtNTUuNjMsMTUuODNaIi8+PC9nPjwvc3ZnPg==" alt="อย."></span><div>
@@ -91,11 +123,11 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 <div class="filters">
   <div class="static-filters">
     <button type="button" class="dash-menu-btn" aria-label="แสดงเมนู" title="แสดงเมนู" aria-expanded="false"><i class="dash-menu-icon" aria-hidden="true"></i></button>
-    <span>ปี: <select id="fySel"><option value="2562">2562</option><option value="2563">2563</option><option value="2564">2564</option><option value="2565">2565</option><option value="2566">2566</option><option value="2567">2567</option><option value="2568" selected>2568</option><option value="2569">2569</option></select></span>
-    <span>เดือน: <select id="filterMonth"><option value="ALL" selected>ทั้งหมด</option></select></span><span>ธุรกรรม <select id="txnSel"><option value="all">ทั้งหมด</option><option value="import">นำเข้า</option><option value="export">ส่งออก</option></select></span>
-    <span>จังหวัด <select id="provSel"><option value="ทั่วประเทศ">ทั่วประเทศ</option><option value="กรุงเทพฯ">กรุงเทพฯ</option><option value="นนทบุรี">นนทบุรี</option><option value="สมุทรปราการ">สมุทรปราการ</option><option value="เชียงใหม่">เชียงใหม่</option><option value="ชลบุรี">ชลบุรี</option><option value="ขอนแก่น">ขอนแก่น</option></select></span>
+    <span>ประเภทผู้ประกอบการ: <select id="typeSel"><option value="ALL" selected>ทั้งหมด</option><option value="PCL">มหาชน (บมจ.)</option><option value="LTD">จำกัด (บจก.)</option><option value="OTHER">ห้างหุ้นส่วน (หจก.)</option></select></span>
+    <span>ขนาดกิจการ: <select id="sizeSel"><option value="ALL" selected>ทั้งหมด</option><option value="L">ใหญ่</option><option value="M">กลาง</option><option value="S">ย่อม (SME)</option></select></span>
+    <span>จังหวัด: <select id="provSel"><option value="ALL" selected>ทั้งประเทศ</option></select></span>
     <span><button type="button" class="reset-btn" id="resetFiltersBtn">คืนค่า</button></span>
-    
+    <span class="crumb">ภาพรวม &nbsp;›&nbsp; ผู้ประกอบการ</span>
   </div>
   <div class="filterGroups">
     <span class="lbl">กลุ่มผลิตภัณฑ์:</span>
@@ -112,98 +144,264 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 
 <main>
 <section class="kpis" id="kpiRow"></section>
-<section class="card span8 card--row-stretch"><h2>ผู้ประกอบการที่มีศักยภาพ (Top Growth)</h2>
-<div class="table-scroll"><table class="data"><thead><tr><th>ผู้ประกอบการ</th><th class="num">BG %</th><th class="cen">Tier</th><th>กลุ่ม</th><th>จังหวัด</th></tr></thead>
-<tbody id="coBody"></tbody></table></div></section>
-<section class="card span4 card--row-stretch card--chart-grow"><h2>การกระจายตัวรายจังหวัด</h2>
+
+<section class="card span8 card--row-stretch"><h2>ผู้ประกอบการดาวรุ่งจำแนกตามการเติบโตและจำนวนผลิตภัณฑ์ที่ได้รับอนุญาต</h2>
+<div class="cap">เชื่อมข้อมูล อย. (ENTREPRENEUR_IDENTIFY) กับข้อมูลรายได้/กำไรจากตลาดหลักทรัพย์และกรมพัฒนาธุรกิจการค้า · คลิกแถวเพื่อกรองกลุ่มผลิตภัณฑ์</div>
+<div class="table-scroll"><table class="data co-table"><thead><tr>
+<th class="num">อันดับ</th><th>ผู้ประกอบการ</th><th>กลุ่มหลัก</th><th>จังหวัด</th>
+<th class="num">ผลิตภัณฑ์<br>ที่ได้รับอนุญาต</th><th class="num">ผลิตภัณฑ์ใหม่<br>(3 ปี)</th>
+<th class="num">รายได้<br>เติบโต</th><th class="num">กำไร<br>เติบโต</th><th class="num">CAGR<br>รายได้</th><th>การจัดกลุ่ม</th>
+</tr></thead><tbody id="coBody"></tbody></table></div></section>
+
+<section class="card span4 card--row-stretch"><h2>สัดส่วนผู้ประกอบการตามลักษณะการเติบโต</h2>
+<div class="cap">จำแนกจากอัตราการเติบโตของรายได้ กำไร และจำนวนผลิตภัณฑ์ · คลิกเพื่อกรองตาราง</div>
+<div class="donut-wrap">
+  <div class="donut-box"><canvas id="cCls"></canvas><div class="donut-center"><div class="n" id="clsTotal">—</div><div class="t">ผู้ประกอบการ</div></div></div>
+  <ul class="cls-legend" id="clsLegend"></ul>
+</div></section>
+
+<section class="card span7 card--row-stretch card--chart-grow"><h2>การกระจายตัวเชิงพื้นที่ของสถานประกอบการที่ได้รับอนุญาต</h2>
+<div class="cap">จำแนกรายจังหวัด | ที่มา: LOCATION_INFO (LOCATION_PROVINCE_NAME, LATITUDE, LONGTITUDE) · คลิกแท่งเพื่อกรองจังหวัด</div>
 <div class="chart-box lg"><canvas id="cProv"></canvas></div></section>
-<section class="card span12 card--donut-tier"><h2>การกระจาย Tier ผู้ประกอบการ</h2><div class="chart-box chart-box--donut lg"><canvas id="cTier"></canvas></div></section></main>
+
+<section class="card span5 card--row-stretch card--chart-grow"><h2>ผู้ประกอบการรายใหม่และผลิตภัณฑ์ใหม่รายปี</h2>
+<div class="cap">ใช้ประเมินพลวัตของอุตสาหกรรมและการเข้าสู่ตลาดของผู้เล่นรายใหม่</div>
+<div class="chart-box lg"><canvas id="cNew"></canvas></div></section>
+</main>
+<footer><span class="note">การวิเคราะห์ระดับผู้ประกอบการใช้ประเมินว่าการเติบโตของตลาดกระจายตัวไปยังผู้ประกอบการหลายราย หรือกระจุกตัวอยู่ในบริษัทขนาดใหญ่เพียงไม่กี่ราย ซึ่งมีนัยต่อการกำหนดนโยบายส่งเสริม</span></footer>
+
 <script>
 const GROUPS = [{"code": "DRUG", "name": "ยา", "color": "#1F6FB2"}, {"code": "MDC", "name": "เครื่องมือแพทย์", "color": "#12A594"}, {"code": "FOOD", "name": "อาหาร", "color": "#3E9F55"}, {"code": "CMT", "name": "เครื่องสำอาง", "color": "#E8A317"}, {"code": "HERB", "name": "สมุนไพร", "color": "#7E57C2"}, {"code": "TXC", "name": "วัตถุอันตราย", "color": "#C0392B"}, {"code": "NCT", "name": "วัตถุเสพติด", "color": "#7F8C8D"}];
-document.querySelectorAll('.chip').forEach(c => c.addEventListener('click', () => clickGroup(c.dataset.g)));
+/* ลักษณะการเติบโต — สีโดนัท / สีข้อความในตาราง ตามรูปที่ 6 */
+const CLASSES = [
+  {key: "Mega Growth",     color: "#1F6FB2", css: "cls-mega"},
+  {key: "Rising Star",     color: "#12A594", css: "cls-rising"},
+  {key: "Steady Growth",   color: "#3E9F55", css: "cls-steady"},
+  {key: "Stable / Mature", color: "#E8A317", css: "cls-stable"},
+  {key: "Declining",       color: "#7E57C2", css: "cls-declining"}
+];
+const PALETTE = ["#1F6FB2", "#12A594", "#3E9F55", "#E8A317", "#7E57C2", "#C0392B"];
 
-const FILTER = { group: 'ALL', fy: 2568, txn: 'all', prov: 'ทั่วประเทศ' };
+/* ข้อมูลจำลอง — ค่าเริ่มต้น (ทั้งหมด) ตรงกับรูปที่ 6 ในเอกสาร 4.3.4 */
+const DATA = {
+  kpi: {active: 14382, newEnt: 1146, mega: 38, rising: 214},
+  delta: {active: "4.2%", newEnt: "12.8%", mega: "6 ราย", rising: "18.4%"},
+  sparks: {
+    active: [13480, 13520, 13610, 13590, 13720, 13800, 13760, 13950, 14020, 14110, 14260, 14382],
+    newEnt: [820, 850, 845, 900, 940, 930, 985, 1010, 1000, 1040, 1100, 1146],
+    mega:   [29, 31, 30, 33, 31, 34, 32, 35, 33, 36, 37, 38],
+    rising: [150, 158, 155, 166, 172, 169, 181, 188, 186, 197, 205, 214],
+    hhi:    [0.152, 0.155, 0.161, 0.158, 0.164, 0.166, 0.165, 0.171, 0.176, 0.179, 0.188, 0.184]
+  },
+  hhi: {ALL: 0.184, DRUG: 0.226, MDC: 0.198, FOOD: 0.142, CMT: 0.171, HERB: 0.133, TXC: 0.312, NCT: 0.405},
+  companies: [
+    {rank: 1,  name: "บมจ. ไทยไบโอเมด อินดัสตรี",     grp: "DRUG", prov: "ปทุมธานี",     type: "PCL",   size: "L", products: 284, newProducts: 62,  revG: 38.4, profitG: 41.2, cagr: 32.6, cls: "Mega Growth"},
+    {rank: 2,  name: "บจก. เมดิเทค อินโนเวชั่น",       grp: "MDC",  prov: "กรุงเทพฯ",     type: "LTD",   size: "M", products: 146, newProducts: 48,  revG: 34.8, profitG: 29.6, cagr: 28.4, cls: "Mega Growth"},
+    {rank: 3,  name: "บมจ. สยามคอสเมติกส์ กรุ๊ป",      grp: "CMT",  prov: "สมุทรปราการ",  type: "PCL",   size: "L", products: 612, newProducts: 138, revG: 26.2, profitG: 22.4, cagr: 24.1, cls: "Rising Star"},
+    {rank: 4,  name: "บจก. เอไอ เฮลท์ โซลูชั่น",       grp: "MDC",  prov: "กรุงเทพฯ",     type: "LTD",   size: "S", products: 38,  newProducts: 31,  revG: 48.6, profitG: 18.2, cagr: 41.8, cls: "Rising Star"},
+    {rank: 5,  name: "บมจ. ไทยเฮิร์บ เนเชอรัล",        grp: "HERB", prov: "เชียงใหม่",    type: "PCL",   size: "M", products: 204, newProducts: 54,  revG: 21.4, profitG: 19.8, cagr: 18.6, cls: "Rising Star"},
+    {rank: 6,  name: "บจก. สมาร์ทแคร์ เทคโนโลยี",      grp: "MDC",  prov: "ชลบุรี",       type: "LTD",   size: "S", products: 52,  newProducts: 26,  revG: 19.8, profitG: 16.4, cagr: 17.2, cls: "Rising Star"},
+    {rank: 7,  name: "บมจ. ฟาร์มาไทย แมนูแฟคเจอริ่ง",  grp: "DRUG", prov: "นครปฐม",       type: "PCL",   size: "L", products: 418, newProducts: 36,  revG: 11.2, profitG: 9.4,  cagr: 10.6, cls: "Steady Growth"},
+    {rank: 8,  name: "บจก. ไทยฟู้ด ซัพพลีเมนต์",       grp: "FOOD", prov: "สมุทรสาคร",    type: "LTD",   size: "M", products: 326, newProducts: 44,  revG: 9.8,  profitG: 8.6,  cagr: 9.1,  cls: "Steady Growth"},
+    {rank: 9,  name: "บจก. เนเชอรัล บิวตี้ แล็บ",      grp: "CMT",  prov: "นนทบุรี",      type: "LTD",   size: "S", products: 174, newProducts: 41,  revG: 9.2,  profitG: 7.4,  cagr: 8.8,  cls: "Steady Growth"},
+    {rank: 10, name: "บมจ. เมดิคอล ซัพพลาย ไทย",       grp: "MDC",  prov: "ปทุมธานี",     type: "PCL",   size: "L", products: 96,  newProducts: 18,  revG: 8.1,  profitG: 6.9,  cagr: 7.6,  cls: "Steady Growth"},
+    {rank: 11, name: "หจก. กรีนฟาร์ม ฟู้ดส์",          grp: "FOOD", prov: "นครปฐม",       type: "OTHER", size: "S", products: 58,  newProducts: 14,  revG: 7.4,  profitG: 5.9,  cagr: 6.8,  cls: "Steady Growth"},
+    {rank: 12, name: "บจก. อะโกร เคมีภัณฑ์",           grp: "TXC",  prov: "สมุทรปราการ",  type: "LTD",   size: "M", products: 88,  newProducts: 12,  revG: 5.4,  profitG: 4.2,  cagr: 5.1,  cls: "Stable / Mature"},
+    {rank: 13, name: "บจก. ไทยเซฟตี้ ฟาร์มา",          grp: "NCT",  prov: "กรุงเทพฯ",     type: "LTD",   size: "M", products: 24,  newProducts: 3,   revG: 3.6,  profitG: 2.8,  cagr: 3.2,  cls: "Stable / Mature"},
+    {rank: 14, name: "บจก. สยามโภชนา ฟู้ด",            grp: "FOOD", prov: "ชลบุรี",       type: "LTD",   size: "M", products: 210, newProducts: 22,  revG: 2.1,  profitG: -1.4, cagr: 1.8,  cls: "Stable / Mature"},
+    {rank: 15, name: "หจก. สมุนไพรบ้านสวน",            grp: "HERB", prov: "เชียงใหม่",    type: "OTHER", size: "S", products: 64,  newProducts: 5,   revG: -3.2, profitG: -6.5, cagr: -2.4, cls: "Declining"}
+  ],
+  provs: ["กรุงเทพฯ", "สมุทรปราการ", "ปทุมธานี", "นนทบุรี", "ชลบุรี", "นครปฐม", "เชียงใหม่", "อื่น ๆ"],
+  provVals: [4820, 1640, 1280, 1120, 940, 810, 620, 3152],
+  years: ["2564", "2565", "2566", "2567", "2568", "2569F"],
+  newEnt: [570, 650, 745, 840, 1016, 1146],
+  newProd: [1290, 1450, 1720, 2070, 2440, 2750],
+  clsPct: {ALL: [2, 8, 26, 49, 15], DRUG: [3, 9, 28, 46, 14], MDC: [4, 12, 30, 42, 12], FOOD: [1, 6, 24, 52, 17],
+           CMT: [2, 9, 27, 48, 14], HERB: [2, 10, 25, 47, 16], TXC: [1, 4, 20, 55, 20], NCT: [0, 2, 15, 60, 23]},
+  gShare: {ALL: 1, DRUG: .14, MDC: .16, FOOD: .33, CMT: .23, HERB: .09, TXC: .035, NCT: .015},
+  typeShare: {ALL: 1, PCL: .03, LTD: .62, OTHER: .35},
+  sizeShare: {ALL: 1, L: .06, M: .14, S: .80}
+};
+const TOP_N = 7;
+const PROV_TOTAL = DATA.provVals.reduce((s, v) => s + v, 0);
+
+const FILTER = { group: "ALL", type: "ALL", size: "ALL", prov: "ALL", cls: null };
 const charts = {};
 function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
 function setChart(id, cfg) {
   const el = document.getElementById(id);
-  if (!el || typeof Chart === 'undefined') return null;
+  if (!el || typeof Chart === "undefined") return null;
   destroyChart(id);
   charts[id] = new Chart(el, window.dashPrepareChart ? dashPrepareChart(cfg) : cfg);
   return charts[id];
 }
-function gName(code) { return code === 'ALL' ? 'ทั้งหมด' : (GROUPS.find(g => g.code === code)?.name || code); }
-function gColor(code) { return GROUPS.find(g => g.code === code)?.color || '#1F6FB2'; }
+const fmt = n => Math.round(n).toLocaleString("th-TH");
+const pct = v => v.toFixed(1) + "%";
+function provKey(p) { return DATA.provs.includes(p) ? p : "อื่น ๆ"; }
 
 function syncChips(code) {
-  document.querySelectorAll('.chip').forEach(x => x.setAttribute('aria-pressed', x.dataset.g === code ? 'true' : 'false'));
+  document.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", x.dataset.g === code ? "true" : "false"));
 }
 function clickGroup(code) { FILTER.group = code; syncChips(code); applyFilters(); }
-/* ── แถบตัวกรองแบบ d1 ── */
-const TH_MONTH_NAME = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-function initD1FilterBar(){
-  const selM = document.getElementById("filterMonth");
-  if (selM && selM.options.length <= 1)
-    selM.innerHTML = '<option value="ALL" selected>ทั้งหมด</option>' +
-      TH_MONTH_NAME.map((n,i) => '<option value="'+String(i+1).padStart(2,"0")+'">'+n+'</option>').join("");
-}
-function resetDashFilters(){
-  if (typeof FILTER !== "undefined") {
-    if ("group" in FILTER) FILTER.group = "ALL";
-    if ("fy" in FILTER) FILTER.fy = 2568;
-    if ("txn" in FILTER) FILTER.txn = "all";
-    if ("prov" in FILTER) FILTER.prov = "ทั่วประเทศ";
-    if ("region" in FILTER) FILTER.region = "ALL";
-  }
-  if (typeof syncChips === "function") syncChips("ALL");
-  document.querySelectorAll(".chip[data-g]").forEach(c =>
-    c.setAttribute("aria-pressed", c.dataset.g === "ALL" ? "true" : "false"));
-  document.querySelectorAll("#regionChips .chip").forEach(c =>
-    c.setAttribute("aria-pressed", c.dataset.r === "ALL" ? "true" : "false"));
-  const fy = document.getElementById("fySel"); if (fy) fy.value = "2568";
-  const txn = document.getElementById("txnSel"); if (txn) txn.value = "all";
-  const prov = document.getElementById("provSel"); if (prov) {
-    prov.value = prov.querySelector('option[value="ทั่วประเทศ"]') ? "ทั่วประเทศ" :
-      (prov.querySelector('option[value="ALL"]') ? "ALL" : prov.options[0]?.value);
-  }
-  const zone = document.getElementById("zoneSel"); if (zone) zone.value = "ALL";
-  const selM = document.getElementById("filterMonth"); if (selM) selM.value = "ALL";  if (typeof applyFilters === "function") applyFilters();
-  else if (typeof renderAll === "function") renderAll();
-}
-document.getElementById("resetFiltersBtn")?.addEventListener("click", resetDashFilters);
-initD1FilterBar();
 window.onGroupFilter = clickGroup;
-document.getElementById('fySel')?.addEventListener('change', e => { FILTER.fy = e.target.value === "ALL" ? 2568 : +e.target.value; applyFilters(); });
-document.getElementById('txnSel')?.addEventListener('change', e => { FILTER.txn = e.target.value; applyFilters(); });
-document.getElementById('provSel')?.addEventListener('change', e => { FILTER.prov = e.target.value; applyFilters(); });
+document.querySelectorAll(".chip").forEach(c => c.addEventListener("click", () => clickGroup(c.dataset.g)));
+
+/* ── ตัวกรอง ── */
+const provSel = document.getElementById("provSel");
+provSel.insertAdjacentHTML("beforeend", DATA.provs.map(p => `<option value="${p}">${p}</option>`).join(""));
+document.getElementById("typeSel").addEventListener("change", e => { FILTER.type = e.target.value; applyFilters(); });
+document.getElementById("sizeSel").addEventListener("change", e => { FILTER.size = e.target.value; applyFilters(); });
+provSel.addEventListener("change", e => { FILTER.prov = e.target.value; applyFilters(); });
+function setProv(p) { FILTER.prov = p; provSel.value = p; applyFilters(); }
+function resetDashFilters() {
+  Object.assign(FILTER, { group: "ALL", type: "ALL", size: "ALL", prov: "ALL", cls: null });
+  syncChips("ALL");
+  ["typeSel", "sizeSel", "provSel"].forEach(id => { document.getElementById(id).value = "ALL"; });
+  applyFilters();
+}
+document.getElementById("resetFiltersBtn").addEventListener("click", resetDashFilters);
+
 function bindRowFilter(tbodyId) {
   const tb = document.getElementById(tbodyId);
   if (!tb || tb.dataset.bound) return;
-  tb.dataset.bound = '1';
-  tb.addEventListener('click', e => {
-    const tr = e.target.closest('tr.clickable');
+  tb.dataset.bound = "1";
+  tb.addEventListener("click", e => {
+    const tr = e.target.closest("tr.clickable");
     if (tr && tr.dataset.code) clickGroup(tr.dataset.code);
   });
 }
-const DATA = {"companies": [{"name": "บริษัท สยาม ฟาร์มาซูติคอล จำกัด", "bg": 12.4, "tier": "Mega Growth", "prov": "กรุงเทพฯ", "grp": "DRUG"}, {"name": "บริษัท กรุงเทพ เฮลท์แคร์ จำกัด", "bg": 9.1, "tier": "Rising Star", "prov": "นนทบุรี", "grp": "MDC"}, {"name": "บริษัท ไทยยูเนี่ยน เมดิคอล จำกัด", "bg": 7.8, "tier": "Rising Star", "prov": "สมุทรปราการ", "grp": "MDC"}, {"name": "บริษัท เอเชียแปซิฟิก ไบโอเทค จำกัด", "bg": 5.2, "tier": "Stable", "prov": "ชลบุรี", "grp": "DRUG"}, {"name": "บริษัท สกาย คอสเมติกส์ จำกัด", "bg": 11.6, "tier": "Mega Growth", "prov": "กรุงเทพฯ", "grp": "CMT"}, {"name": "บริษัท ภูมิใจไทย เฮิร์บ จำกัด", "bg": 8.9, "tier": "Rising Star", "prov": "เชียงใหม่", "grp": "HERB"}], "provs": ["กรุงเทพฯ", "นนทบุรี", "สมุทรปราการ", "ชลบุรี", "เชียงใหม่", "ขอนแก่น", "ภูเก็ต"], "provVals": [4200, 1850, 1620, 980, 720, 540, 380], "entAll": 14382.0};
-const tierBadge = t => t==='Mega Growth'?'<span class="badge badge-star">Mega Growth</span>':t==='Rising Star'?'<span class="badge badge-rise">Rising Star</span>':'<span class="badge badge-stable">Stable</span>';
-function applyFilters() {
+
+/* สัดส่วนผู้ประกอบการที่เหลือหลังกรอง (ไม่รวม/รวมจังหวัด) — ใช้ปรับขนาดตัวเลขจำลอง */
+function baseFactor() {
+  return DATA.gShare[FILTER.group] * DATA.typeShare[FILTER.type] * DATA.sizeShare[FILTER.size];
+}
+function provFactor() {
+  if (FILTER.prov === "ALL") return 1;
+  return DATA.provVals[DATA.provs.indexOf(FILTER.prov)] / PROV_TOTAL;
+}
+
+/* ── การ์ดตัวชี้วัด ── */
+function sparkSvg(vals, color) {
+  const w = 104, h = 36, lo = Math.min(...vals), hi = Math.max(...vals);
+  const sx = i => i / (vals.length - 1) * w;
+  const sy = v => hi === lo ? h / 2 : h - (v - lo) / (hi - lo) * (h - 8) - 4;
+  const pts = vals.map((v, i) => `${sx(i).toFixed(1)},${sy(v).toFixed(1)}`).join(" ");
+  return `<svg class="spark" viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true">
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.8" stroke-linejoin="round" stroke-linecap="round"/></svg>`;
+}
+function kpiHtml(name, val, delta, deltaUp, color, spark) {
+  return `<div class="kpi"><div class="bar" style="background:${color}"></div>
+    <div class="body"><div class="name">${name}</div><div class="val">${val}</div>
+    <div class="foot-row"><span class="delta ${deltaUp ? "" : "down"}">${deltaUp ? "▲" : "▼"} ${delta}</span>${sparkSvg(spark, color)}</div></div></div>`;
+}
+function renderKpis() {
+  const f = baseFactor() * provFactor();
+  const hhi = DATA.hhi[FILTER.group];
+  const hhiUp = hhi < 0.25;
+  document.getElementById("kpiRow").innerHTML =
+    kpiHtml("ผู้ประกอบการที่ยังดำเนินการ", fmt(DATA.kpi.active * f) + " ราย", DATA.delta.active, true, "#1F6FB2", DATA.sparks.active) +
+    kpiHtml("ผู้ประกอบการรายใหม่ (ปีนี้)", fmt(DATA.kpi.newEnt * f) + " ราย", DATA.delta.newEnt, true, "#12A594", DATA.sparks.newEnt) +
+    kpiHtml("กลุ่ม Mega Growth", fmt(DATA.kpi.mega * f) + " ราย", DATA.delta.mega, true, "#C0392B", DATA.sparks.mega) +
+    kpiHtml("กลุ่ม Rising Star Company", fmt(DATA.kpi.rising * f) + " ราย", DATA.delta.rising, true, "#3E9F55", DATA.sparks.rising) +
+    kpiHtml("ดัชนีการกระจุกตัว (HHI)", hhi.toFixed(3), hhiUp ? "กระจายตัว" : "กระจุกตัวสูง", hhiUp, "#7E57C2", DATA.sparks.hhi);
+}
+
+/* ── ตารางผู้ประกอบการดาวรุ่ง ── */
+function renderTable() {
   const g = FILTER.group;
-  let cos = g==='ALL'?DATA.companies:DATA.companies.filter(c=>c.grp===g);
-  if (FILTER.prov !== 'ทั่วประเทศ') cos = cos.filter(c=>c.prov===FILTER.prov);
-  document.getElementById('kpiRow').innerHTML =
-    `<div class="kpi"><div class="bar" style="background:#1F6FB2"></div><div class="body"><div class="name">Active Entity</div><div class="val">${DATA.entAll.toLocaleString('th-TH')}</div><div class="unit">ราย</div></div></div>`+
-    `<div class="kpi"><div class="bar" style="background:#12A594"></div><div class="body"><div class="name">แสดงในตาราง</div><div class="val">${cos.length}</div><div class="unit">ราย</div></div></div>`+
-    `<div class="kpi"><div class="bar" style="background:#E8A317"></div><div class="body"><div class="name">กลุ่ม</div><div class="val">${gName(g)}</div><div class="unit">${FILTER.prov}</div></div></div>`+
-    `<div class="kpi"><div class="bar" style="background:#7E57C2"></div><div class="body"><div class="name">BG เฉลี่ย</div><div class="val">${cos.length?(cos.reduce((s,c)=>s+c.bg,0)/cos.length).toFixed(1):'—'}</div><div class="unit">%</div></div></div>`;
-  document.getElementById('coBody').innerHTML = cos.map(c=>`<tr class="clickable ${c.grp===g?'active-row':''}" data-code="${c.grp}"><td>${c.name}</td><td class="num">+${c.bg}%</td><td class="cen">${tierBadge(c.tier)}</td><td>${c.grp}</td><td>${c.prov}</td></tr>`).join('');
-  bindRowFilter('coBody');
-  const gScale = g === 'ALL' ? 1 : Math.max(0.15, cos.length / Math.max(DATA.companies.length, 1));
-  const fyM = window.dashFyFactor ? dashFyFactor(FILTER.fy) : 1;
-  const provVals = DATA.provVals.map(v => Math.round(v * gScale * fyM));
-  const tierBase = [48, 312, 1280, 13742].map(v => Math.max(1, Math.round(v * gScale * fyM)));
-  setChart('cProv', {type:'bar', data:{labels:DATA.provs, datasets:[{data:provVals, backgroundColor:'#1F6FB2'}]}, options:{indexAxis:'y', responsive:true, maintainAspectRatio:false, plugins:{legend:{display:false}}}});
-  setChart('cTier', {type:'doughnut', data:{labels:['Mega','Rising','Stable','Declining'], datasets:[{data:tierBase, backgroundColor:['#1F6FB2','#12A594','#95A5A6','#C0392B']}]}, options:{responsive:true, maintainAspectRatio:false, plugins:{legend:{position:'bottom'}}}});
+  const rows = DATA.companies
+    .filter(c => (g === "ALL" || c.grp === g)
+      && (FILTER.type === "ALL" || c.type === FILTER.type)
+      && (FILTER.size === "ALL" || c.size === FILTER.size)
+      && (FILTER.prov === "ALL" || provKey(c.prov) === FILTER.prov)
+      && (!FILTER.cls || c.cls === FILTER.cls))
+    .sort((a, b) => a.rank - b.rank)
+    .slice(0, TOP_N);
+  const tb = document.getElementById("coBody");
+  if (!rows.length) {
+    tb.innerHTML = '<tr class="empty-row"><td colspan="10">ไม่พบผู้ประกอบการตามเงื่อนไขที่เลือก</td></tr>';
+    return;
+  }
+  tb.innerHTML = rows.map((c, i) => {
+    const cls = CLASSES.find(k => k.key === c.cls);
+    return `<tr class="clickable ${c.cls === "Mega Growth" ? "row-mega" : ""} ${c.grp === g ? "active-row" : ""}" data-code="${c.grp}">
+      <td class="num">${i + 1}</td><td>${c.name}</td><td>${c.grp}</td><td>${c.prov}</td>
+      <td class="num">${fmt(c.products)}</td><td class="num">${fmt(c.newProducts)}</td>
+      <td class="num">${pct(c.revG)}</td><td class="num">${pct(c.profitG)}</td><td class="num">${pct(c.cagr)}</td>
+      <td class="cls ${cls ? cls.css : ""}">${c.cls}</td></tr>`;
+  }).join("");
+  bindRowFilter("coBody");
+}
+
+/* ── โดนัทลักษณะการเติบโต ── */
+function toggleCls(key) { FILTER.cls = FILTER.cls === key ? null : key; applyFilters(); }
+function renderDonut() {
+  const vals = DATA.clsPct[FILTER.group];
+  const colors = CLASSES.map(k => !FILTER.cls || FILTER.cls === k.key ? k.color : k.color + "44");
+  document.getElementById("clsTotal").textContent = fmt(DATA.kpi.active * baseFactor() * provFactor());
+  document.getElementById("clsLegend").innerHTML = CLASSES.map((k, i) =>
+    `<li data-k="${k.key}" class="${FILTER.cls === k.key ? "active" : FILTER.cls ? "dim" : ""}"><i style="background:${k.color}"></i>${k.key}<b>${vals[i]}%</b></li>`).join("");
+  document.querySelectorAll("#clsLegend li").forEach(li => li.addEventListener("click", () => toggleCls(li.dataset.k)));
+  const ch = setChart("cCls", {
+    type: "doughnut",
+    data: { labels: CLASSES.map(k => k.key), datasets: [{ data: vals, backgroundColor: colors, borderWidth: 0 }] },
+    options: { responsive: true, maintainAspectRatio: false, cutout: "58%",
+      plugins: { legend: { display: false }, datalabels: false,
+        tooltip: { callbacks: { label: ctx => `${ctx.label}: ${ctx.parsed}%` } } } }
+  });
+  if (ch) ch.options.onClick = (evt, els) => { if (els && els.length) toggleCls(CLASSES[els[0].index].key); };
+}
+
+/* ── การกระจายตัวรายจังหวัด ── */
+function renderProv() {
+  const f = baseFactor();
+  const vals = DATA.provVals.map(v => Math.round(v * f));
+  const colors = DATA.provs.map((p, i) => {
+    const c = PALETTE[i % PALETTE.length];
+    return FILTER.prov === "ALL" || FILTER.prov === p ? c : c + "44";
+  });
+  const ch = setChart("cProv", {
+    type: "bar",
+    data: { labels: DATA.provs, datasets: [{ data: vals, backgroundColor: colors, borderRadius: 3, maxBarThickness: 64 }] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false },
+        datalabels: { anchor: "end", align: "end", offset: 2, color: "#1A2430", formatter: v => fmt(v) },
+        tooltip: { callbacks: { label: ctx => `${fmt(ctx.parsed.y)} แห่ง` } } },
+      scales: { y: { beginAtZero: true, ticks: { display: false }, grid: { color: "#EEF2F6" }, border: { display: false } },
+                x: { grid: { display: false } } } }
+  });
+  if (ch) ch.options.onClick = (evt, els) => {
+    if (!els || !els.length) return;
+    const p = DATA.provs[els[0].index];
+    setProv(FILTER.prov === p ? "ALL" : p);
+  };
+}
+
+/* ── ผู้ประกอบการรายใหม่ / ผลิตภัณฑ์ใหม่รายปี ── */
+function renderNew() {
+  const f = baseFactor() * provFactor();
+  const line = (label, data, color, unit) => ({ label, data: data.map(v => Math.round(v * f)), unit,
+    borderColor: color, backgroundColor: color, pointBackgroundColor: "#fff", pointBorderColor: color,
+    pointRadius: 3.5, pointBorderWidth: 2, borderWidth: 2.2, tension: 0, fill: false });
+  setChart("cNew", {
+    type: "line",
+    data: { labels: DATA.years, datasets: [
+      line("ผู้ประกอบการรายใหม่ (ราย)", DATA.newEnt, "#1F6FB2", "ราย"),
+      line("ผลิตภัณฑ์ใหม่ (ร้อยรายการ)", DATA.newProd, "#12A594", "ร้อยรายการ")] },
+    options: { responsive: true, maintainAspectRatio: false,
+      plugins: { datalabels: false, legend: { position: "top", align: "start" },
+        tooltip: { callbacks: { label: ctx => `${ctx.dataset.label.replace(/ \(.*\)$/, "")}: ${fmt(ctx.parsed.y)} ${ctx.dataset.unit}` } } },
+      scales: { y: { beginAtZero: true, ticks: { display: false }, grid: { color: "#EEF2F6" }, border: { display: false } },
+                x: { grid: { display: false } } } }
+  });
+}
+
+function applyFilters() {
+  renderKpis();
+  renderTable();
+  renderDonut();
+  renderProv();
+  renderNew();
 }
 applyFilters();
 
@@ -221,4 +419,3 @@ renderHeaderAsOf();
 </script>
 <script src="shared/dash-layout.js" defer></script>
 </div>
-</body></html>

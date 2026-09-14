@@ -87,26 +87,66 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
   <link rel="stylesheet" href="shared/dash-layout.css">
 <link rel="stylesheet" href="shared/dash-filters.css">
 <style>
-/* d8 — ตามรูปที่ 8 (ต้นแบบหน้าจอที่ 8) ในเอกสาร 4.3.4 */
+/* d8 — ตามรูปที่ 8 ในเอกสาร 4.3.4 + ข้อสังเกต 14 ก.ย. 2569 */
 .card>h2 .tag-badge{margin-left:auto;background:#E3F5F3;color:#0F7F86;border-radius:999px;padding:2px 12px;font-size:var(--fs-ui-sm);font-weight:700;white-space:nowrap}
-.levers{display:flex;flex-direction:column;gap:12px;margin-top:2px}
-.lever label{display:block;font-size:var(--fs-ui-md);color:var(--ink);line-height:1.35;margin-bottom:3px}
-.lever-row{display:flex;align-items:center;gap:14px}
-.lever-row output{flex:0 0 12.5em;width:12.5em;text-align:right;color:#0F8A8A;font-weight:700;font-size:var(--fs-ui-md);white-space:nowrap}
-.lever input[type=range]{-webkit-appearance:none;appearance:none;flex:1;min-width:0;height:8px;margin:8px 0;border-radius:999px;
+/* มาตรการที่แนะนำ (ผลลัพธ์จาก slider) */
+/* slider */
+.lever input[type=range]{-webkit-appearance:none;appearance:none;display:block;width:100%;height:6px;margin:8px 0 4px;border-radius:999px;
   background:linear-gradient(90deg,#12A594 0,#12A594 var(--pct),#E3E8EE var(--pct),#E3E8EE 100%);outline:none;cursor:pointer}
-.lever input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid #0F8A8A;box-shadow:0 1px 3px rgba(0,0,0,.18)}
+.lever input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid #0F8A8A;box-shadow:0 1px 3px rgba(0,0,0,.18)}
 .lever input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:#fff;border:3px solid #0F8A8A}
 .lever input[type=range]:focus-visible{box-shadow:0 0 0 3px rgba(18,165,148,.25)}
+/* ผลกระทบ */
 body[data-dash="8"] table.data.impact-table td{padding:10px 12px}
+body[data-dash="8"] table.data.impact-table th:first-child,body[data-dash="8"] table.data.impact-table td:first-child{width:38%}
 .chg-good{color:#1F8A55;font-weight:600}.chg-up{color:#2F6FC2;font-weight:600}
-.track-list{list-style:none;margin:4px 0 0;padding:0;display:flex;flex-direction:column;gap:16px}
-.track-head{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:5px}
-.track-head .t{font-size:var(--fs-ui-md);color:var(--ink);line-height:1.35}
-.track-head .s{font-size:var(--fs-ui-md);font-weight:700;white-space:nowrap}
-.track-bar{height:8px;border-radius:999px;background:#E3E8EE;overflow:hidden}
-.track-bar i{display:block;height:100%;border-radius:999px}
 footer .note{color:var(--muted)}
+@media(max-width:1440px){.sim-row{grid-template-columns:16px minmax(0,160px) minmax(40px,1fr) 64px}}
+
+/* ผลการจำลอง 12 สถานะหลัก — สรุปตัวเลข · แถบเดียวต่อขั้น (ฐานจาง + หลังใช้ทึบ) · ขั้นสิ้นสุดแบบตารางย่อ */
+.sim-sum{display:flex;align-items:flex-end;gap:14px;flex-wrap:wrap;padding:2px 0 10px}
+.sim-sum .ss .k{font-size:12.5px;color:var(--muted);line-height:1.2}
+.sim-sum .ss .v{font-size:26px;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums;color:var(--ink)}
+.sim-sum .ss .v small{font-size:13px;font-weight:500;color:var(--muted)}
+.sim-sum .ss .v.teal{color:#0F8A7E}
+.sim-sum .arrow{font-size:20px;color:var(--muted);padding-bottom:4px}
+.sim-sum .save{margin-left:auto;text-align:right}
+.sim-sum .save .v{color:#1F8A55;font-size:22px}
+.sim-head{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:12px;font-weight:700;color:var(--muted);border-bottom:1px solid var(--line);padding:6px 0 3px}
+.sim-legend{display:flex;gap:12px;font-weight:500}
+.sim-legend span{display:inline-flex;align-items:center;gap:5px}
+.sim-legend i{width:12px;height:8px;border-radius:2px;display:inline-block}
+.sim-legend .lg-after{background:#12A594}.sim-legend .lg-base{background:#D5E1EE}
+.sim-list{display:flex;flex-direction:column;gap:7px;padding:6px 0 4px}
+body[data-dash="8"] main .card:has(#simRun) #simRun{flex:1 1 auto;justify-content:space-around}
+.sim-row{display:grid;grid-template-columns:18px minmax(0,190px) minmax(40px,1fr) 72px;align-items:center;gap:8px;font-size:13px}
+.sim-row .n{color:var(--muted);font-variant-numeric:tabular-nums}
+.sim-row .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.sim-row .bar{height:12px;display:flex;align-items:center}
+.sim-row .base{position:relative;display:block;height:12px;background:#D5E1EE;border-radius:3px;min-width:3px}
+.sim-row .after{position:absolute;left:0;top:0;bottom:0;background:#12A594;border-radius:3px}
+.sim-row .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.sim-row .v b{color:var(--ink);font-weight:700}
+.sim-end{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 22px;padding-top:6px}
+.sim-end .se{display:grid;grid-template-columns:18px 1fr auto;gap:6px;font-size:13px;align-items:center}
+.sim-end .se .n{color:var(--muted)}
+.sim-end .se .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--ink)}
+.sim-end .se .v{font-variant-numeric:tabular-nums;color:var(--muted);white-space:nowrap}
+.sim-end .se .v b{color:var(--ink)}
+
+/* การ์ดตัวแปรมาตรการ — แบบกระชับ */
+.rec{border:1px solid #D5ECE8;background:#F4FAF9;border-radius:8px;padding:8px 12px;margin:0 0 10px;cursor:help}
+.rec .rec-top{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.rec .lbl{font-size:12px;color:#0F7F86;font-weight:700}
+.rec .rec-tag{font-size:11px;font-weight:600;color:#8A5A00;background:#FFF5DD;border-radius:999px;padding:0 8px;white-space:nowrap}
+.rec .name{font-size:17px;font-weight:700;color:var(--ink);line-height:1.3;margin-top:1px}
+.rec .meta{font-size:12.5px;color:var(--muted);line-height:1.35}
+.rec.none .name{color:var(--muted)}
+.levers{display:flex;flex-direction:column;flex:1;justify-content:space-between;gap:6px}
+.lever{cursor:help}
+.lever-top{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.lever-top label{font-size:14px;color:var(--ink);line-height:1.3;cursor:help;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lever-top output{font-size:14px;font-weight:700;color:#0F8A8A;white-space:nowrap;font-variant-numeric:tabular-nums}
 </style>
 </head><body data-dash="8">
 <div id="dashPage"><script src="shared/dash-sidebar.js"></script>
@@ -118,7 +158,6 @@ footer .note{color:var(--muted)}
   <div class="static-filters">
     <button type="button" class="dash-menu-btn" aria-label="แสดงเมนู" title="แสดงเมนู" aria-expanded="false"><i class="dash-menu-icon" aria-hidden="true"></i></button>
     <span>ผลิตภัณฑ์เป้าหมาย: <select id="prodSel" aria-label="ผลิตภัณฑ์เป้าหมาย"></select></span>
-    <span>มาตรการ: <select id="measureSel" aria-label="มาตรการ"></select></span>
     <span>ระยะเวลาประเมิน: <select id="horizonSel" aria-label="ระยะเวลาประเมิน"><option value="1">1 ปี</option><option value="3" selected>3 ปี</option><option value="5">5 ปี</option></select></span>
     <span><button type="button" class="reset-btn" id="resetFiltersBtn">คืนค่า</button></span>
   </div>
@@ -126,121 +165,139 @@ footer .note{color:var(--muted)}
 
 <main>
 <section class="card span5 card--row-stretch"><h2>ตัวแปรมาตรการที่ปรับได้ (Policy Levers)</h2>
-<div class="cap">ผู้ใช้ปรับค่าเพื่อดูผลกระทบต่อ RBI และ Time-to-Market แบบทันที</div>
+<div class="cap">ทุกตัวแปรปรับเวลาของขั้นตอนใน 12 สถานะหลัก</div>
+<div class="rec" id="rec" aria-live="polite"></div>
 <div class="levers" id="levers"></div></section>
 
-<section class="card span7 card--row-stretch card--chart-grow"><h2>ผลการจำลองสถานการณ์ : ระยะเวลาสู่ตลาด (Time-to-Market)<span class="tag-badge">Prescriptive</span></h2>
-<div class="cap">เปรียบเทียบสถานการณ์ฐาน (Baseline) กับสถานการณ์หลังใช้มาตรการ | หน่วย: วันทำการ</div>
-<div class="chart-box lg"><canvas id="cTtm"></canvas></div></section>
+<section class="card span7 card--row-stretch"><h2><span>ผลการจำลองสถานการณ์ : ระยะเวลาเฉลี่ยตาม 12 สถานะหลัก</span><span class="tag-badge">Prescriptive</span></h2>
+<div class="cap">ค่าตั้งต้น = วันเฉลี่ยของ 12 สถานะหลัก (MILE_STONE_STATUS) ปีงบ 2568 · หน่วย: วันทำการ</div>
+<div class="sim-sum" id="simSum"></div>
+<div class="sim-head"><span>ระหว่างดำเนินการ · วันเฉลี่ยในขั้น</span>
+  <span class="sim-legend"><span><i class="lg-after"></i>หลังใช้มาตรการ</span><span><i class="lg-base"></i>สถานการณ์ฐาน</span></span></div>
+<div class="sim-list" id="simRun"></div>
+<div class="sim-head"><span>สิ้นสุดคำขอ · วันเฉลี่ยจนสิ้นสุด</span></div>
+<div class="sim-end" id="simEnd"></div></section>
 
-<section class="card span7 card--row-stretch"><h2>ผลกระทบที่คาดว่าจะเกิดขึ้นจากมาตรการ</h2>
+<section class="card span12"><h2>ผลกระทบที่คาดว่าจะเกิดขึ้นจากมาตรการ</h2>
 <div class="cap">ประเมินภายใต้สมมติฐานว่ามาตรฐานด้านความปลอดภัยและประสิทธิผลคงเดิม</div>
 <div class="table-scroll"><table class="data impact-table"><thead><tr><th>ตัวชี้วัด</th><th>สถานการณ์ฐาน</th><th>หลังใช้มาตรการ</th><th>เปลี่ยนแปลง</th></tr></thead>
 <tbody id="impactBody"></tbody></table></div></section>
-
-<section class="card span5 card--row-stretch"><h2>สถานะการติดตามข้อเสนอเชิงนโยบาย</h2>
-<div class="cap">เชื่อมกับแผนปฏิบัติการและผู้รับผิดชอบ เพื่อติดตามผลหลังนำไปปฏิบัติ</div>
-<ul class="track-list" id="trackList"></ul></section>
 </main>
-<footer><span class="note">การจำลองสถานการณ์ใช้แบบจำลอง Survival Analysis (Cox Proportional Hazards) ร่วมกับ Process Mining โดยผลลัพธ์เป็นค่าประมาณการที่ต้องผ่านการสอบทานโดยผู้เชี่ยวชาญก่อนนำไปใช้ตัดสินใจ</span></footer>
+<footer><span class="note">การจำลองใช้วันเฉลี่ยของ 12 สถานะหลักเป็นค่าตั้งต้น และปรับเฉพาะระยะเวลาในแต่ละขั้นตอน โดยจำนวนขั้นตอนตาม พ.ร.บ. คงเดิม · ค่าน้ำหนักของตัวแปรเป็นค่าสาธิต รอกำหนดร่วมกับผู้เชี่ยวชาญ · แบบจำลอง Survival Analysis (Cox Proportional Hazards) ร่วมกับ Process Mining ผลลัพธ์เป็นค่าประมาณการที่ต้องผ่านการสอบทานโดยผู้เชี่ยวชาญก่อนนำไปใช้ตัดสินใจ</span></footer>
 
 <script>
-/* ข้อมูลจำลอง — ค่าเริ่มต้น (SaMD / AI · Abridged Pathway · 3 ปี) ตรงกับรูปที่ 8 ในเอกสาร 4.3.4 */
-const CATS = ["จดแจ้ง", "แจ้งรายละเอียด", ["ขึ้นทะเบียน", "ความเสี่ยงต่ำ"], ["ขึ้นทะเบียน", "ความเสี่ยงสูง"], ["แก้ไข", "เปลี่ยนแปลง"]];
+/* ข้อมูลจำลอง — ค่าเริ่มต้น (SaMD / AI · 3 ปี) ให้ผลตรงกับรูปที่ 8: Time-to-Market −34.9%, RBI 71.3 → 48.6
+   ค่าตั้งต้นวันเฉลี่ย 12 สถานะหลักของ SaMD / AI ตรงกับหน้าจอที่ 4
+   ตามที่ประชุม 14 ก.ย. 2569: slider ทุกตัวเป็นเรื่องเวลา ผูกกับขั้นตอนใน 12 สถานะหลัก (factor จากการวิเคราะห์คอขวดหน้าจอที่ 4) */
+const STEPS = ["ยื่นคำขอ", "ชำระเงิน", "รับคำขอ", "เจ้าหน้าที่ตรวจ/ประเมินเอกสาร", "ขอคำชี้แจง", "ผปก.ชี้แจง", "สรุปผลการพิจารณา", "ชำระเงินค่าธรรมเนียม",
+               "เสร็จสิ้น", "คืนคำขอ", "คืนโดยระบบ", "ผู้ประกอบการยกเลิก"];
 
-/* ตัวแปรมาตรการ — ค่า 0–100 */
+/* ตัวแปรมาตรการ 6 ตัว (0–100) · steps = ดัชนีขั้นใน STEPS ที่ตัวแปรลดเวลาโดยตรง */
 const LEVERS = [
-  {key: "steps",    label: "ลดจำนวนขั้นตอนพิจารณา",              fmt: v => `-${v}%`},
-  {key: "reliance", label: "ใช้ Regulatory Reliance",             fmt: v => `${v}% ของคำขอ`},
-  {key: "presub",   label: "เพิ่ม Pre-submission Consultation",   fmt: v => `ครอบคลุม ${v}%`},
-  {key: "pccp",     label: "ใช้ Predetermined Change Control Plan", fmt: v => `${v}% ของ Minor Change`},
-  {key: "staff",    label: "เพิ่มอัตรากำลังผู้ประเมิน",             fmt: v => `+${v}%`},
-  {key: "dup",      label: "ลดเอกสารที่ยื่นซ้ำซ้อน",               fmt: v => `-${v}%`}
+  {key: "queue",    short: "รอคิว", label: "ลดเวลารอคิวรับเรื่องและตรวจเอกสาร", fmt: v => `-${v}%`, def: 30, steps: [2, 3],
+   note: "ลดเวลารอคิวก่อนรับเรื่องและระหว่างตรวจ/ประเมินเอกสาร", field: "DAY_WORK ของสถานะรับคำขอ และเจ้าหน้าที่ตรวจ/ประเมินเอกสาร"},
+  {key: "clarify",  short: "ขอคำชี้แจง", label: "ลดเวลาขอคำชี้แจง–ผู้ประกอบการชี้แจง", fmt: v => `-${v}%`, def: 40, steps: [4, 5],
+   note: "ลดเวลาที่หยุดนับระหว่างรอผู้ประกอบการชี้แจงหรือส่งเอกสารเพิ่ม", field: "DAY_STOP_CLOCK ของสถานะขอคำชี้แจง และ ผปก.ชี้แจง"},
+  {key: "decision", short: "สรุปผล", label: "ลดเวลาสรุปผลการพิจารณา", fmt: v => `-${v}%`, def: 30, steps: [6],
+   note: "ลดเวลาจัดทำสรุปผลและลงนามอนุมัติ", field: "DAY_WORK ของสถานะสรุปผลการพิจารณา"},
+  {key: "payment",  short: "ยื่นและชำระเงิน", label: "ลดเวลายื่นคำขอและชำระเงิน", fmt: v => `-${v}%`, def: 20, steps: [0, 1, 7],
+   note: "ยื่นคำขอและชำระค่าธรรมเนียมทางอิเล็กทรอนิกส์", field: "DAY_WORK ของสถานะยื่นคำขอ ชำระเงิน และชำระเงินค่าธรรมเนียม"},
+  {key: "returns",  short: "การคืนคำขอ", label: "ลดการคืนคำขอ", fmt: v => `-${v}%`, def: 30, steps: [],
+   note: "ลดคำขอที่ถูกคืนหรือคืนโดยระบบด้วยคู่มือ วิดีโอ และการให้คำปรึกษาก่อนยื่น ทำให้ลดรอบชี้แจงและเวลาที่เสียจากการยื่นซ้ำ", field: "สัดส่วนสถานะคืนคำขอ และคืนโดยระบบ"},
+  {key: "staff",    short: "อัตรากำลัง", label: "เพิ่มอัตรากำลังผู้ประเมิน", fmt: v => `+${v}%`, def: 20, steps: [],
+   note: "เพิ่มกำลังผู้ประเมิน ลดเวลารอคิวในขั้นรับคำขอ ตรวจ/ประเมินเอกสาร และสรุปผล", field: "จำนวนคำขอต่อผู้ประเมิน"}
 ];
-/* ชุดมาตรการสำเร็จรูป — Abridged Pathway = ค่าในรูปที่ 8 */
-const MEASURES = [
-  {id: "ABR",  label: "Abridged Pathway",             scen: "A", v: {steps: 30, reliance: 55, presub: 70, pccp: 60, staff: 20, dup: 45}},
-  {id: "REL",  label: "Regulatory Reliance Pathway",  scen: "B", v: {steps: 15, reliance: 80, presub: 30, pccp: 20, staff: 10, dup: 30}},
-  {id: "FAST", label: "Fast-track ผลิตภัณฑ์ดาวรุ่ง",   scen: "C", v: {steps: 40, reliance: 30, presub: 60, pccp: 40, staff: 35, dup: 40}},
-  {id: "DIGI", label: "e-Submission และลดเอกสาร",      scen: "D", v: {steps: 10, reliance: 10, presub: 20, pccp: 30, staff: 5,  dup: 80}}
-];
-/* น้ำหนักผลของแต่ละตัวแปรต่อแต่ละตัวชี้วัด — ผลที่ค่าในรูปที่ 8 ถูกสอบเทียบให้เท่ากับ TARGET */
-const WEIGHTS = {
-  time:     {steps: .40, reliance: .20, presub: .06, pccp: .05, staff: .15, dup: .04},
-  rbi:      {steps: .30, reliance: .15, presub: .15, pccp: .10, staff: .10, dup: .20},
-  backlog:  {steps: .25, reliance: .20, presub: .05, pccp: .05, staff: .35, dup: .10},
-  rework:   {steps: .05, reliance: .05, presub: .45, pccp: .10, staff: 0,   dup: .35},
-  workload: {steps: .15, reliance: .15, presub: 0,   pccp: 0,   staff: .60, dup: .10}
-};
-const TARGET = {rbi: .318, backlog: .422, reworkPts: 12.8, workload: .158, tradePct: .159};
-
-const PRODUCTS = [
-  {id: "SAMD", label: "SaMD / AI",
-   base: {cats: [118, 187, 196, 284, 143], scen: [93, 128, 134, 170, 81], rbi: 71.3, backlog: 1284, rework: 34.2, workload: 164, trade: 24276},
-   track: [["จัดทำแนวทาง Classification สำหรับ SaMD/AI", 100], ["พัฒนา Pre-submission Consultation", 60], ["ทบทวนหลักเกณฑ์ Minor / Major Change", 45],
-           ["จัดทำหลักเกณฑ์ Regulatory Reliance", 18], ["ปรับปรุงระบบยื่นคำขออิเล็กทรอนิกส์", 12]]},
-  {id: "BIO", label: "ยาชีววัตถุ",
-   base: {cats: [96, 164, 205, 312, 176], scen: [78, 118, 148, 196, 104], rbi: 78.4, backlog: 486, rework: 41.6, workload: 142, trade: 38460},
-   track: [["จัดทำแนวทางยาชีววัตถุคล้ายคลึง (Biosimilar)", 100], ["เชื่อมผลประเมินหน่วยงานอ้างอิงต่างประเทศ", 55], ["ทบทวนข้อกำหนดข้อมูลการศึกษาทางคลินิก", 35],
-           ["จัดทำคู่มือยื่นคำขอยาชีววัตถุ", 20], ["เพิ่มผู้ประเมินด้านชีววัตถุ", 10]]},
-  {id: "PROBIO", label: "โพรไบโอติก",
-   base: {cats: [14, 38, 52, 88, 31], scen: [11, 27, 38, 57, 18], rbi: 38.6, backlog: 624, rework: 18.4, workload: 212, trade: 3840},
-   track: [["ปรับรายชื่อจุลินทรีย์โพรไบโอติกที่อนุญาต", 100], ["จัดทำแนวทางกล่าวอ้างทางสุขภาพ", 70], ["เชื่อมข้อมูลฉลากกับระบบ e-Submission", 40],
-           ["ทบทวนเกณฑ์ตรวจประเมินสถานที่ผลิต", 25], ["พัฒนาระบบคัดกรองเอกสารอัตโนมัติ", 8]]},
-  {id: "COSME", label: "เวชสำอาง",
-   base: {cats: [3, 9, 18, 46, 12], scen: [2, 6, 12, 29, 7], rbi: 24.2, backlog: 318, rework: 9.8, workload: 486, trade: 12640},
-   track: [["ปรับปรุงบัญชีสารห้ามใช้/ควบคุม", 100], ["จัดทำแนวทางโฆษณาเวชสำอาง", 65], ["เชื่อมระบบจดแจ้งกับฐานข้อมูลสาร", 50],
-           ["ทบทวนการตรวจสอบหลังออกสู่ตลาด", 20], ["พัฒนาแดชบอร์ดเฝ้าระวังเครื่องสำอาง", 10]]}
-];
+const STAFF_STEPS = [2, 3, 6], QUEUE_SHARE = 0.6;   // สัดส่วนเวลาที่เป็นการรอคิวในขั้นที่เพิ่มกำลังคนแล้วลดได้
+const RET_CLARIFY = 0.3;                            // ลดการคืนคำขอ → ลดเวลาขั้นขอคำชี้แจง/ชี้แจง
+const OTHER_K = 0.6362;                             // เวลาระหว่างขั้น/ยื่นซ้ำ · สอบเทียบให้ค่าเริ่มต้น SaMD / AI ลด 34.9% (รูปที่ 8)
+const RETURN_COUNT_K = 0.6;                         // ลดการคืนคำขอ 100% → จำนวนคืนคำขอลด 60%
 const HORIZON = {1: .45, 3: 1, 5: 1.15};
 
-const STATE = { prod: "SAMD", measure: "ABR", horizon: 3, v: {...MEASURES[0].v} };
-const charts = {};
-function destroyChart(id) { if (charts[id]) { charts[id].destroy(); delete charts[id]; } }
-function setChart(id, cfg) {
-  const el = document.getElementById(id);
-  if (!el || typeof Chart === "undefined") return null;
-  destroyChart(id);
-  charts[id] = new Chart(el, window.dashPrepareChart ? dashPrepareChart(cfg) : cfg);
-  return charts[id];
-}
-const fmt = (n, d = 0) => Number(n).toLocaleString("th-TH", {minimumFractionDigits: d, maximumFractionDigits: d});
-const curProd = () => PRODUCTS.find(p => p.id === STATE.prod);
-const curMeasure = () => MEASURES.find(m => m.id === STATE.measure);
+/* ชุดมาตรการ (ชื่อจากเล่มส่งมอบงวด 2) — ใช้สรุป "มาตรการที่แนะนำ" จากค่าที่เลื่อน */
+const PACKAGES = [
+  {name: "Abridged Pathway / Regulatory Reliance", desc: "ใช้ผลการประเมินของหน่วยงานที่ได้รับการยอมรับ ลดเวลาประเมินเอกสารและสรุปผล",
+   v: {queue: 35, clarify: 40, decision: 35, payment: 15, returns: 30, staff: 15}},
+  {name: "Pre-submission Consultation", desc: "ให้คำปรึกษาก่อนยื่นพร้อมคู่มือ/วิดีโอ ลดการขอคำชี้แจงและการคืนคำขอ",
+   v: {queue: 10, clarify: 60, decision: 10, payment: 10, returns: 70, staff: 5}},
+  {name: "Fast Track / Priority Review", desc: "จัดคิวพิจารณาเร่งด่วนและเพิ่มกำลังผู้ประเมินสำหรับผลิตภัณฑ์ที่มีศักยภาพ",
+   v: {queue: 60, clarify: 20, decision: 40, payment: 10, returns: 10, staff: 60}},
+  {name: "e-Submission และลดเอกสารซ้ำซ้อน", desc: "ยื่นคำขอและชำระเงินทางอิเล็กทรอนิกส์ เชื่อมโยงเอกสารระหว่างหน่วยงาน",
+   v: {queue: 30, clarify: 15, decision: 10, payment: 70, returns: 30, staff: 5}}
+];
 
-/* สัดส่วนผลของมาตรการเทียบกับค่าในรูปที่ 8 (ค่า Abridged Pathway · 3 ปี = 1) */
+/* ตัวชี้วัดผลกระทบอื่น — น้ำหนักของตัวแปร (เทียบค่าเริ่มต้น = ผลตามรูปที่ 8) */
+const WEIGHTS = {
+  rbi:      {queue: .25, clarify: .20, decision: .15, payment: .05, returns: .20, staff: .15},
+  inprog:   {queue: .30, clarify: .15, decision: .15, payment: .05, returns: .05, staff: .30},
+  rework:   {queue: 0,   clarify: .40, decision: 0,   payment: 0,   returns: .60, staff: 0},
+  workload: {queue: .10, clarify: 0,   decision: 0,   payment: 0,   returns: .20, staff: .70}
+};
+const TARGET = {rbi: .318, inprog: .422, reworkPts: 12.8, workload: .158, tradePct: .159, ttm: .349};
+
+const PRODUCTS = [
+  {id: "SAMD",   label: "SaMD / AI",   ms: [3, 5, 6, 38, 21, 26, 17, 4, 148, 96, 31, 58], rbi: 71.3, inprog: 1284, rework: 34.2, workload: 164, trade: 24276},
+  {id: "BIO",    label: "ยาชีววัตถุ",   ms: [3, 4, 7, 34, 21, 25, 18, 4, 125, 96, 36, 57], rbi: 78.4, inprog: 486,  rework: 41.6, workload: 142, trade: 38460},
+  {id: "PROBIO", label: "โพรไบโอติก",  ms: [1, 2, 2, 12, 8, 9, 6, 2, 42, 32, 13, 20],     rbi: 38.6, inprog: 624,  rework: 18.4, workload: 212, trade: 3840},
+  {id: "COSME",  label: "เวชสำอาง",    ms: [1, 1, 1, 5, 2, 2, 1, 1, 15, 11, 6, 9],        rbi: 24.2, inprog: 318,  rework: 9.8,  workload: 486, trade: 12640}
+];
+const defaults = () => Object.fromEntries(LEVERS.map(l => [l.key, l.def]));
+const STATE = { prod: "SAMD", horizon: 3, v: defaults() };
+const fmt = (n, d = 0) => Number(n).toLocaleString("th-TH", {minimumFractionDigits: d, maximumFractionDigits: d});
+const fmtDay = n => n < 10 && Math.abs(n - Math.round(n)) >= 0.05 ? fmt(n, 1) : fmt(n);
+const curProd = () => PRODUCTS.find(p => p.id === STATE.prod);
+const clamp = x => Math.max(0, Math.min(0.85, x));
+
+/* ── แบบจำลอง: ลดเวลาในขั้น 1–8 ตามตัวแปร แล้วคำนวณ Time-to-Market (ขั้น 9 เสร็จสิ้น) ── */
+function ttmFor(v) {
+  const ms = curProd().ms, h = HORIZON[STATE.horizon];
+  const run = ms.slice(0, 8), sum = run.reduce((a, b) => a + b, 0), other = Math.max(0, ms[8] - sum);
+  const after = run.map((d, i) => {
+    const l = LEVERS.find(x => x.steps.includes(i));
+    let f = 1 - clamp(h * (l ? v[l.key] : 0) / 100);
+    if (STAFF_STEPS.includes(i)) f *= 1 - clamp(QUEUE_SHARE * (1 - 1 / (1 + h * v.staff / 100)));
+    if (i === 4 || i === 5) f *= 1 - clamp(RET_CLARIFY * h * v.returns / 100);
+    return d * f;
+  });
+  const ratio = (after.reduce((a, b) => a + b, 0) + other * (1 - clamp(OTHER_K * h * (v.returns + v.queue) / 200))) / (sum + other);
+  return {after, ratio};
+}
+function simulate() {
+  const ms = curProd().ms, r = ttmFor(STATE.v), h = HORIZON[STATE.horizon];
+  const after = [...r.after, ...ms.slice(8).map(d => d * r.ratio)];
+  const retCut = clamp(RETURN_COUNT_K * h * STATE.v.returns / 100);
+  // วันที่ลดได้จากแต่ละตัวแปร = Time-to-Market เมื่อไม่ใช้ตัวแปรนั้น − Time-to-Market ปัจจุบัน
+  const contrib = LEVERS.map(l => ({l, days: ms[8] * (ttmFor({...STATE.v, [l.key]: 0}).ratio - r.ratio)}));
+  return {base: ms, after, ttmRed: 1 - r.ratio, contrib, retCut};
+}
 function effectRatio(metric) {
-  const w = WEIGHTS[metric], ref = MEASURES[0].v;
+  const w = WEIGHTS[metric], ref = defaults();
   const score = v => Object.keys(w).reduce((s, k) => s + w[k] * v[k], 0);
   return score(STATE.v) / score(ref) * HORIZON[STATE.horizon];
 }
-const clamp01 = x => Math.max(0, Math.min(0.85, x));
 
 /* ── ตัวกรอง ── */
-const prodSel = document.getElementById("prodSel");
-const measureSel = document.getElementById("measureSel");
-const horizonSel = document.getElementById("horizonSel");
+const prodSel = document.getElementById("prodSel"), horizonSel = document.getElementById("horizonSel");
 prodSel.innerHTML = PRODUCTS.map(p => `<option value="${p.id}">${p.label}</option>`).join("");
-measureSel.innerHTML = MEASURES.map(m => `<option value="${m.id}">${m.label}</option>`).join("");
 prodSel.addEventListener("change", e => { STATE.prod = e.target.value; render(); });
-measureSel.addEventListener("change", e => { STATE.measure = e.target.value; STATE.v = {...curMeasure().v}; renderLevers(); render(); });
 horizonSel.addEventListener("change", e => { STATE.horizon = +e.target.value; render(); });
 document.getElementById("resetFiltersBtn").addEventListener("click", () => {
-  Object.assign(STATE, { prod: "SAMD", measure: "ABR", horizon: 3, v: {...MEASURES[0].v} });
-  prodSel.value = "SAMD"; measureSel.value = "ABR"; horizonSel.value = "3";
+  Object.assign(STATE, { prod: "SAMD", horizon: 3, v: defaults() });
+  prodSel.value = "SAMD"; horizonSel.value = "3";
   renderLevers(); render();
 });
 
-/* ── ตัวแปรมาตรการ (slider) ── */
-function paintRange(input) {
-  input.style.setProperty("--pct", input.value + "%");
+/* ── slider ── */
+function paintRange(input) { input.style.setProperty("--pct", input.value + "%"); }
+function leverSteps(l) {
+  if (l.key === "staff") return STAFF_STEPS.map(i => `${i + 1} ${STEPS[i]}`).join(", ");
+  if (l.key === "returns") return "10 คืนคำขอ, 11 คืนโดยระบบ (และ 5–6 ขอคำชี้แจง/ชี้แจง)";
+  return l.steps.map(i => `${i + 1} ${STEPS[i]}`).join(", ");
 }
 function renderLevers() {
   const box = document.getElementById("levers");
-  box.innerHTML = LEVERS.map(l => `<div class="lever">
-      <label for="lv-${l.key}">${l.label}</label>
-      <div class="lever-row"><input type="range" id="lv-${l.key}" data-k="${l.key}" min="0" max="100" step="5" value="${STATE.v[l.key]}">
-      <output id="out-${l.key}">${l.fmt(STATE.v[l.key])}</output></div></div>`).join("");
+  box.innerHTML = LEVERS.map(l => `<div class="lever" title="${l.note}\nมีผลต่อขั้น: ${leverSteps(l)}\nข้อมูลอ้างอิง: ${l.field}">
+      <div class="lever-top"><label for="lv-${l.key}">${l.label}</label><output id="out-${l.key}">${l.fmt(STATE.v[l.key])}</output></div>
+      <input type="range" id="lv-${l.key}" data-k="${l.key}" min="0" max="100" step="5" value="${STATE.v[l.key]}"></div>`).join("");
   box.querySelectorAll("input[type=range]").forEach(inp => {
     paintRange(inp);
     inp.addEventListener("input", () => {
@@ -253,85 +310,81 @@ function renderLevers() {
   });
 }
 
-/* ── ผลการจำลอง ── */
-function scenarioCats() {
-  const b = curProd().base, r = effectRatio("time");
-  return b.cats.map((base, i) => Math.round(base * (1 - clamp01((1 - b.scen[i] / base) * r))));
+/* ── มาตรการที่แนะนำ (ผลลัพธ์จาก slider) ── */
+function renderRec(sim) {
+  const v = STATE.v, keys = LEVERS.map(l => l.key), el = document.getElementById("rec");
+  const norm = x => Math.sqrt(keys.reduce((s, k) => s + x[k] * x[k], 0));
+  const NOTE = "ชื่อมาตรการมาจากเล่มส่งมอบงวด 2 · เกณฑ์การเลือกยังเป็นแบบจำลองสาธิต รอผู้เชี่ยวชาญกำหนด (Quadrant หน้าจอ 5 · ขั้นคอขวดหน้าจอ 4 · ระดับความเสี่ยงหน้าจอ 7)";
+  const top = '<div class="rec-top"><span class="lbl">มาตรการที่แนะนำ</span><span class="rec-tag">มาตรการตัวอย่าง</span></div>';
+  if (norm(v) === 0) {
+    el.className = "rec none"; el.title = NOTE;
+    el.innerHTML = top + '<div class="name">ยังไม่ได้ปรับตัวแปรมาตรการ</div><div class="meta">เลื่อนค่าอย่างน้อย 1 ตัวเพื่อจำลองผล</div>';
+    return null;
+  }
+  const best = PACKAGES.map(p => ({p, sim: keys.reduce((s, k) => s + v[k] * p.v[k], 0) / (norm(v) * norm(p.v))})).sort((a, b) => b.sim - a.sim)[0];
+  const drivers = sim.contrib.filter(c => c.days >= 0.5).sort((a, b) => b.days - a.days).slice(0, 2).map(c => `${c.l.short} ${fmt(c.days)} วัน`);
+  el.className = "rec";
+  el.title = `${best.p.desc}\nใกล้เคียงชุดมาตรการ ${fmt(best.sim * 100)}%\n${NOTE}`;
+  el.innerHTML = `${top}<div class="name">${best.p.name}</div>
+    <div class="meta">ลดเวลาได้มากสุด: ${drivers.join(" · ") || "—"}</div>`;
+  return best.p;
 }
-const avg = a => a.reduce((s, v) => s + v, 0) / a.length;
-function renderChart() {
-  const b = curProd().base, scen = scenarioCats();
-  const labels = [...CATS, "รวมเฉลี่ย"];
-  setChart("cTtm", {
-    type: "bar",
-    data: { labels, datasets: [
-      { label: "สถานการณ์ฐาน (Baseline)", data: [...b.cats, Math.round(avg(b.cats))], backgroundColor: "#2F6FC2", borderRadius: 2, categoryPercentage: .62, barPercentage: .96 },
-      { label: `หลังใช้มาตรการ (Scenario ${curMeasure().scen})`, data: [...scen, Math.round(avg(scen))], backgroundColor: "#12A594", borderRadius: 2, categoryPercentage: .62, barPercentage: .96 }] },
-    options: { responsive: true, maintainAspectRatio: false,
-      plugins: { datalabels: false, legend: { position: "top", align: "start", labels: { usePointStyle: true, pointStyle: "rect" } },
-        tooltip: { callbacks: { title: items => [].concat(items[0].label).join(""), label: ctx => `${ctx.dataset.label}: ${fmt(ctx.parsed.y)} วันทำการ` } } },
-      scales: { y: { beginAtZero: true, ticks: { display: false }, grid: { color: "#EEF2F6" }, border: { display: false } },
-                x: { grid: { display: false }, ticks: { maxRotation: 0, autoSkip: false } } } }
-  });
-  return scen;
+
+/* ── ผลการจำลอง 12 สถานะหลัก ── */
+const tipOf = (i, sim) => {
+  const b = sim.base[i], a = sim.after[i], chg = b ? (a / b - 1) * 100 : 0;
+  return `${i + 1}. ${STEPS[i]}\nสถานการณ์ฐาน ${fmtDay(b)} วัน → หลังใช้มาตรการ ${fmtDay(a)} วัน (${Math.abs(chg) < 0.5 ? "0" : fmt(chg)}%)`;
+};
+function renderSim(sim) {
+  const b = sim.base[8], a = sim.after[8];
+  document.getElementById("simSum").innerHTML = `
+    <div class="ss"><div class="k">สถานการณ์ฐาน</div><div class="v">${fmt(b)} <small>วัน</small></div></div>
+    <div class="arrow">→</div>
+    <div class="ss"><div class="k">หลังใช้มาตรการ</div><div class="v teal">${fmt(a)} <small>วัน</small></div></div>
+    <div class="ss save"><div class="k">Time-to-Market ลดลง</div><div class="v">${fmt(b - a)} วัน <small>(▼ ${fmt(sim.ttmRed * 100, 1)}%)</small></div></div>`;
+  const run = [0, 1, 2, 3, 4, 5, 6, 7], max = Math.max(...run.map(i => sim.base[i]));
+  document.getElementById("simRun").innerHTML = run.map(i => {
+    const base = sim.base[i], after = sim.after[i];
+    return `<div class="sim-row" title="${tipOf(i, sim)}"><span class="n">${i + 1}</span><span class="nm">${STEPS[i]}</span>
+      <span class="bar"><i class="base" style="width:${base / max * 100}%"><i class="after" style="width:${base ? after / base * 100 : 0}%"></i></i></span>
+      <span class="v">${fmtDay(base)} → <b>${fmtDay(after)}</b></span></div>`;
+  }).join("");
+  document.getElementById("simEnd").innerHTML = [8, 9, 10, 11].map(i =>
+    `<div class="se" title="${tipOf(i, sim)}${i === 9 || i === 10 ? `\nจำนวนคำขอที่เข้าสถานะนี้ลดลงประมาณ ${fmt(sim.retCut * 100)}%` : ""}"><span class="n">${i + 1}</span><span class="nm">${STEPS[i]}</span>
+      <span class="v">${fmtDay(sim.base[i])} → <b>${fmtDay(sim.after[i])}</b></span></div>`).join("");
 }
 
 /* ── ผลกระทบ ── */
-function renderImpact(scen) {
-  const b = curProd().base;
-  const d0 = Math.round(avg(b.cats)), d1 = Math.round(avg(scen));
-  const rbiRed = clamp01(TARGET.rbi * effectRatio("rbi"));
-  const blRed = clamp01(TARGET.backlog * effectRatio("backlog"));
-  const wlRed = clamp01(TARGET.workload * effectRatio("workload"));
-  const rbi1 = b.rbi * (1 - rbiRed);
-  const bl1 = Math.round(b.backlog * (1 - blRed));
-  const rw1 = Math.max(0, b.rework - Math.min(b.rework * .9, TARGET.reworkPts * (b.rework / 34.2) * effectRatio("rework")));
-  const wl1 = Math.round(b.workload * (1 - wlRed));
-  const tradePct = TARGET.tradePct * effectRatio("time");
-  const tradeVal = Math.round(b.trade * tradePct);
-  const pct = (a, c) => (c - a) / a * 100;
+function renderImpact(sim) {
+  const p = curProd();
+  const rbiRed = clamp(TARGET.rbi * effectRatio("rbi")), ipRed = clamp(TARGET.inprog * effectRatio("inprog")), wlRed = clamp(TARGET.workload * effectRatio("workload"));
+  const rw1 = Math.max(0, p.rework - Math.min(p.rework * .9, TARGET.reworkPts * (p.rework / 34.2) * effectRatio("rework")));
+  const tradePct = TARGET.tradePct * sim.ttmRed / TARGET.ttm;
   const chg = (v, unit = "%") => `<span class="${v <= 0 ? "chg-good" : "chg-up"}">${v > 0 ? "+" : ""}${fmt(v, 1)}${unit}</span>`;
   const rows = [
-    ["ระยะเวลาพิจารณาเฉลี่ย", `${fmt(d0)} วัน`, `${fmt(d1)} วัน`, chg(pct(d0, d1))],
-    ["คะแนน RBI", fmt(b.rbi, 1), fmt(rbi1, 1), chg(-rbiRed * 100)],
-    ["คำขอคงค้าง (Backlog)", `${fmt(b.backlog)} คำขอ`, `${fmt(bl1)} คำขอ`, chg(-blRed * 100)],
-    ["อัตราการแก้ไขคำขอ", `${fmt(b.rework, 1)}%`, `${fmt(rw1, 1)}%`, chg(+(rw1.toFixed(1)) - b.rework, " จุด")],
-    ["มูลค่าการค้าที่คาดว่าจะเพิ่มขึ้น", "–", `+${fmt(tradeVal)} ลบ./ปี`, `<span class="chg-up">+${fmt(tradePct * 100, 1)}%</span>`],
-    ["ภาระงานผู้ประเมินต่อคน", `${fmt(b.workload)} คำขอ/ปี`, `${fmt(wl1)} คำขอ/ปี`, chg(-wlRed * 100)]
+    ["ระยะเวลาพิจารณาเฉลี่ย (ถึงสถานะเสร็จสิ้น)", `${fmt(sim.base[8])} วัน`, `${fmt(sim.after[8])} วัน`, chg(-sim.ttmRed * 100)],
+    ["คะแนน RBI", fmt(p.rbi, 1), fmt(p.rbi * (1 - rbiRed), 1), chg(-rbiRed * 100)],
+    ["คำขอที่อยู่ระหว่างดำเนินการ", `${fmt(p.inprog)} คำขอ`, `${fmt(Math.round(p.inprog * (1 - ipRed)))} คำขอ`, chg(-ipRed * 100)],
+    ["อัตราการแก้ไขคำขอ", `${fmt(p.rework, 1)}%`, `${fmt(rw1, 1)}%`, chg(+(rw1.toFixed(1)) - p.rework, " จุด")],
+    ["มูลค่าการค้าที่คาดว่าจะเพิ่มขึ้น", "–", `+${fmt(Math.round(p.trade * tradePct))} ลบ./ปี`, `<span class="chg-up">+${fmt(tradePct * 100, 1)}%</span>`],
+    ["ภาระงานผู้ประเมินต่อคน", `${fmt(p.workload)} คำขอ/ปี`, `${fmt(Math.round(p.workload * (1 - wlRed)))} คำขอ/ปี`, chg(-wlRed * 100)]
   ];
   document.getElementById("impactBody").innerHTML = rows.map(r => `<tr>${r.map(c => `<td>${c}</td>`).join("")}</tr>`).join("");
 }
 
-/* ── สถานะการติดตามข้อเสนอ ── */
-function trackStatus(p) {
-  return p >= 100 ? ["ดำเนินการแล้ว", "#1F8A55"] : p >= 30 ? ["อยู่ระหว่างดำเนินการ", "#E39B1B"] : ["เริ่มดำเนินการ", "#2F6FC2"];
-}
-function renderTrack() {
-  document.getElementById("trackList").innerHTML = curProd().track.map(([t, p]) => {
-    const [s, c] = trackStatus(p);
-    return `<li title="ความคืบหน้า ${p}%"><div class="track-head"><span class="t">${t}</span><span class="s" style="color:${c}">${s}</span></div>
-      <div class="track-bar"><i style="width:${p}%;background:${c}"></i></div></li>`;
-  }).join("");
-}
-
 function render() {
-  const scen = renderChart();
-  renderImpact(scen);
-  renderTrack();
+  const sim = simulate();
+  renderRec(sim);
+  renderSim(sim);
+  renderImpact(sim);
 }
 renderLevers();
 render();
 
 /* วันที่หัวข้อ — วันเปิดดู (พ.ศ.) */
 const TH_MONTH_ABBR = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
-function formatThaiDateToday(){
-  const d = new Date();
-  return d.getDate() + " " + TH_MONTH_ABBR[d.getMonth()] + " " + (d.getFullYear() + 543);
-}
-function renderHeaderAsOf(){
-  const el = document.getElementById("asOf");
-  if (el) el.textContent = formatThaiDateToday();
-}
+function formatThaiDateToday(){ const d = new Date(); return d.getDate() + " " + TH_MONTH_ABBR[d.getMonth()] + " " + (d.getFullYear() + 543); }
+function renderHeaderAsOf(){ const el = document.getElementById("asOf"); if (el) el.textContent = formatThaiDateToday(); }
 renderHeaderAsOf();
 </script>
 <script src="shared/dash-layout.js" defer></script>

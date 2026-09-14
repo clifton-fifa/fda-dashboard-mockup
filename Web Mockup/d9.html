@@ -1,21 +1,19 @@
 <!doctype html>
 <html lang="th"><head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&display=swap">
 <link rel="stylesheet" href="shared/dash-fonts.css">
 <title>หน้าจอที่ 9 — แผนที่วิเคราะห์เชิงพื้นที่ | อย.</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
 <script src="shared/dash-chart-defaults.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@turf/turf@7/turf.min.js"></script>
 <style>
 :root{--navy:#0E2A4F;--gold:#B7922E;--ink:#1A2430;--muted:#5B6B7E;--line:#D8E0EA;--line2:#EAEFF4;
---canvas:#F2F4F7;--card:#FFF;--good:#1F7A45;--warn:#A66A00;--bad:#B4382A;--sh:0 1px 3px rgba(18,48,91,.08);--r:8px;--fs-kpi:40px;--fs-kpi-name:17px;--fs-kpi-unit:16px;--fs-base:24px;--fs-h2:19px;--fs-chrome-h1:26px;--fs-chrome-sub:20px;--fs-chrome-meta:19px;--fs-chrome-org:17px;--fs-filter:19px;--fs-filter-chip:18px;--fs-ui:16px;--fs-ui-md:15px;--fs-ui-sm:16px;--fs-axis:16px;--fs-chart-lbl:18px;--fs-chart-data:12px;--fs-tip:26px;--fs-period:20px}
+--canvas:#F2F4F7;--card:#FFF;--good:#1F7A45;--warn:#A66A00;--bad:#B4382A;--sh:0 1px 3px rgba(18,48,91,.08);--r:8px;--fs-kpi:40px;--fs-kpi-name:17px;--fs-kpi-unit:16px;--fs-base:24px;--fs-h2:19px;--fs-chrome-h1:26px;--fs-chrome-sub:20px;--fs-chrome-meta:19px;--fs-chrome-org:17px;--fs-filter:19px;--fs-filter-chip:18px;--fs-ui:16px;--fs-ui-md:15px;--fs-ui-sm:16px;--fs-axis:16px;--fs-chart-lbl:18px;--fs-tip:26px;--fs-period:20px}
 *{box-sizing:border-box}html,body{margin:0;padding:0}
 body{background:var(--canvas);color:var(--ink);font-size:var(--fs-base);line-height:1.45;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
 header{background:var(--navy);color:#fff;padding:11px 22px 10px;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;border-bottom:3px solid var(--gold);position:relative;z-index:1200}
@@ -26,7 +24,7 @@ header .sub{color:#B7C7DC;font-size:var(--fs-chrome-sub);margin-top:2px;line-hei
 header .right{text-align:right;font-size:var(--fs-chrome-meta);line-height:1.35}
 header .org{color:#B7C7DC;font-size:var(--fs-chrome-org);margin-top:2px;line-height:1.3}
 header .right .asof{font-weight:600}
-.filters{background:#fff;border-bottom:1px solid var(--line);padding:6px 16px 6px 22px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 10px;align-items:center;position:sticky;top:0;z-index:1200;box-shadow:0 1px 0 var(--line)}
+.filters{background:#fff;border-bottom:1px solid var(--line);padding:6px 16px 6px 22px;display:grid;grid-template-columns:1fr auto;gap:8px 10px;align-items:center;position:sticky;top:0;z-index:1200;box-shadow:0 1px 0 var(--line)}
 .static-filters{grid-column:1;justify-self:start;min-width:0;display:flex;gap:12px;color:var(--muted);font-size:var(--fs-filter);flex-wrap:wrap;align-items:center}
 .static-filters span{white-space:nowrap;padding-left:12px;border-left:1px solid var(--line)}
 .static-filters span:first-child{padding-left:0;border-left:none}
@@ -64,19 +62,27 @@ table.data tr.clickable:hover{background:#F0F6FC}
 table.data tr.active-row{background:#EAF4FD;font-weight:600}
 table.data td.num{text-align:right;font-variant-numeric:tabular-nums;font-weight:600}
 .sort-arrow{font-size:var(--fs-ui-sm);color:var(--navy)}
-.chart-box{position:relative;height:280px}.chart-box.lg{height:400px}
-#mapEl{width:100%;height:400px;border-radius:8px;background:#E8EDF3;overflow:hidden;position:relative;z-index:1;isolation:isolate}
-.leaflet-container{background:#E8EDF3;font-family:var(--dash-font,"Sarabun","Noto Sans Thai",sans-serif);outline:none!important}
+.chart-box{position:relative;height:280px}.chart-box.lg{height:520px}
+#mapEl{width:100%;height:520px;border-radius:8px;background:#E8EDF3;overflow:hidden;position:relative;z-index:1;isolation:isolate}
+.leaflet-container{background:#E8EDF3;font-family:var(--dash-font, "Sarabun", "Noto Sans Thai", "Leelawadee UI", system-ui, sans-serif);outline:none!important}
 .leaflet-container:focus,.leaflet-container:focus-visible{outline:none!important}
 .leaflet-interactive:focus,.leaflet-interactive:focus-visible{outline:none!important}
 .leaflet-zoom-box{border:none!important;opacity:0!important;display:none!important}
-.leaflet-tooltip{font-family:var(--dash-font,"Sarabun","Noto Sans Thai",sans-serif);font-size:var(--fs-ui-sm)}
+.leaflet-tooltip{font-family:var(--dash-font, "Sarabun", "Noto Sans Thai", "Leelawadee UI", system-ui, sans-serif);font-size:var(--fs-ui-sm);font-weight:500}
 .card.mapCard{overflow:hidden}
 .legend-swatch{display:inline-flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:var(--fs-ui-sm);color:var(--muted);margin-top:8px}
-.legend-swatch span.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-2px;box-shadow:0 0 0 1px rgba(255,255,255,.8)}
+.legend-swatch span.sw{display:inline-block;width:16px;height:16px;border-radius:3px;margin-right:5px;vertical-align:-3px}
 footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify-content:space-between;color:var(--muted);font-size:var(--fs-ui-md);gap:16px;flex-wrap:wrap}
-@media(max-width:1024px){.span8,.span7,.span6,.span5,.span4,.span3{grid-column:span 12}}
-@media(max-width:900px){.filters{grid-template-columns:1fr;grid-template-rows:auto auto;gap:8px}.static-filters,.filterGroups{grid-column:1;justify-self:stretch}.static-filters{flex-wrap:wrap}#regionChips{flex-wrap:wrap;justify-content:flex-start}}
+.expand-arrow{display:inline-block;width:16px;color:var(--navy);transition:transform .15s}
+tr.comp-row.expanded .expand-arrow{transform:rotate(90deg)}
+tr.comp-detail-row>td{background:#F7F9FC;padding:0}
+.comp-detail{padding:10px 16px 14px 40px}
+.comp-detail table{width:100%;border-collapse:collapse;font-size:var(--fs-ui-sm)}
+.comp-detail th{color:var(--muted);font-weight:600;text-align:left;padding:4px 8px;border-bottom:1px solid var(--line)}
+.comp-detail th.num,.comp-detail td.num{text-align:right;font-variant-numeric:tabular-nums}
+.comp-detail td{padding:6px 8px;border-bottom:1px solid var(--line2)}
+@media(max-width:1100px){.span8,.span7,.span6,.span5,.span4,.span3{grid-column:span 12}}
+@media(max-width:980px){.filters{grid-template-columns:1fr;gap:8px}.static-filters,.filterGroups{grid-column:1;justify-self:stretch}#chips,#regionChips{justify-content:flex-start}}
 @media(max-width:700px){header h1{font-size:26px}header .right{text-align:left}}
 </style>
   <link rel="stylesheet" href="shared/dash-sidebar.css">
@@ -101,7 +107,7 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
     <span class="lbl">ภาค:</span>
     <span id="regionChips"><button type="button" class="chip" aria-pressed="true" data-r="ALL">ทั้งหมด</button>
 <button type="button" class="chip" aria-pressed="false" data-r="N">เหนือ</button>
-<button type="button" class="chip" aria-pressed="false" data-r="NE" title="ตะวันออกเฉียงเหนือ">อีสาน</button>
+<button type="button" class="chip" aria-pressed="false" data-r="NE">ตะวันออกเฉียงเหนือ</button>
 <button type="button" class="chip" aria-pressed="false" data-r="C">กลาง</button>
 <button type="button" class="chip" aria-pressed="false" data-r="E">ตะวันออก</button>
 <button type="button" class="chip" aria-pressed="false" data-r="W">ตะวันตก</button>
@@ -111,40 +117,41 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
 
 <main>
 <section class="kpis" id="kpiRow"></section>
-<section class="card mapCard span8 card--row-stretch card--chart-grow"><h2>แผนที่มูลค่าผลิตภัณฑ์รายจังหวัด</h2>
+<section class="card mapCard span8"><h2>แผนที่มูลค่าผลิตภัณฑ์รายจังหวัด</h2>
+<div class="cap">คลิกจังหวัดบนแผนที่เพื่อดูรายละเอียดระดับอำเภอ · สีเข้ม = มูลค่าสูง</div>
 <div id="mapEl"></div>
 <div class="legend-swatch" id="mapLegend"></div>
 </section>
-<section class="card span4 card--row-stretch card--chart-grow card--rank"><h2>อันดับจังหวัด Top 10
-<span class="card-filter-pick">
-  <select id="rankMetric" class="card-filter-select" aria-label="เลือกมิติจัดอันดับ">
-    <option value="total" selected>มูลค่ารวม</option>
-    <option value="imp">มูลค่านำเข้า</option>
-    <option value="exp">มูลค่าส่งออก</option>
-    <option value="prod">มูลค่าการผลิต</option>
-    <option value="sale">มูลค่าการขาย</option>
-  </select>
-</span></h2>
+<section class="card span4"><h2>อันดับจังหวัด Top 10
+<select id="rankMetric" style="margin-left:auto;font:inherit;font-size:var(--dash-filter-chip-fs);padding:4px 8px;border:1px solid var(--line);border-radius:6px;font-weight:600">
+  <option value="total" selected>มูลค่ารวม</option>
+  <option value="imp">มูลค่านำเข้า</option>
+  <option value="exp">มูลค่าส่งออก</option>
+  <option value="prod">มูลค่าการผลิต</option>
+  <option value="sale">มูลค่าการขาย</option>
+</select></h2>
 <div class="cap" id="rankCap">เรียงตามมูลค่าผลิตภัณฑ์ในพื้นที่ (ล้านบาท)</div>
 <div class="chart-box lg"><canvas id="cRank"></canvas></div></section>
 <section class="card span12" id="companyCard">
-<h2>รายชื่อบริษัท/ผู้ประกอบการในจังหวัด
-<span class="card-filter-pick">
-  <select id="compTopN" class="card-filter-select" aria-label="เลือกจำนวนอันดับ">
-    <option value="10">Top 10 อันดับ</option>
-    <option value="20">Top 20 อันดับ</option>
-    <option value="100" selected>Top 100 อันดับ</option>
-  </select>
-</span></h2>
-<div class="cap" id="compCap">100 รายการแรก · เรียงตามมูลค่ารวม</div>
+<h2>รายชื่อบริษัท/ผู้ประกอบการในจังหวัด — <span id="compProvName">ทั้งหมด</span>
+<select id="compTopN" style="margin-left:auto;font:inherit;font-size:var(--dash-filter-chip-fs);padding:4px 8px;border:1px solid var(--line);border-radius:6px;font-weight:600">
+  <option value="10">Top 10 อันดับ</option>
+  <option value="20">Top 20 อันดับ</option>
+  <option value="100" selected>Top 100 อันดับ</option>
+</select></h2>
+<div class="cap" id="compCap">Top 100 รายการ · เรียงตามมูลค่ารวม</div>
+<div class="cap" style="margin:2px 0 8px 13px;font-weight:400">คลิกแถวบริษัทเพื่อขยายดูรายการผลิตภัณฑ์และสัดส่วนมูลค่าในบริษัท</div>
 <div id="compTableWrap" style="max-height:400px;overflow:auto"><table class="data"><thead><tr>
-<th class="num">อันดับ</th><th>ชื่อบริษัท/ผู้ประกอบการ</th><th>จังหวัด</th><th class="sortable" data-key="district">อำเภอ <span class="sort-arrow" id="carrow-district"></span></th>
-<th class="sortable num" data-key="imp">มูลค่านำเข้า (ล้านบาท) <span class="sort-arrow" id="carrow-imp"></span></th>
-<th class="sortable num" data-key="exp">มูลค่าส่งออก (ล้านบาท) <span class="sort-arrow" id="carrow-exp"></span></th>
-<th class="sortable num" data-key="prod">มูลค่าการผลิต (ล้านบาท) <span class="sort-arrow" id="carrow-prod"></span></th>
-<th class="sortable num" data-key="sale">มูลค่าการขาย (ล้านบาท) <span class="sort-arrow" id="carrow-sale"></span></th>
+<th>อันดับ</th><th>ชื่อบริษัท/ผู้ประกอบการ</th><th>จังหวัด</th><th class="sortable" data-key="district">อำเภอ <span class="sort-arrow" id="carrow-district"></span></th>
+<th class="sortable" data-key="imp">มูลค่านำเข้า (ล้านบาท) <span class="sort-arrow" id="carrow-imp"></span></th>
+<th class="sortable" data-key="exp">มูลค่าส่งออก (ล้านบาท) <span class="sort-arrow" id="carrow-exp"></span></th>
+<th class="sortable" data-key="prod">มูลค่าการผลิต (ล้านบาท) <span class="sort-arrow" id="carrow-prod"></span></th>
+<th class="sortable" data-key="sale">มูลค่าการขาย (ล้านบาท) <span class="sort-arrow" id="carrow-sale"></span></th>
+<th class="sortable" data-key="pct">สัดส่วนของจังหวัด (%) <span class="sort-arrow" id="carrow-pct"></span></th>
 </tr></thead><tbody id="compBody"></tbody></table></div></section>
 </main>
+<footer><span>Mockup — คลิกแผนที่/แถบกราฟ/ตารางเพื่อกรองพื้นที่ · ขอบเขตแผนที่จากชุดข้อมูลสาธารณะ (ครบ 77 จังหวัด)</span>
+<span>เส้นทางเจาะลึก: ภาค → เขตสุขภาพ → จังหวัด → อำเภอ</span></footer>
 <script>
 const REGION_NAME = {"N": "เหนือ", "NE": "ตะวันออกเฉียงเหนือ", "C": "กลาง", "E": "ตะวันออก", "W": "ตะวันตก", "S": "ใต้"};
 const PROVINCES = {
@@ -642,51 +649,21 @@ function rankingScopeKeys() {
   }
   return top.sort((a, b) => rankValue(b) - rankValue(a));
 }
-function rankBarThickness(n) {
-  const box = document.getElementById('cRank')?.parentElement;
-  const h = (box && box.clientHeight) || 400;
-  const plot = Math.max(220, h - 52);
-  const count = Math.max(1, n || 10);
-  return Math.min(36, Math.max(22, Math.floor((plot / count) * 0.76)));
-}
 function renderRanking() {
   const vk = rankingScopeKeys();
   const labels = vk.map(k => PROVINCES[k].th);
   const data = vk.map(k => rankValue(k));
   const colors = vk.map(k => isSelectedProvince(k) ? '#B7922E' : '#1F6FB2');
-  const barH = rankBarThickness(vk.length);
   document.getElementById('rankCap').textContent = `เรียงตาม${RANK_METRIC_LABEL[RANK_METRIC]} (ล้านบาท)`;
   setChart('cRank', {
     type: 'bar',
-    data: {
-      labels,
-      datasets: [{
-        label: 'มูลค่า',
-        data,
-        backgroundColor: colors,
-        barThickness: barH,
-        maxBarThickness: 44,
-        borderRadius: 4,
-        borderSkipped: false
-      }]
-    },
+    data: { labels, datasets: [{ label: 'มูลค่า', data, backgroundColor: colors }] },
     options: {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
-      layout: { padding: { top: 2, bottom: 0, left: 2, right: 10 } },
       plugins: { legend: { display: false } },
-      datasets: { bar: { categoryPercentage: 0.92, barPercentage: 0.88 } },
-      scales: {
-        x: {
-          grid: { color: '#EAEFF4' },
-          ticks: { maxRotation: 0, autoSkip: true, maxTicksLimit: 8 }
-        },
-        y: {
-          grid: { display: false },
-          ticks: { autoSkip: false, padding: 8 }
-        }
-      },
+      scales: { x: { ticks: { font: { size: 22 } } }, y: { ticks: { font: { size: 22 } } } },
       onClick: (_, els) => {
         if (els.length) selectProvince(String(vk[els[0].index]), { fromUi: 'rankChart' });
       }
@@ -727,12 +704,53 @@ function companiesForProvince(provKey) {
     const exp = seededVal(seed + '|exp', base*0.15, base*0.8);
     const prod = seededVal(seed + '|prod', base*0.3, base*1.2);
     const sale = seededVal(seed + '|sale', base*0.25, base*1.1);
-    out.push({ name: companyName(provKey, i), district: dists[dIdx], imp, exp, prod, sale, total: +(imp+exp+prod+sale).toFixed(1) });
+    out.push({ idx: i, provKey, name: companyName(provKey, i), district: dists[dIdx], imp, exp, prod, sale, total: +(imp+exp+prod+sale).toFixed(1) });
   }
   return out;
 }
 
+const PRODUCT_POOL = {
+  DRUG: ["ยาลดความดันโลหิตชนิดเม็ด", "ยาปฏิชีวนะชนิดแคปซูล", "ยาลดไข้แก้ปวดชนิดน้ำ", "ยาลดไขมันในเลือด", "ยารักษาโรคเบาหวานชนิดเม็ด"],
+  MDC: ["เครื่องวัดความดันโลหิตดิจิทัล", "ชุดตรวจน้ำตาลในเลือด", "หน้ากากอนามัยทางการแพทย์", "เตียงผู้ป่วยไฟฟ้า", "เครื่องผลิตออกซิเจน"],
+  FOOD: ["ผลิตภัณฑ์เสริมอาหารวิตามินซี", "นมผงสำหรับเด็ก", "เครื่องดื่มโปรตีนเวย์", "ผลิตภัณฑ์เสริมอาหารคอลลาเจน", "ชาสมุนไพรลดน้ำหนัก"],
+  CMT: ["ครีมกันแดด SPF50", "เซรั่มบำรุงผิวหน้า", "แชมพูสมุนไพร", "โลชั่นบำรุงผิวกาย", "มาส์กหน้าผิวขาวใส"],
+  HERB: ["ยาแคปซูลฟ้าทะลายโจร", "ยาหม่องสมุนไพร", "ยาดมสมุนไพร", "ยาแคปซูลขมิ้นชัน", "ชาสมุนไพรรางจืด"]
+};
+const PRODUCT_GROUP_LABEL = { DRUG: "ยา", MDC: "เครื่องมือแพทย์", FOOD: "อาหาร", CMT: "เครื่องสำอาง", HERB: "สมุนไพร" };
+const PRODUCT_GROUPS = Object.keys(PRODUCT_POOL);
+function productsForCompany(c) {
+  const seed = c.provKey + '|comp|' + c.idx + '|prod';
+  const grp = PRODUCT_GROUPS[Math.floor(seededVal(seed + '|grp', 0, PRODUCT_GROUPS.length))];
+  const pool = PRODUCT_POOL[grp];
+  const n = 2 + Math.floor(seededVal(seed + '|n', 0, 3));
+  const idxs = [];
+  for (let k = 0; k < n; k++) {
+    let pIdx = Math.floor(seededVal(seed + '|p' + k, 0, pool.length));
+    while (idxs.includes(pIdx)) pIdx = (pIdx + 1) % pool.length;
+    idxs.push(pIdx);
+  }
+  const weights = idxs.map((_, k) => seededVal(seed + '|w' + k, 0.4, 1.6));
+  const wsum = weights.reduce((a, b) => a + b, 0);
+  return idxs.map((pIdx, k) => ({
+    name: pool[pIdx], group: grp,
+    value: +(c.total * weights[k] / wsum).toFixed(1)
+  })).sort((a, b) => b.value - a.value);
+}
+
+function companyKey(c) { return c.provKey + '|' + c.idx; }
+function renderCompanyDetailRow(c) {
+  const prods = productsForCompany(c);
+  const rows = prods.map(p => {
+    const share = c.total ? (p.value / c.total * 100) : 0;
+    return `<tr><td>${p.name}</td><td>${PRODUCT_GROUP_LABEL[p.group]}</td><td class="num">${fmtTHB(p.value)}</td><td class="num">${fmtTHB(share)}%</td></tr>`;
+  }).join('');
+  return `<tr class="comp-detail-row"><td colspan="9"><div class="comp-detail">
+    <table><thead><tr><th>ผลิตภัณฑ์</th><th>กลุ่ม</th><th class="num">มูลค่า (ล้านบาท)</th><th class="num">สัดส่วนของบริษัท (%)</th></tr></thead>
+    <tbody>${rows}</tbody></table></div></td></tr>`;
+}
+
 let COMP_TOPN = 100;
+let COMP_ITEMS = [];
 const COMP_SORT = { key: 'total', dir: 'desc' };
 document.getElementById('compTopN').addEventListener('change', e => { COMP_TOPN = +e.target.value; renderCompanies(); });
 document.querySelectorAll('#compTableWrap th.sortable').forEach(th => th.addEventListener('click', () => {
@@ -740,21 +758,27 @@ document.querySelectorAll('#compTableWrap th.sortable').forEach(th => th.addEven
   else { COMP_SORT.key = th.dataset.key; COMP_SORT.dir = 'desc'; }
   renderCompanies();
 }));
-const COMP_METRIC_LABEL = { imp: 'มูลค่านำเข้า', exp: 'มูลค่าส่งออก', prod: 'มูลค่าการผลิต', sale: 'มูลค่าการขาย', district: 'อำเภอ' };
+const COMP_METRIC_LABEL = { imp: 'มูลค่านำเข้า', exp: 'มูลค่าส่งออก', prod: 'มูลค่าการผลิต', sale: 'มูลค่าการขาย', district: 'อำเภอ', pct: 'สัดส่วนของจังหวัด' };
+let EXPANDED_KEY = null;
 function renderCompanies() {
   const sel = selectedProvinceKey();
   const cap = document.getElementById('compCap');
-  let scopeLabel = 'ทั้งหมด';
+  const nameEl = document.getElementById('compProvName');
   if (sel) {
-    scopeLabel = PROVINCES[sel].th;
+    nameEl.textContent = PROVINCES[sel].th;
   } else if (FILTER.region !== 'ALL' || FILTER.zone !== 'ALL') {
     const parts = [];
     if (FILTER.region !== 'ALL') parts.push('ภาค' + REGION_NAME[FILTER.region]);
     if (FILTER.zone !== 'ALL') parts.push('เขตสุขภาพที่ ' + FILTER.zone);
-    scopeLabel = `ทั้งหมด (${parts.join(' · ')})`;
+    nameEl.textContent = `ทั้งหมด (${parts.join(' · ')})`;
+  } else {
+    nameEl.textContent = 'ทั้งหมด';
   }
   const scopeKeys = sel ? [sel] : visibleKeys();
-  let items = scopeKeys.flatMap(code => companiesForProvince(code).map(c => ({ ...c, province: PROVINCES[code].th })));
+  let items = scopeKeys.flatMap(code => companiesForProvince(code).map(c => ({
+    ...c, province: PROVINCES[code].th,
+    pct: PROVINCE_VALUES[code] ? +(c.total / PROVINCE_VALUES[code] * 100).toFixed(1) : 0
+  })));
   const dirMul = COMP_SORT.dir === 'asc' ? 1 : -1;
   items = items.slice().sort((a,b) => {
     if (COMP_SORT.key === 'district') return a.district.localeCompare(b.district, 'th') * dirMul;
@@ -763,15 +787,28 @@ function renderCompanies() {
   document.querySelectorAll('#compTableWrap .sort-arrow').forEach(s => s.textContent = '');
   const activeArrow = document.getElementById(`carrow-${COMP_SORT.key}`);
   if (activeArrow) activeArrow.textContent = COMP_SORT.dir === 'asc' ? '▲' : '▼';
-  const sortPart = COMP_SORT.key === 'total'
+  cap.textContent = COMP_SORT.key === 'total'
     ? `Top ${items.length} รายการ · เรียงตามมูลค่ารวม (นำเข้า+ส่งออก+ผลิต+ขาย)`
     : `Top ${items.length} รายการ · เรียงตาม${COMP_METRIC_LABEL[COMP_SORT.key]} (${COMP_SORT.dir==='desc'?'มากไปน้อย':'น้อยไปมาก'})`;
-  cap.textContent = `${scopeLabel} · ${sortPart}`;
-  document.getElementById('compBody').innerHTML = items.map((c,i)=>`<tr>
-    <td class="num">${i+1}</td><td>${c.name}</td><td>${c.province}</td><td>${c.district}</td>
-    <td class="num">${fmtTHB(c.imp)}</td><td class="num">${fmtTHB(c.exp)}</td>
-    <td class="num">${fmtTHB(c.prod)}</td><td class="num">${fmtTHB(c.sale)}</td></tr>`).join('');
+  COMP_ITEMS = items;
+  document.getElementById('compBody').innerHTML = items.map((c,i)=>{
+    const key = companyKey(c);
+    const isOpen = EXPANDED_KEY === key;
+    const row = `<tr class="clickable comp-row${isOpen?' expanded active-row':''}" data-key="${key}">
+      <td>${i+1}</td><td class="name-cell"><span class="expand-arrow">▸</span>${c.name}</td><td>${c.province}</td><td>${c.district}</td>
+      <td class="num">${fmtTHB(c.imp)}</td><td class="num">${fmtTHB(c.exp)}</td>
+      <td class="num">${fmtTHB(c.prod)}</td><td class="num">${fmtTHB(c.sale)}</td>
+      <td class="num">${fmtTHB(c.pct)}%</td></tr>`;
+    return isOpen ? row + renderCompanyDetailRow(c) : row;
+  }).join('');
 }
+document.getElementById('compBody').addEventListener('click', e => {
+  const tr = e.target.closest('tr.comp-row');
+  if (!tr) return;
+  const key = tr.dataset.key;
+  EXPANDED_KEY = EXPANDED_KEY === key ? null : key;
+  renderCompanies();
+});
 
 function render() {
   renderKpis();
@@ -792,16 +829,8 @@ fetch(DISTRICTS_URL).then(r => r.json()).then(list => {
   initMap();
   render();
 });
-window.addEventListener('load', () => {
-  if (mapObj) mapObj.invalidateSize(true);
-  renderRanking();
-});
+window.addEventListener('load', () => { if (mapObj) mapObj.invalidateSize(true); });
 window.addEventListener('pageshow', () => { if (mapObj) mapObj.invalidateSize(true); });
-let rankResizeT;
-window.addEventListener('resize', () => {
-  clearTimeout(rankResizeT);
-  rankResizeT = setTimeout(renderRanking, 150);
-});
 
 /* ── แถบตัวกรองแบบ d1 ── */
 const TH_MONTH_NAME = ["ม.ค.","ก.พ.","มี.ค.","เม.ย.","พ.ค.","มิ.ย.","ก.ค.","ส.ค.","ก.ย.","ต.ค.","พ.ย.","ธ.ค."];
@@ -854,7 +883,6 @@ function renderHeaderAsOf(){
 renderHeaderAsOf();
 </script>
 
-<script src="shared/dash-card-filter.js" defer></script>
 <script src="shared/dash-layout.js" defer></script>
 </div>
 </body></html>

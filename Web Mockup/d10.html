@@ -85,48 +85,98 @@ footer{max-width:2000px;margin:0 auto;padding:8px 26px 20px;display:flex;justify
   <link rel="stylesheet" href="shared/dash-sidebar.css">
   <link rel="stylesheet" href="shared/dash-layout.css">
 <link rel="stylesheet" href="shared/dash-filters.css">
+<style>
+/* d10 — ตามรูปที่ 9 (Data Quality & Lineage Monitoring) ในเอกสาร 4.3.4 */
+body[data-dash="10"] main .kpis{grid-template-columns:repeat(5,minmax(0,1fr)) !important}
+body[data-dash="10"] .kpi{position:relative;display:flex;padding:0 !important;overflow:hidden}
+body[data-dash="10"] .kpi .bar{width:5px;flex:none;align-self:stretch;height:auto !important}
+body[data-dash="10"] .kpi .body{flex:1;min-width:0;display:flex;flex-direction:column;justify-content:space-between;gap:4px;padding:10px 14px !important}
+body[data-dash="10"] .kpi .name{font-size:14px;color:var(--muted);font-weight:500;line-height:1.3 !important}
+body[data-dash="10"] .kpi .val{font-size:clamp(20px,2.1vw,31px) !important;line-height:1.15 !important;margin:0 !important;white-space:nowrap}
+body[data-dash="10"] .kpi .foot-row{display:flex;align-items:center;justify-content:space-between;gap:8px}
+body[data-dash="10"] .kpi .delta{font-size:14px;font-weight:600;color:#1F9D62;white-space:nowrap}
+body[data-dash="10"] .kpi .delta.bad{color:#D0463B}
+body[data-dash="10"] .kpi .spark{flex:0 1 110px;min-width:56px;height:26px}
+.card>h2 .info{margin-left:6px;cursor:help;color:var(--muted);font-weight:700;font-size:14px}
+/* Scorecard */
+body[data-dash="10"] table.data.dq-table{font-size:13px}
+body[data-dash="10"] table.data.dq-table thead th{padding:6px 6px;line-height:1.2;vertical-align:bottom}
+body[data-dash="10"] table.data.dq-table td{padding:8px 6px;white-space:nowrap}
+table.dq-table tr{cursor:pointer}
+table.dq-table tr.sel td{background:#EAF4FD}
+table.dq-table .clip{display:inline-block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;vertical-align:bottom}
+table.dq-table .clip-name{max-width:clamp(120px,11vw,220px)}
+table.dq-table .clip-time{max-width:clamp(78px,6vw,130px)}
+.st-ok{color:#1F9D62;font-weight:600}.st-watch{color:#D98A00;font-weight:600}.st-fix{color:#D0463B;font-weight:600}
+tr.empty-row td{text-align:center;color:var(--muted);padding:22px;cursor:default}
+/* Pipeline */
+.pipe{display:flex;flex-direction:column;justify-content:space-around;gap:8px;flex:1;padding-top:4px}
+.pipe-row{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,1.25fr) 50px;align-items:center;gap:8px;font-size:13px}
+.pipe-row .lbl{color:var(--ink);line-height:1.25}
+.pipe-row .bar-wrap{display:flex;justify-content:center}
+.pipe-row .bar{height:34px;border-radius:3px;color:#fff;font-weight:600;font-variant-numeric:tabular-nums;display:flex;align-items:center;justify-content:center;font-size:13.5px;min-width:70px}
+.pipe-row .pct{text-align:right;color:#D0463B;font-size:12px;font-variant-numeric:tabular-nums}
+/* Lineage */
+.lineage-pick{display:flex;align-items:center;gap:8px;margin:5px 0 12px 13px;font-size:var(--fs-ui-md);color:var(--muted)}
+.lineage-pick select{font:inherit;font-size:14px;color:var(--ink);border:1px solid var(--line);border-radius:5px;padding:2px 6px;max-width:100%}
+.lineage{display:flex;align-items:stretch;gap:4px;flex:1;container-type:inline-size;min-height:180px}
+.lin-box{flex:1 1 0;min-width:0;border:2px solid var(--c);border-radius:5px;display:flex;flex-direction:column;background:#fff}
+.lin-box .hd{background:var(--c);color:#fff;font-size:clamp(10.5px,calc((100cqi - 60px) / 50),13px);font-weight:700;text-align:center;padding:3px 2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* ขนาดอักษรตามความกว้างการ์ด — ชื่อยาวสุด ~12 ตัวอักษรต้องไม่ถูกตัดกลางคำ */
+.lin-box .bd{padding:6px 5px;font-size:clamp(9px,calc((100cqi - 150px) / 48),12px);line-height:1.35;color:var(--ink);overflow-wrap:anywhere;flex:1;display:flex;flex-direction:column;justify-content:center}
+.lin-box .bd div+div{margin-top:2px}
+.lin-box .bd .note{color:var(--muted)}
+.lin-arrow{flex:none;align-self:center;color:#8A96A3;font-size:9px}
+.lin-box .role{margin:0 5px;padding:4px 0 5px;border-top:1px dashed #D8E0EA;font-size:clamp(9.5px,calc((100cqi - 100px) / 52),12px);color:var(--muted);text-align:center;line-height:1.25}
+/* Alert log */
+body[data-dash="10"] table.data.log-table{font-size:13.5px}
+body[data-dash="10"] table.data.log-table td{padding:9px 8px}
+body[data-dash="10"] table.data.log-table td:nth-child(1),body[data-dash="10"] table.data.log-table td:nth-child(2),body[data-dash="10"] table.data.log-table td:nth-child(3),body[data-dash="10"] table.data.log-table td:nth-child(5){white-space:nowrap}
+footer .note{color:var(--muted)}
+@media(max-width:1199px){body[data-dash="10"] main .kpis{grid-template-columns:repeat(3,minmax(0,1fr)) !important}}
+@media(max-width:1440px){body[data-dash="10"] table.data.dq-table{font-size:12.5px}body[data-dash="10"] table.data.dq-table thead th,body[data-dash="10"] table.data.dq-table td{padding-left:4px;padding-right:4px}
+  .lin-box{border-width:1.5px}.lin-box .bd{padding:5px 3px}
+  .pipe-row{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 44px;font-size:12.5px}body[data-dash="10"] table.data.log-table{font-size:12.5px}body[data-dash="10"] table.data.log-table td{padding:8px 5px}}
+</style>
 </head><body data-dash="10">
 <div id="dashPage"><script src="shared/dash-sidebar.js"></script>
 <header><div class="brand"><span class="dash-header-logo"><img class="brandLogo" src="data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz48c3ZnIGlkPSJiIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNDAiIGhlaWdodD0iMjQwIiB2aWV3Qm94PSIwIDAgMjQwIDI0MCI+PGRlZnM+PHN0eWxlPi5ke2ZpbGw6IzAwNGNhZjt9PC9zdHlsZT48L2RlZnM+PGcgaWQ9ImMiPjxwYXRoIGNsYXNzPSJkIiBkPSJtMTE5LjE1LDBjLTIzLjcuMTctNDYuODEsNy4zNS02Ni40MywyMC42NC0xOS42MiwxMy4yOS0zNC44NywzMi4wOS00My44Miw1NC4wM0MtLjA2LDk2LjYxLTIuMzIsMTIwLjcxLDIuNDEsMTQzLjkzYzQuNzMsMjMuMjIsMTYuMjIsNDQuNTIsMzMuMDQsNjEuMjIsMTYuODIsMTYuNywzOC4yLDI4LjA0LDYxLjQ1LDMyLjYsMjMuMjUsNC41Niw0Ny4zNCwyLjEzLDY5LjIyLTYuOTcsMjEuODgtOS4xMSw0MC41Ny0yNC40OSw1My43Mi00NC4yLDEzLjE1LTE5LjcyLDIwLjE2LTQyLjg4LDIwLjE2LTY2LjU4LS4xMS0zMS45NC0xMi45MS02Mi41Mi0zNS41OC04NS4wM0MxODEuNzYsMTIuNDcsMTUxLjA5LS4xMSwxMTkuMTUsMFptMCwyMjQuN2MtMTQuOS4xLTI5LjY0LTIuOTctNDMuMjYtOS4wMi0xMy42MS02LjA1LTI1Ljc4LTE0LjkzLTM1LjY5LTI2LjA2LTkuOTEtMTEuMTItMTcuMzMtMjQuMjMtMjEuNzYtMzguNDUtNC40NC0xNC4yMi01Ljc5LTI5LjIyLTMuOTctNDQuMDFoNzAuNTljMS44LDAsMi4zNS41OCwyLjM1LDIuNDUtLjA1LDIxLjMxLS4wNiw0Mi42MS0uMDQsNjMuOTIsMCwuNTUuMjEsMS4xNi0uMzgsMS43OGwtMjYuNTItMjkuNTNoOC44OHEzLjEsMCwzLjExLTMuMTljMC0zLjEyLS4wNS02LjI0LDAtOS4zNS4wMy0xLjU1LS40OC0yLjI1LTIuMDQtMi4yNS0xMy4wOS4wMy0yNi4xOCwwLTM5LjI2LjAyLS41NCwwLTEuMjktLjE1LTEuNDcuNTEtLjE5LjY2LjQ4LDEuMTQuOSwxLjYsNi45Miw3LjY1LDEzLjg1LDE1LjMsMjAuNzgsMjIuOTUsMTMuNjcsMTUuMTIsMjcuMzQsMzAuMjUsNDEsNDUuMzcsMi43MSwyLjk5LDIuMDQsMi45NCw0LjY2LDAsMTMuNDItMTUuMTgsMjYuODItMzAuMzksNDAuMTktNDUuNjMsOS4xOS0xMC40MiwxOC4zOS0yMC44MywyNy42LTMxLjIzLDguOTUtMTAuMTMsMTcuODktMjAuMjYsMjYuODMtMzAuMzkuMTgtLjE5LjMzLS4zOS40Ny0uNi4yNS0uNDIuODgtLjcyLjY3LTEuMjlzLS44Ny0uMzgtMS4zMy0uMzhjLTQuNDksMC04Ljk3LDAtMTMuNDYtLjAyLS40Ny0uMDEtLjk0LjA4LTEuMzYuMjgtLjQzLjItLjguNDktMS4wOS44Ni04LjI4LDkuMzUtMTYuNTcsMTguNjktMjQuODcsMjguMDQtNS4wNyw1LjcyLTEwLjE0LDExLjQ1LTE1LjIsMTcuMTgtMTAuNTcsMTEuOTItMjEuMTUsMjMuODQtMzEuNzIsMzUuNzUtLjMuNDItLjU3Ljg2LS44LDEuMzMtLjI2LS4zMy0uNDUtLjcxLS41Ni0xLjEyLS4xMS0uNDEtLjEzLS44My0uMDYtMS4yNS0uMDItOC4xOC0uMDItMTYuMzcsMC0yNC41NSwwLTIuNTEuMDgtMi41OSwyLjU2LTIuNiw0LjExLDAsOC4yMy0uMDQsMTIuMzQsMCwxLjUyLjAyLDIuMTEtLjUzLDIuMDgtMi4xNi0uMDktMy41MS0uMDktNy4wMSwwLTEwLjUyLjA0LTEuNjQtLjU5LTIuMTYtMi4wOC0yLjE0LTQuMTcuMDYtOC4zNC0uMDUtMTIuNTMuMDUtMS43Ny4wNC0yLjQyLS41OS0yLjM5LTIuNDYuMDgtNi4zLjA4LTEyLjYsMC0xOC45LS4wMi0xLjgzLjUyLTIuNTQsMi4zNC0yLjUsNC4yNC4xMSw4LjQ4LDAsMTIuNzEuMDYsMS42My4wMywyLjIyLS42NCwyLjE5LTIuMy0uMDYtMy40NCwwLTYuODksMC0xMC4zMywwLTIuNjgtLjAzLTIuNy0yLjYzLTIuN0gxNy41M2M1LjEyLTE4Ljk4LDE1LjQ1LTM2LjE0LDI5LjgyLTQ5LjU2LDE0LjM3LTEzLjQxLDMyLjIxLTIyLjU0LDUxLjQ5LTI2LjM0LDE5LjI4LTMuOCwzOS4yNS0yLjE0LDU3LjY0LDQuODEsMTguMzksNi45NSwzNC40NiwxOC45MSw0Ni40MSwzNC41MiwxMS45NSwxNS42MSwxOS4yOSwzNC4yNSwyMS4xOSw1My44MiwxLjksMTkuNTYtMS43MSwzOS4yNy0xMC40Miw1Ni44OS04LjcxLDE3LjYyLTIyLjE4LDMyLjQ1LTM4Ljg4LDQyLjgyLTE2LjcsMTAuMzYtMzUuOTcsMTUuODUtNTUuNjMsMTUuODNaIi8+PC9nPjwvc3ZnPg==" alt="อย."></span><div>
 <h1>ระบบวิเคราะห์ข้อมูลเศรษฐกิจผลิตภัณฑ์สุขภาพ</h1>
-<div class="sub">หน้าจอที่ 10 · การติดตามคุณภาพข้อมูลและธรรมาภิบาลข้อมูล (Data Quality & Governance)</div></div></div>
+<div class="sub">หน้าจอที่ 10 · การติดตามคุณภาพข้อมูลและธรรมาภิบาลข้อมูล (Data Quality & Lineage Monitoring)</div></div></div>
 <div class="right"><div class="asof">อัปเดตล่าสุด <span id="asOf"></span></div><div class="org">สำนักงานคณะกรรมการอาหารและยา</div><div class="dash-mock-badge" title="ตัวเลขในหน้านี้จัดทำขึ้นเพื่อสาธิตรูปแบบการแสดงผลเท่านั้น ไม่ใช่ข้อมูลจริงของสำนักงานคณะกรรมการอาหารและยา โปรดอย่านำไปอ้างอิง">ข้อมูลจำลอง</div></div></header>
 <div class="filters">
   <div class="static-filters">
     <button type="button" class="dash-menu-btn" aria-label="แสดงเมนู" title="แสดงเมนู" aria-expanded="false"><i class="dash-menu-icon" aria-hidden="true"></i></button>
-    <span>ปี: <select id="fySel"><option value="2562">2562</option><option value="2563">2563</option><option value="2564">2564</option><option value="2565">2565</option><option value="2566">2566</option><option value="2567">2567</option><option value="2568" selected>2568</option><option value="2569">2569</option></select></span>
-    <span>เดือน: <select id="filterMonth"><option value="ALL" selected>ทั้งหมด</option></select></span><span>ธุรกรรม <select id="txnSel"><option value="all">ทั้งหมด</option><option value="import">นำเข้า</option><option value="export">ส่งออก</option></select></span>
-    <span>จังหวัด <select id="provSel"><option value="ทั่วประเทศ">ทั่วประเทศ</option><option value="กรุงเทพฯ">กรุงเทพฯ</option><option value="นนทบุรี">นนทบุรี</option><option value="สมุทรปราการ">สมุทรปราการ</option><option value="เชียงใหม่">เชียงใหม่</option><option value="ชลบุรี">ชลบุรี</option><option value="ขอนแก่น">ขอนแก่น</option></select></span>
+    <span>รอบข้อมูล: <select id="roundSel" aria-label="รอบข้อมูล"></select></span>
+    <span>แหล่งข้อมูล: <select id="sourceSel" aria-label="แหล่งข้อมูล"></select></span>
+    <span>ประเภท: <select id="typeSel" aria-label="ประเภทแหล่งข้อมูล"><option value="ALL" selected>ภายใน + ภายนอก</option><option value="INT">ภายใน</option><option value="EXT">ภายนอก</option></select></span>
     <span><button type="button" class="reset-btn" id="resetFiltersBtn">คืนค่า</button></span>
-    
-  </div>
-  <div class="filterGroups">
-    <span class="lbl">กลุ่มผลิตภัณฑ์:</span>
-    <span id="chips"><button type="button" class="chip" aria-pressed="true" data-g="ALL"><span class="dot" style="background:#12305B"></span>ทั้งหมด</button>
-<button type="button" class="chip" aria-pressed="false" data-g="DRUG"><span class="dot" style="background:#1F6FB2"></span>ยา</button>
-<button type="button" class="chip" aria-pressed="false" data-g="MDC"><span class="dot" style="background:#12A594"></span>เครื่องมือแพทย์</button>
-<button type="button" class="chip" aria-pressed="false" data-g="FOOD"><span class="dot" style="background:#3E9F55"></span>อาหาร</button>
-<button type="button" class="chip" aria-pressed="false" data-g="CMT"><span class="dot" style="background:#E8A317"></span>เครื่องสำอาง</button>
-<button type="button" class="chip" aria-pressed="false" data-g="HERB"><span class="dot" style="background:#7E57C2"></span>สมุนไพร</button>
-<button type="button" class="chip" aria-pressed="false" data-g="TXC"><span class="dot" style="background:#C0392B"></span>วัตถุอันตราย</button>
-<button type="button" class="chip" aria-pressed="false" data-g="NCT"><span class="dot" style="background:#7F8C8D"></span>วัตถุเสพติด</button></span>
   </div>
 </div>
 
 <main>
-<section class="kpis" id="healthKpi"></section>
-<section class="card span6 card--row-stretch"><h2>คุณภาพข้อมูลรายเมตริก</h2>
-<div class="table-scroll"><table class="data"><thead><tr><th>เมตริก</th><th class="num">ค่า</th><th class="cen">สถานะ</th></tr></thead><tbody id="healthBody"><tr><td colspan="3" class="cen" style="color:var(--muted)">กำลังโหลดข้อมูล…</td></tr></tbody></table></div></section>
-<section class="card span6 card--row-stretch card--donut-paired"><h2>สถิติขั้นตอนทำความสะอาดข้อมูล</h2>
-<div class="chart-box chart-box--donut lg"><canvas id="cClean"></canvas></div></section>
-<section class="card span12"><h2>ที่มาข้อมูลและธรรมาภิบาล</h2>
-<div class="table-scroll"><table class="data"><thead><tr><th>แหล่งข้อมูล</th><th>ตาราง/ไฟล์</th><th class="num">ความครบถ้วน</th><th>ปรับปรุงล่าสุด</th><th>ผู้รับผิดชอบ</th></tr></thead>
-<tbody>
-<tr><td>Oracle FDADB</td><td>VW_IM_PRODUCTRELEASEDINFO</td><td class="num">98.6%</td><td>30 มิ.ย. 2569</td><td>IT อย.</td></tr>
-<tr><td>Oracle FDADB</td><td>VW_xxx_DOC_REQ</td><td class="num">97.2%</td><td>30 มิ.ย. 2569</td><td>IT อย.</td></tr>
-<tr><td>Cleansing Pipeline</td><td>fda_before_after.csv</td><td class="num">96.2%</td><td>Demo</td><td>Data Steward</td></tr>
-<tr><td>External</td><td>กรมศุลกากร HS</td><td class="num">92.0%</td><td>30 มิ.ย. 2569</td><td>กรมศุลกากร</td></tr>
-</tbody></table></div></section></main>
+<section class="kpis" id="dqKpi"></section>
+
+<section class="card span8 card--row-stretch"><h2>คุณภาพข้อมูลรายตารางต้นทาง (Data Quality Scorecard)</h2>
+<div class="cap">ตรวจสอบตามกรอบ Data Pipeline &amp; Cleansing Framework ในข้อ 4.3.2 · คลิกแถวเพื่อดูผลการตรวจสอบรายขั้นตอน</div>
+<div class="table-scroll"><table class="data dq-table"><thead><tr>
+<th>Data Domain</th><th>ชื่อตาราง</th><th class="num">จำนวน<br>Fields</th><th class="num">จำนวน<br>ระเบียน</th><th class="num">Completeness</th><th class="num">Validity</th><th class="num">Duplicate</th><th class="num">Mapping<br>สำเร็จ</th><th>รอบปรับปรุง<br>ล่าสุด</th><th>สถานะ <span class="info" id="statusInfo">ⓘ</span></th>
+</tr></thead><tbody id="dqBody"></tbody></table></div></section>
+
+<section class="card span4 card--row-stretch"><h2>ผลการตรวจสอบตามขั้นตอน Data Pipeline</h2>
+<div class="cap" id="pipeCap">จำนวนระเบียนที่ผ่าน / ไม่ผ่าน ในแต่ละขั้นตอน</div>
+<div class="pipe" id="pipe"></div></section>
+
+<section class="card span6 card--row-stretch"><h2>สายเลือดข้อมูล (Data Lineage) ของตัวชี้วัดที่เลือก</h2>
+<div class="lineage-pick">ตัวชี้วัด: <select id="lineageSel" aria-label="ตัวชี้วัด"></select></div>
+<div class="lineage" id="lineage"></div></section>
+
+<section class="card span6 card--row-stretch"><h2>บันทึกเหตุการณ์และการแจ้งเตือน (Monitoring &amp; Alert Log)</h2>
+<div class="cap">ตามการออกแบบขั้นตอน Publishing &amp; Monitoring ในข้อ 4.3.2</div>
+<div class="table-scroll"><table class="data log-table"><thead><tr><th>เวลา</th><th>งานประมวลผล</th><th>ประเภท</th><th>รายละเอียด</th><th>สถานะ</th></tr></thead>
+<tbody id="logBody"></tbody></table></div></section>
+</main>
+<footer><span class="note">หน้าจอนี้รองรับการกำกับดูแลธรรมาภิบาลข้อมูลตามข้อ 4.3.3 โดยเชื่อมโยงกับบัญชีข้อมูลภาครัฐ (Government Data Catalog) และพจนานุกรมข้อมูล (Data Dictionary) ของทั้ง 25 ตาราง</span></footer>
 <script src="shared/d10-app.js" defer></script>
 <script src="shared/dash-layout.js" defer></script>
 </div>

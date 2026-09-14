@@ -290,19 +290,23 @@ function renderStats() {
   const days = Math.round(s.days * r.days);
   const rework = Math.min(95, s.rework * (0.6 + 0.4 * r.days));
   const rbi = Math.min(99, s.rbi * (0.55 + 0.45 * r.days));
-  const [rssT, rssC] = rssLabel(s.rss), [rbiT, rbiC] = rbiLabel(rbi);
-  const cls = rbi > 60 ? (s.rss >= 60 ? "ดาวรุ่งติดคอขวด" : "ติดคอขวด") : (s.rss >= 60 ? "ดาวรุ่ง" : "ติดตาม");
+  const imp = Math.round(s.imp * r.count);
+  const exp = Math.round(s.exp * r.count);
+  const cagr = s.cagr * (0.7 + 0.3 * r.days);
+  const rss = Math.min(99, s.rss * (0.85 + 0.15 * r.days));
+  const [rssT, rssC] = rssLabel(rss), [rbiT, rbiC] = rbiLabel(rbi);
+  const cls = rbi > 60 ? (rss >= 60 ? "ดาวรุ่งติดคอขวด" : "ติดคอขวด") : (rss >= 60 ? "ดาวรุ่ง" : "ติดตาม");
   const tiles = [
-    ["มูลค่านำเข้า (2568)", fmt(s.imp) + " ลบ.", "#1F6FB2"],
-    ["มูลค่าส่งออก (2568)", fmt(s.exp) + " ลบ.", "#12A594"],
-    ["CAGR 3 ปี", fmt(s.cagr, 1) + "%", "#1F7A45"],
+    ["มูลค่านำเข้า (2568)", fmt(imp) + " ลบ.", "#1F6FB2"],
+    ["มูลค่าส่งออก (2568)", fmt(exp) + " ลบ.", "#12A594"],
+    ["CAGR 3 ปี", fmt(cagr, 1) + "%", "#1F7A45"],
     ["จำนวนผลิตภัณฑ์สะสม", fmt(s.products * r.count) + " รายการ", "#7E57C2"],
     ["ผลิตภัณฑ์ใหม่ (3 ปี)", fmt(s.newProducts * r.count) + " รายการ", "#7E57C2"],
     ["จำนวนผู้ประกอบการ", fmt(s.entities * r.count) + " ราย", "#1F6FB2"],
     ["คำขอ (2568)", fmt(s.requests * r.count) + " คำขอ", "#E8A317"],
     ["ระยะเวลาพิจารณาเฉลี่ย", fmt(days) + " วันทำการ", days > 90 ? "#C0392B" : "#1F7A45"],
     ["อัตราการแก้ไขคำขอ", fmt(rework, 1) + "%", rework > 25 ? "#C0392B" : "#1F7A45"],
-    ["คะแนน RSS", `${fmt(s.rss, 1)} (${rssT})`, rssC],
+    ["คะแนน RSS", `${fmt(rss, 1)} (${rssT})`, rssC],
     ["คะแนน RBI", `${fmt(rbi, 1)} (${rbiT})`, rbiC],
     ["การจัดกลุ่ม", cls, cls.includes("คอขวด") ? "#C0392B" : "#1F7A45"]
   ];
@@ -342,6 +346,7 @@ function renderTrend() {
 /* ปีงบประมาณ พ.ศ. — ต.ค. เริ่มปีงบถัดไป (เลขรับ MD-68-… = ปีงบ 2568) */
 function fiscalYear(ddmmyyyy) { const [, m, y] = ddmmyyyy.split("/").map(Number); return m >= 10 ? y + 1 : y; }
 function renderApps() {
+  const r = curRisk();
   const rows = curProduct().apps.filter(a => fiscalYear(a[3]) >= FILTER.from);
   const tb = document.getElementById("appBody");
   if (!rows.length) {
@@ -349,9 +354,12 @@ function renderApps() {
     return;
   }
   tb.innerHTML = rows.map(a => {
+    const days = Math.max(1, Math.round(a[5] * r.days));
+    const stop = Math.max(0, Math.round(a[6] * r.days));
+    const rework = Math.max(0, Math.round(a[7] * r.days));
     const st = a[8] === "ค้างพิจารณา" ? "st-pending" : a[8] === "คืนคำขอ" ? "st-return" : "st-ok";
     return `<tr class="${a[8] === "ค้างพิจารณา" ? "row-pending" : ""}"><td><span class="clip clip-no" title="${a[0]}">${a[0]}</span></td><td><span class="clip clip-name" title="${a[1]}">${a[1]}</span></td><td>${a[2]}</td><td>${a[3]}</td><td>${a[4]}</td>
-      <td class="num">${a[5]}</td><td class="num">${a[6]}</td><td class="num">${a[7]}</td><td class="${st}">${a[8]}</td></tr>`;
+      <td class="num">${days}</td><td class="num">${stop}</td><td class="num">${rework}</td><td class="${st}">${a[8]}</td></tr>`;
   }).join("");
 }
 

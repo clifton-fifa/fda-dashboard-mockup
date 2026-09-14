@@ -295,7 +295,7 @@ function renderStats() {
   const cagr = s.cagr * (0.7 + 0.3 * r.days);
   const rss = Math.min(99, s.rss * (0.85 + 0.15 * r.days));
   const [rssT, rssC] = rssLabel(rss), [rbiT, rbiC] = rbiLabel(rbi);
-  const cls = rbi > 60 ? (rss >= 60 ? "ดาวรุ่งติดคอขวด" : "ติดคอขวด") : (rss >= 60 ? "ดาวรุ่ง" : "ติดตาม");
+  const cls = rbi > 60 ? (rss >= 60 ? "ดาวรุ่ง · ภาระสูง" : "ภาระสูง") : (rss >= 60 ? "ดาวรุ่ง" : "ติดตาม");
   const tiles = [
     ["มูลค่านำเข้า (2568)", fmt(imp) + " ลบ.", "#1F6FB2"],
     ["มูลค่าส่งออก (2568)", fmt(exp) + " ลบ.", "#12A594"],
@@ -308,7 +308,7 @@ function renderStats() {
     ["อัตราการแก้ไขคำขอ", fmt(rework, 1) + "%", rework > 25 ? "#C0392B" : "#1F7A45"],
     ["คะแนน RSS", `${fmt(rss, 1)} (${rssT})`, rssC],
     ["คะแนน RBI", `${fmt(rbi, 1)} (${rbiT})`, rbiC],
-    ["การจัดกลุ่ม", cls, cls.includes("คอขวด") ? "#C0392B" : "#1F7A45"]
+    ["การจัดกลุ่ม", cls, cls.includes("ภาระสูง") ? "#C0392B" : "#1F7A45"]
   ];
   document.getElementById("statGrid").innerHTML = tiles.map(([n, v, c], i) =>
     `<div class="stat${i === tiles.length - 1 ? " stat--cls" : ""}"><div class="n">${n}</div><div class="v" style="color:${c}">${v}</div></div>`).join("");
